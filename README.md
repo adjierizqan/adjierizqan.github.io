@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Adjie Rizqan — Portfolio
 
-## Getting Started
+Personal portfolio website: AI research, computer vision, and interactive web projects.
 
-First, run the development server:
+Built with Next.js (App Router), TypeScript, and Tailwind CSS. Fully static — no backend.
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Editing content
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+All content lives in two files — no component changes needed:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **`data/site.ts`** — name, role, bio, email, GitHub, LinkedIn, CV path.
+- **`data/projects.ts`** — the project list. Each project has a title, description, tech stack, features, links (GitHub / demo / paper), and a preview.
 
-## Learn More
+### Project previews
 
-To learn more about Next.js, take a look at the following resources:
+Preview media lives in `public/projects/`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `<slug>.mp4` — looping video preview (referenced by the `video` field)
+- `<slug>.jpg` — poster/fallback image (referenced by the `image` field)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To update a preview from a screen recording:
 
-## Deploy on Vercel
+```bash
+ffmpeg -i recording.mov -vf "scale=960:-2" -c:v libx264 -crf 27 \
+  -an -pix_fmt yuv420p -movflags +faststart public/projects/<slug>.mp4
+ffmpeg -ss 3 -i public/projects/<slug>.mp4 -frames:v 1 public/projects/<slug>.jpg
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### CV
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Replace `public/cv.pdf` to update the CV download.
