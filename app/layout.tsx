@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://adjierizqan.github.io"),
   title: {
     default: "Adjie Rizqan — AI Researcher & Computer Vision Engineer",
     template: "%s — Adjie Rizqan",
