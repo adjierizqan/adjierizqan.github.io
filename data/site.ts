@@ -2,8 +2,8 @@ export const site = {
   name: "Adjie Rizqan",
   role: "AI Researcher · Computer Vision Engineer · Full-Stack Developer",
   bio: [
-    "I work on computer vision and applied deep learning, with a focus on object detection — YOLO architectures, transformer backbones, and detection ensembles for agricultural and real-world applications.",
-    "Alongside research, I build full-stack and interactive 3D web experiences with Next.js, Three.js, and modern animation tooling. I like shipping things that are both technically solid and pleasant to use.",
+    "I work on computer vision, mostly object detection: YOLO models, transformer backbones, and ensembles, applied to problems like fruit ripeness grading and sports analytics.",
+    "Outside research I build for the web with Next.js and Three.js, including interactive 3D sites. I care that what I ship works well and feels good to use.",
   ],
   email: "adjierizqan@gmail.com",
   github: "https://github.com/adjierizqan",
