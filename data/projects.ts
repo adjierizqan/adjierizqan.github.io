@@ -22,22 +22,22 @@ export const projects: Project[] = [
   {
     slug: "tomato-ripeness",
     title:
-      "Tomato Maturity Detection with YOLOv11, Swin Transformer, Multi-Scale SPPF & Weighted Boxes Fusion",
+      "Tomato Maturity Detection with YOLOv11, Swin Transformer, Multi-Scale SPPF and Weighted Boxes Fusion",
     category: "Research",
     year: "2026",
     description:
-      "Three-class tomato ripeness detection combining a YOLOv11 baseline with a Swin Transformer backbone, multi-scale SPPF, and WBF ensembling for higher mAP on small and occluded fruit.",
+      "Detects three ripeness stages of greenhouse tomatoes. A YOLOv11 baseline is compared against Swin Transformer and multi-scale SPPF variants, then ensembled with Weighted Boxes Fusion, which raises mAP@0.5 from 0.795 to 0.824.",
     longDescription:
-      "This research explores architectural improvements for tomato maturity detection in real greenhouse conditions. Starting from a YOLOv11 baseline, the model is enhanced with a Swin Transformer backbone for stronger global context, a multi-scale SPPF module for better small-object representation, and Weighted Boxes Fusion to ensemble predictions across models. The system classifies tomatoes into three ripeness stages and is evaluated against occlusion, overlap, and lighting variation.",
+      "Greenhouse tomato detection is hard because fruit overlap, hide behind leaves, and sit at very different distances from the camera. This project starts from a YOLOv11 baseline and tests two architectural changes: a Swin Transformer backbone for wider context, and a multi-scale SPPF block for small fruit. Predictions from the three models are then combined with Weighted Boxes Fusion. The best ensemble reaches 0.824 mAP@0.5 on a three-class ripeness dataset (green, orange, red), up from 0.795 for the baseline.",
     image: "/projects/tomato-ripeness.jpg",
     video: "/projects/tomato-ripeness.mp4",
     tech: ["YOLOv11", "Swin Transformer", "PyTorch", "OpenCV", "Weighted Boxes Fusion"],
     features: [
-      "Three-class ripeness detection (green, orange, ripe)",
-      "Swin Transformer backbone for global feature context",
-      "Multi-scale SPPF for small and occluded fruit",
-      "WBF ensembling across model variants",
-      "Evaluated on real greenhouse imagery with heavy occlusion",
+      "Three ripeness classes: green, orange, red",
+      "Swin Transformer backbone variant",
+      "Multi-scale SPPF variant for small fruit",
+      "Weighted Boxes Fusion across the three models",
+      "Evaluated on real greenhouse photos with heavy occlusion",
     ],
     links: {
       github: "https://github.com/adjierizqan/tomato-ripeness-yolov11",
@@ -46,22 +46,22 @@ export const projects: Project[] = [
   },
   {
     slug: "padel-vision",
-    title: "Padel Vision — Monocular Padel Match Analytics",
+    title: "Padel Vision: Monocular Padel Match Analytics",
     category: "Research",
     year: "2026",
     description:
-      "Computer-vision pipeline that turns a single broadcast camera into full padel analytics: player tracking, ball trajectory, shot speed, and a live tactical minimap.",
+      "Reads a professional padel match from one broadcast camera: it tracks all four players and the ball, estimates shot speed, and draws a live top-down minimap.",
     longDescription:
-      "Padel Vision analyzes professional padel matches from a single monocular broadcast feed. A fine-tuned YOLOv11 model detects the ball at high resolution while pose models track all four players; court homography maps everything onto a top-down tactical minimap. The system estimates ball speed, recognizes shot types, and renders an annotated output video with live trajectories, player IDs, and match statistics.",
+      "Padel Vision takes a single broadcast clip and turns it into match data. A fine-tuned YOLOv11 model finds the ball at high resolution, pose models follow the four players, and a court homography projects everything onto a top-down minimap. On top of the tracking it estimates ball speed, classifies shot types, and renders an annotated video with trajectories, player identities, and match statistics.",
     image: "/projects/padel-vision.jpg",
     video: "/projects/padel-vision.mp4",
     tech: ["YOLOv11", "PyTorch", "OpenCV", "Pose Estimation", "Homography"],
     features: [
       "Ball detection and trajectory tracking from broadcast video",
-      "Four-player tracking with pose estimation",
-      "Court calibration and top-down tactical minimap",
-      "Ball speed and shot-type recognition",
-      "Fully annotated output video rendering",
+      "Tracking of all four players with pose estimation",
+      "Court calibration and top-down minimap",
+      "Ball speed estimation and shot classification",
+      "Annotated output video",
     ],
     links: {
       github: "https://github.com/adjierizqan/padel-vision",
@@ -69,21 +69,21 @@ export const projects: Project[] = [
   },
   {
     slug: "objecttwin",
-    title: "ObjectTwin — Image-to-3D Reconstruction Pipeline",
+    title: "ObjectTwin: Image-to-3D Reconstruction Pipeline",
     category: "Web App",
     year: "2026",
     description:
-      "End-to-end image-to-3D platform with pluggable GPU adapters, transparent quality evaluation, and a web-based 3D model inspector.",
+      "Turns one product photo into a 3D model you can inspect in the browser. Every generation gets a quality score, and the GPU model backends are swappable.",
     longDescription:
-      "ObjectTwin turns product photos into inspectable 3D models. The backend orchestrates image-to-3D generation through pluggable GPU adapters, runs a transparent quality-evaluation stage on every result, and exposes job progress through an API. The Next.js frontend provides a full workflow: upload, pipeline monitoring, quality reports, and an interactive in-browser 3D inspector for the generated models.",
+      "ObjectTwin generates 3D models from single photos and is honest about how good each result is. The backend runs generation through pluggable GPU adapters (Hunyuan3D, InstantMesh, TRELLIS), cleans the mesh, and scores every output on silhouette match, geometry health, textures, complexity, and pipeline reliability. The Next.js frontend covers the whole workflow: upload, stage-by-stage progress, the quality report, and an interactive GLB viewer.",
     image: "/projects/objecttwin.jpg",
     video: "/projects/objecttwin.mp4",
     tech: ["Next.js", "TypeScript", "Three.js", "Python", "FastAPI"],
     features: [
-      "Image-to-3D generation with pluggable GPU adapters",
-      "Automated quality evaluation with visual reports",
-      "Job pipeline with real-time progress tracking",
-      "Web-based interactive 3D model inspector",
+      "Pluggable image-to-3D adapters (Hunyuan3D, InstantMesh, TRELLIS)",
+      "Weighted quality score with the reasoning visible",
+      "Job pipeline with per-stage progress and logs",
+      "In-browser GLB inspector with orbit controls",
     ],
     links: {
       github: "https://github.com/adjierizqan/objecttwin",
@@ -91,21 +91,21 @@ export const projects: Project[] = [
   },
   {
     slug: "porsche-3d",
-    title: "Porsche Collector — Interactive 3D Configurator",
+    title: "Porsche Collector: Interactive 3D Configurator",
     category: "Website",
     year: "2026",
     description:
-      "Fan-made interactive Porsche showcase: six legendary models rendered in real-time 3D with orbit controls, repainting, and cinematic GSAP transitions.",
+      "A fan-made Porsche site. Six cars rendered in real time with Three.js; you can orbit each one, repaint it, and switch between models with animated camera moves.",
     longDescription:
-      "A fan-made digital atelier celebrating six decades of Porsche design. Each car is rendered in real time with Three.js — visitors can orbit, switch between six legendary models, and repaint them live. Transitions between cars are choreographed with GSAP for a cinematic, showroom-like feel, while the editorial UI keeps specs and stories readable around the 3D centerpiece.",
+      "A fan project about Porsche design. Six models, from the 1991 RWB 964 to the 2022 718 Cayman GT4 RS, are rendered in real time with Three.js. Visitors orbit each car, change its paint, and move between models through GSAP camera transitions. The site is plain HTML with ES modules, so there is no build step. 3D models by Ddiaz Design on Sketchfab.",
     image: "/projects/porsche-3d.jpg",
     video: "/projects/porsche-3d.mp4",
     tech: ["Three.js", "GSAP", "JavaScript", "WebGL"],
     features: [
       "Six real-time 3D Porsche models",
       "Orbit interaction and live repainting",
-      "Cinematic GSAP transitions between cars",
-      "Editorial spec panels framing the 3D hero",
+      "GSAP camera transitions between cars",
+      "No build step: plain HTML and ES modules",
     ],
     links: {
       github: "https://github.com/adjierizqan/porsche_3d",
