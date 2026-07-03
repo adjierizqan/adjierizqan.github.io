@@ -7,6 +7,6 @@ export const site = {
   ],
   email: "adjierizqan@gmail.com",
   github: "https://github.com/adjierizqan",
-  linkedin: "https://www.linkedin.com/in/adjierizqan",
+  linkedin: "https://www.linkedin.com/in/muhammadrizqan/",
   cv: "/cv.pdf",
 } as const;
