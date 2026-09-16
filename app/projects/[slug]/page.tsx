@@ -78,6 +78,21 @@ export default async function ProjectPage({ params }: Props) {
         <p>{project.longDescription}</p>
       </div>
 
+      {project.sections && (
+        <div className="mt-10 space-y-8">
+          {project.sections.map((section) => (
+            <section key={section.heading}>
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">
+                {section.heading}
+              </h2>
+              <p className="mt-3 text-[15px] leading-relaxed text-foreground/80">
+                {section.body}
+              </p>
+            </section>
+          ))}
+        </div>
+      )}
+
       <div className="mt-10 grid gap-8 sm:grid-cols-2">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">
@@ -104,6 +119,32 @@ export default async function ProjectPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {project.gallery && (
+        <div className="mt-12">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">
+            Screenshots
+          </h2>
+          <div className="mt-4 space-y-6">
+            {project.gallery.map((shot) => (
+              <figure key={shot.src}>
+                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg border border-line">
+                  <Image
+                    src={shot.src}
+                    alt={shot.caption}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 768px"
+                    className="object-cover object-top"
+                  />
+                </div>
+                <figcaption className="mt-2 text-xs leading-relaxed text-muted">
+                  {shot.caption}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-12 flex flex-wrap gap-3 border-t border-line pt-8">
         {hasDemo && (
