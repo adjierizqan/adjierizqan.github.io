@@ -106,7 +106,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Production and releases",
-        body: "The current release is v1.2.2, running on a VPS behind Nginx with HTTPS and systemd. Daily SQLite backups are checked with an isolated test restore rather than assumed to work, and each release in this cycle started from a freshly verified backup. The suite is 276 automated tests, with typecheck and a production build as release gates. Releases are fast-forward only, and the commit SHA is checked to match across local, origin and production.",
+        body: "The current release is v1.2.3, running on a VPS behind Nginx with HTTPS and systemd. Daily SQLite backups are checked with an isolated test restore rather than assumed to work, and each release in this cycle started from a freshly verified backup. The suite is 276 automated tests, with typecheck and a production build as release gates. Releases are fast-forward only, and the commit SHA is checked to match across local, origin and production.",
       },
     ],
     gallery: [
