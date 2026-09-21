@@ -5,6 +5,7 @@ import Link from "next/link";
 import { KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { ArrowLeftIcon, ArrowUpRightIcon, FileIcon, MailIcon } from "@/components/Icons";
 import { site } from "@/data/site";
+import { getProject } from "@/data/projects";
 import {
   allWorkspaceProjects,
   featuredWork,
@@ -37,6 +38,19 @@ const prompts = [
     projects: ["suhulog", "labstock"],
   },
 ];
+
+const workspaceMetadata: Record<string, { system: string; stack?: string }> = {
+  labstock: {
+    system: "Laboratory inventory and reporting system",
+    stack: "Next.js · TypeScript · PostgreSQL · Prisma · ExcelJS",
+  },
+  bdrs: { system: "Blood-bank operations system" },
+  suhulog: { system: "Temperature logging and compliance reporting" },
+  "tomato-ripeness": { system: "Computer vision research system" },
+  "padel-vision": { system: "Monocular sports analytics" },
+  objecttwin: { system: "Image-to-3D generation pipeline" },
+  "porsche-3d": { system: "Interactive 3D web experience" },
+};
 
 function Icon({ name }: { name: "home" | "work" | "labs" | "ask" | "panel" | "grid" | "arrow" | "spark" }) {
   const paths = {
@@ -106,6 +120,10 @@ function ProjectRow({ project, selected, onSelect, onOpen }: {
 function Inspector({ project, open, close, onOpen }: {
   project: WorkspaceProject; open: boolean; close: () => void; onOpen: () => void;
 }) {
+  const published = getProject(project.slug);
+  const metadata = workspaceMetadata[project.slug];
+  const stack = metadata?.stack ?? published?.tech.join(" · ");
+
   return (
     <aside className={`ws-inspector ${open ? "is-open" : ""}`} aria-label={`Project context: ${project.title}`}>
       <div className="ws-panel-head">
@@ -113,11 +131,15 @@ function Inspector({ project, open, close, onOpen }: {
         <button type="button" onClick={close} aria-label="Close context panel">×</button>
       </div>
       <div className="ws-inspector-scroll" key={project.slug}>
-        <div className="ws-inspector-preview"><ProjectThumb project={project} /><span>{project.year}</span></div>
+        {project.image && <div className="ws-inspector-preview"><ProjectThumb project={project} /><span>{project.year}</span></div>}
         <div className="ws-inspector-title">
           <span>{project.eyebrow}</span>
           <h2>{project.title}</h2>
           <p>{project.role}</p>
+        </div>
+        <div className="ws-inspector-meta">
+          <div><span>System</span><strong>{metadata?.system ?? project.eyebrow}</strong></div>
+          {stack && <div><span>Stack</span><strong>{stack}</strong></div>}
         </div>
         <div className="ws-inspector-section">
           <h3>Evidence</h3>
@@ -134,6 +156,57 @@ function Inspector({ project, open, close, onOpen }: {
   );
 }
 
+function LabStockFeature({ project, selected, select, open }: {
+  project: WorkspaceProject; selected: boolean; select: () => void; open: () => void;
+}) {
+  return (
+    <article className={`ws-primary-feature ${selected ? "is-selected" : ""}`} onMouseEnter={select}>
+      <div className="ws-primary-copy">
+        <div className="ws-primary-meta"><span>Primary case</span><span>{project.year}</span></div>
+        <h3>{project.title}</h3>
+        <p>{project.summary}</p>
+        <dl>
+          {project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
+        </dl>
+        <button type="button" onClick={open}>Open case study <Icon name="arrow" /></button>
+      </div>
+      <div className="ws-ledger-evidence" aria-label="LabStock verified workflow">
+        <div className="ws-ledger-head"><span>Inventory workflow</span><em>Source-aware</em></div>
+        <div className="ws-ledger-flow">
+          <div><span>01</span><strong>Workbook import</strong><small>file · sheet · row</small></div>
+          <i />
+          <div><span>02</span><strong>Canonical ledger</strong><small>auditable corrections</small></div>
+          <i />
+          <div><span>03</span><strong>Monthly reports</strong><small>detail · recap</small></div>
+        </div>
+        <div className="ws-ledger-output">
+          <span>Output boundary</span>
+          <strong>Import → ledger → report → export</strong>
+          <div><i /><i /><i /><i /><i /><i /></div>
+        </div>
+        <p>No hospital production screen is published without a verified sanitized asset.</p>
+      </div>
+    </article>
+  );
+}
+
+function SecondaryFeature({ project, index, selected, select, open }: {
+  project: WorkspaceProject; index: number; selected: boolean; select: () => void; open: () => void;
+}) {
+  return (
+    <button type="button" className={`ws-secondary-feature feature-${index} ${selected ? "is-selected" : ""}`}
+      onMouseEnter={select} onFocus={select} onClick={open}>
+      {project.image && <ProjectThumb project={project} />}
+      <span className="ws-secondary-copy">
+        <span><em>{project.eyebrow}</em><small>{project.year}</small></span>
+        <strong>{project.title}</strong>
+        <p>{project.summary}</p>
+        <b>View case <Icon name="arrow" /></b>
+      </span>
+    </button>
+  );
+}
+
 function BrowseCanvas({ selectedSlug, select, open, ask }: {
   selectedSlug: string; select: (slug: string) => void; open: (project: WorkspaceProject) => void; ask: () => void;
 }) {
@@ -142,11 +215,10 @@ function BrowseCanvas({ selectedSlug, select, open, ask }: {
       <header className="ws-document-hero">
         <div>
           <span className="ws-eyebrow">Adjie Rizqan · Product engineer</span>
-          <h1>Operational software.<br />Applied AI systems.</h1>
+          <h1>Operational software. Applied AI systems.</h1>
         </div>
         <div className="ws-intro-note">
           <p>Work designed around real inputs, accountable state, and outputs people can use.</p>
-          <button type="button" onClick={ask}><Icon name="spark" /> Ask about the work</button>
         </div>
       </header>
 
@@ -155,10 +227,19 @@ function BrowseCanvas({ selectedSlug, select, open, ask }: {
           <div><span>01</span><h2 id="featured-work">Featured work</h2></div>
           <p>Four systems selected for product depth and evidence.</p>
         </div>
-        <div className="ws-project-list">
-          {featuredWork.map((project) => <ProjectRow key={project.slug} project={project}
-            selected={selectedSlug === project.slug} onSelect={() => select(project.slug)} onOpen={() => open(project)} />)}
+        <div className="ws-editorial-showcase">
+          <LabStockFeature project={featuredWork[0]} selected={selectedSlug === featuredWork[0].slug}
+            select={() => select(featuredWork[0].slug)} open={() => open(featuredWork[0])} />
+          <div className="ws-secondary-grid">
+            {featuredWork.slice(1).map((project, index) => <SecondaryFeature key={project.slug} project={project}
+              index={index} selected={selectedSlug === project.slug} select={() => select(project.slug)} open={() => open(project)} />)}
+          </div>
         </div>
+      </section>
+
+      <section className="ws-inline-ask" aria-label="Ask about Adjie">
+        <div><Icon name="spark" /><span><strong>Ask about Adjie</strong><small>His work, decisions, or how something was built.</small></span></div>
+        <button type="button" onClick={ask}>Open Ask <Icon name="arrow" /></button>
       </section>
 
       <section className="ws-work-section ws-labs-section" aria-labelledby="labs-work">
@@ -256,7 +337,7 @@ export function WorkspacePrototype() {
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState<string | null>(null);
   const [resultSlugs, setResultSlugs] = useState<string[]>([]);
-  const [selectedSlug, setSelectedSlug] = useState("suhulog");
+  const [selectedSlug, setSelectedSlug] = useState("labstock");
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [inspectorOpen, setInspectorOpen] = useState(false);
 
@@ -312,32 +393,18 @@ export function WorkspacePrototype() {
       <section className="ws-workspace">
         <header className="ws-toolbar">
           <div className="ws-breadcrumb"><span>Adjie Workspace</span><b>/</b><strong>{opened ? opened.title : mode === "ask" ? "Ask" : "Featured work"}</strong></div>
-          <div className="ws-view-switch" aria-label="Workspace view">
-            <button type="button" className={mode === "browse" ? "is-active" : ""} onClick={() => setWorkspaceMode("browse")}><Icon name="grid" /> Browse</button>
-            <button type="button" className={mode === "ask" ? "is-active" : ""} onClick={() => setWorkspaceMode("ask")}><Icon name="spark" /> Ask</button>
-          </div>
+          <button type="button" className="ws-command" onClick={() => setWorkspaceMode("ask")}>
+            <Icon name="spark" /><span>Ask about Adjie, his work, or how something was built…</span><kbd>↵</kbd>
+          </button>
           <button type="button" className="ws-context-toggle" onClick={() => setInspectorOpen(true)}><Icon name="panel" /> Context</button>
         </header>
 
         <div className="ws-canvas">
-          <div className={`ws-canvas-frame ${mode === "ask" && !opened ? "is-chat" : ""}`}>
-            <div className="ws-frame-top">
-              <div><i /><i /><i /></div>
-              <span>{opened ? `Case study / ${opened.title}` : mode === "ask" ? "Ask / approved public work" : "Portfolio / selected work"}</span>
-              <em>{mode === "ask" ? "Local response" : "100%"}</em>
-            </div>
-            <div className="ws-frame-scroll">
-              {opened ? <CaseCanvas project={opened} back={() => setOpenSlug(null)} />
-                : mode === "ask" ? <AskCanvas query={query} setQuery={setQuery} answer={answer} results={results}
-                    submit={() => runAsk()} choose={runAsk} select={setSelectedSlug} open={openProject} />
-                  : <BrowseCanvas selectedSlug={selectedSlug} select={setSelectedSlug} open={openProject} ask={() => setWorkspaceMode("ask")} />}
-            </div>
-          </div>
+          {opened ? <CaseCanvas project={opened} back={() => setOpenSlug(null)} />
+            : mode === "ask" ? <AskCanvas query={query} setQuery={setQuery} answer={answer} results={results}
+                submit={() => runAsk()} choose={runAsk} select={setSelectedSlug} open={openProject} />
+              : <BrowseCanvas selectedSlug={selectedSlug} select={setSelectedSlug} open={openProject} ask={() => setWorkspaceMode("ask")} />}
         </div>
-        <footer className="ws-statusbar">
-          <div><span className="ws-presence" /> Available for selected product work</div>
-          <div><span>Static prototype</span><span>EN</span></div>
-        </footer>
       </section>
 
       <Inspector project={selected} open={inspectorOpen} close={() => setInspectorOpen(false)} onOpen={() => openProject(selected)} />
