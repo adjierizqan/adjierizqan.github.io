@@ -1,25 +1,17 @@
 # Third-party notices
 
-## Onlook
+## BoardUI
 
-Apache License 2.0.
+MIT License.
 
-Used as a product-shell reference for application chrome, canvas hierarchy, navigation, and contextual inspection.
+Used as a design-language reference for the restrained sidebar, centered command composer, semantic spacing, and deterministic chat workspace.
 
-Source: https://github.com/onlook-dev/onlook
-
-## Vercel Chatbot
-
-Apache License 2.0. Copyright 2023 Vercel, Inc.
-
-Used as an interaction reference for the prompt composer and conversation layout.
-
-Source: https://github.com/vercel/chatbot
+Source: https://github.com/BoardUI/boardui
 
 ## Motion Primitives
 
 MIT License.
 
-Used as a component-pattern reference for restrained panel and state transitions.
+Used as a component-pattern reference for restrained workspace reveal and mobile drawer transitions.
 
 Source: https://github.com/ibelick/motion-primitives
