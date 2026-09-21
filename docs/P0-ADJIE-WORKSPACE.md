@@ -15,8 +15,15 @@
 - Any listed project opens into a richer workspace case-study view.
 - SuhuLog includes an evidence gallery using the existing sanitized portfolio assets.
 - Contact and Resume remain reachable in both workspace modes.
-- Desktop uses a rail, main workspace, and evidence panel; mobile collapses to a linear flow.
+- Desktop uses a rail, main workspace, and reactive evidence panel; mobile uses a project-first flow with a compact Ask dock.
 - Keyboard focus is visible and reduced-motion preferences disable transition motion.
+
+## Donor record
+
+- `rollacode/ai-portfolio` (MIT): state-derived browse/ask workspace, reactive content selection, contextual panel, and compact mobile conversation entry.
+- Motion Primitives (MIT): transition-panel pacing, staggered content reveal, and progressive edge treatment.
+
+Both donors informed interaction patterns. Their branding, content, visual identity, and application structure were not copied. The prototype keeps this repository's content model and local deterministic Ask behavior.
 
 ## Public content boundary
 
