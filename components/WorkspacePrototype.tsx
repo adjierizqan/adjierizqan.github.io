@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, KeyboardEvent, useMemo, useState } from "react";
+import { KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { ArrowLeftIcon, ArrowUpRightIcon, FileIcon, MailIcon } from "@/components/Icons";
 import { site } from "@/data/site";
 import {
@@ -38,153 +38,213 @@ const prompts = [
   },
 ];
 
-function Arrow({ direction = "right" }: { direction?: "right" | "up" }) {
-  return (
-    <svg viewBox="0 0 20 20" aria-hidden="true" className={direction === "up" ? "-rotate-45" : ""}>
-      <path d="M3.5 10h12.5M11.5 5.5 16 10l-4.5 4.5" />
-    </svg>
-  );
+function Icon({ name }: { name: "home" | "work" | "labs" | "ask" | "panel" | "grid" | "arrow" | "spark" }) {
+  const paths = {
+    home: <><path d="m3 10 7-6 7 6" /><path d="M5.5 9v7h9V9" /></>,
+    work: <><rect x="3" y="4" width="14" height="12" rx="1.5" /><path d="M7 4V2.8h6V4M3 8h14" /></>,
+    labs: <><path d="M7 3h6M8 3v4l-4 7.2A1.2 1.2 0 0 0 5.1 16h9.8a1.2 1.2 0 0 0 1.1-1.8L12 7V3" /><path d="M6.4 11h7.2" /></>,
+    ask: <><path d="M4 4.5h12v9H9l-3.5 3v-3H4z" /><path d="M7 8h6M7 10.5h4" /></>,
+    panel: <><rect x="2.5" y="3" width="15" height="14" rx="1.5" /><path d="M12.5 3v14" /></>,
+    grid: <><rect x="3" y="3" width="5.5" height="5.5" /><rect x="11.5" y="3" width="5.5" height="5.5" /><rect x="3" y="11.5" width="5.5" height="5.5" /><rect x="11.5" y="11.5" width="5.5" height="5.5" /></>,
+    arrow: <><path d="M3.5 10h12.5M11.5 5.5 16 10l-4.5 4.5" /></>,
+    spark: <><path d="M10 2.5c.45 4.4 2.1 6.05 6.5 6.5-4.4.45-6.05 2.1-6.5 6.5C9.55 11.1 7.9 9.45 3.5 9 7.9 8.55 9.55 6.9 10 2.5Z" /><path d="M16 13.5c.18 1.65.85 2.32 2.5 2.5-1.65.18-2.32.85-2.5 2.5-.18-1.65-.85-2.32-2.5-2.5 1.65-.18 2.32-.85 2.5-2.5Z" /></>,
+  };
+  return <svg viewBox="0 0 20 20" aria-hidden="true">{paths[name]}</svg>;
 }
 
-function SparkIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2.75c.55 4.7 2.55 6.7 7.25 7.25-4.7.55-6.7 2.55-7.25 7.25C11.45 12.55 9.45 10.55 4.75 10 9.45 9.45 11.45 7.45 12 2.75Z" />
-      <path d="M18.25 15.5c.2 1.75 1 2.55 2.75 2.75-1.75.2-2.55 1-2.75 2.75-.2-1.75-1-2.55-2.75-2.75 1.75-.2 2.55-1 2.75-2.75Z" />
-    </svg>
-  );
-}
-
-function ProjectVisual({ project, priority = false }: { project: WorkspaceProject; priority?: boolean }) {
+function ProjectThumb({ project, priority = false }: { project: WorkspaceProject; priority?: boolean }) {
   if (!project.image) {
-    return (
-      <div className="aw-visual aw-visual-placeholder">
-        <span>{project.title.slice(0, 2).toUpperCase()}</span>
-        <p>Public visual held until a sanitized asset is approved.</p>
-      </div>
-    );
+    return <div className="ws-thumb ws-thumb-empty"><span>{project.title.slice(0, 2).toUpperCase()}</span></div>;
   }
   return (
-    <div className="aw-visual">
-      <Image src={project.image} alt="" fill priority={priority}
-        sizes="(max-width: 760px) 100vw, (max-width: 1200px) 60vw, 720px"
-        className="object-cover object-top" />
-      <div className="aw-visual-shade" />
+    <div className="ws-thumb">
+      <Image src={project.image} alt="" fill priority={priority} sizes="(max-width: 800px) 40vw, 360px" className="object-cover object-top" />
     </div>
   );
 }
 
-function ProjectTile({ project, active, index, onPreview, onOpen }: {
-  project: WorkspaceProject; active: boolean; index: number; onPreview: () => void; onOpen: () => void;
+function Composer({ query, setQuery, submit, compact = false }: {
+  query: string; setQuery: (value: string) => void; submit: () => void; compact?: boolean;
+}) {
+  function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      submit();
+    }
+  }
+  return (
+    <div className={`ws-composer ${compact ? "is-compact" : ""}`}>
+      <textarea rows={1} value={query} onChange={(event) => setQuery(event.target.value)}
+        onKeyDown={onKeyDown} placeholder="Ask about Adjie’s work" aria-label="Ask about Adjie’s work" />
+      <div className="ws-composer-actions">
+        <span><Icon name="spark" /> Approved public content</span>
+        <button type="button" onClick={submit} disabled={!query.trim()} aria-label="Submit question">
+          <Icon name="arrow" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ProjectRow({ project, selected, onSelect, onOpen }: {
+  project: WorkspaceProject; selected: boolean; onSelect: () => void; onOpen: () => void;
 }) {
   return (
-    <button type="button" className={`aw-project-tile ${active ? "is-active" : ""}`}
-      onMouseEnter={onPreview} onFocus={onPreview} onClick={onOpen}
-      aria-label={`Open ${project.title} case study`}
-      style={{ "--tile-index": index } as React.CSSProperties}>
-      <ProjectVisual project={project} priority={index === 0} />
-      <span className="aw-project-copy">
-        <span className="aw-project-meta">{String(index + 1).padStart(2, "0")} · {project.eyebrow}</span>
-        <span className="aw-project-title">{project.title}</span>
-        <span className="aw-project-summary">{project.summary}</span>
-        <span className="aw-project-open">View case <Arrow /></span>
+    <button type="button" className={`ws-project-row ${selected ? "is-selected" : ""}`}
+      onMouseEnter={onSelect} onFocus={onSelect} onClick={onOpen}>
+      <ProjectThumb project={project} />
+      <span className="ws-project-row-copy">
+        <span className="ws-project-row-top"><em>{project.eyebrow}</em><small>{project.year}</small></span>
+        <strong>{project.title}</strong>
+        <span>{project.summary}</span>
       </span>
+      <span className="ws-row-arrow"><Icon name="arrow" /></span>
     </button>
   );
 }
 
-function ProjectStrip({ project, onPreview, onOpen }: {
-  project: WorkspaceProject; onPreview: () => void; onOpen: () => void;
+function Inspector({ project, open, close, onOpen }: {
+  project: WorkspaceProject; open: boolean; close: () => void; onOpen: () => void;
 }) {
   return (
-    <button type="button" className="aw-result-strip" onMouseEnter={onPreview} onFocus={onPreview} onClick={onOpen}>
-      <span><span className="aw-label">{project.eyebrow}</span><strong>{project.title}</strong></span>
-      <span className="aw-result-summary">{project.summary}</span>
-      <span className="aw-round-arrow"><Arrow /></span>
-    </button>
-  );
-}
-
-function ContextPanel({ project, onOpen }: { project: WorkspaceProject; onOpen: () => void }) {
-  return (
-    <aside className="aw-context" aria-label={`Context for ${project.title}`}>
-      <div className="aw-context-top">
-        <span className="aw-live-dot" /><span>Selected evidence</span>
-        <span className="aw-context-count">{project.evidence.length.toString().padStart(2, "0")}</span>
+    <aside className={`ws-inspector ${open ? "is-open" : ""}`} aria-label={`Project context: ${project.title}`}>
+      <div className="ws-panel-head">
+        <div><Icon name="panel" /><span>Context</span></div>
+        <button type="button" onClick={close} aria-label="Close context panel">×</button>
       </div>
-      <div className="aw-context-body" key={project.slug}>
-        <div className="aw-context-visual">
-          <ProjectVisual project={project} />
-          <span className="aw-context-index">{project.year}</span>
+      <div className="ws-inspector-scroll" key={project.slug}>
+        <div className="ws-inspector-preview"><ProjectThumb project={project} /><span>{project.year}</span></div>
+        <div className="ws-inspector-title">
+          <span>{project.eyebrow}</span>
+          <h2>{project.title}</h2>
+          <p>{project.role}</p>
         </div>
-        <div className="aw-context-heading">
-          <p>{project.eyebrow}</p><h2>{project.title}</h2><span>{project.role}</span>
+        <div className="ws-inspector-section">
+          <h3>Evidence</h3>
+          <dl>{project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
         </div>
-        <dl className="aw-evidence-list">
-          {project.evidence.map((item) => (
-            <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>
-          ))}
-        </dl>
-        <button type="button" className="aw-context-open" onClick={onOpen}>Open the full case study <Arrow /></button>
+        <div className="ws-inspector-section">
+          <h3>What it demonstrates</h3>
+          <ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul>
+        </div>
+        {project.assetNote && <div className="ws-disclosure"><span>Asset boundary</span><p>{project.assetNote}</p></div>}
+        <button type="button" className="ws-inspector-open" onClick={onOpen}>Open case study <Icon name="arrow" /></button>
       </div>
-      <div className="aw-progressive-edge" aria-hidden="true" />
     </aside>
   );
 }
 
-function AskComposer({ query, setQuery, onSubmit, compact = false }: {
-  query: string; setQuery: (value: string) => void; onSubmit: () => void; compact?: boolean;
+function BrowseCanvas({ selectedSlug, select, open, ask }: {
+  selectedSlug: string; select: (slug: string) => void; open: (project: WorkspaceProject) => void; ask: () => void;
 }) {
-  function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      onSubmit();
-    }
-  }
   return (
-    <div className={`aw-composer ${compact ? "is-compact" : ""}`}>
-      <div className="aw-composer-mark"><SparkIcon /></div>
-      <label htmlFor={compact ? "aw-question-mobile" : "aw-question"} className="sr-only">Ask about Adjie’s work</label>
-      <textarea id={compact ? "aw-question-mobile" : "aw-question"} rows={1} value={query}
-        onChange={(event) => setQuery(event.target.value)} onKeyDown={handleKeyDown}
-        placeholder="Ask about the work…" />
-      <button type="button" onClick={onSubmit} aria-label="Submit question" disabled={!query.trim()}><Arrow direction="up" /></button>
+    <div className="ws-document ws-enter">
+      <header className="ws-document-hero">
+        <div>
+          <span className="ws-eyebrow">Adjie Rizqan · Product engineer</span>
+          <h1>Operational software.<br />Applied AI systems.</h1>
+        </div>
+        <div className="ws-intro-note">
+          <p>Work designed around real inputs, accountable state, and outputs people can use.</p>
+          <button type="button" onClick={ask}><Icon name="spark" /> Ask about the work</button>
+        </div>
+      </header>
+
+      <section className="ws-work-section" aria-labelledby="featured-work">
+        <div className="ws-section-head">
+          <div><span>01</span><h2 id="featured-work">Featured work</h2></div>
+          <p>Four systems selected for product depth and evidence.</p>
+        </div>
+        <div className="ws-project-list">
+          {featuredWork.map((project) => <ProjectRow key={project.slug} project={project}
+            selected={selectedSlug === project.slug} onSelect={() => select(project.slug)} onOpen={() => open(project)} />)}
+        </div>
+      </section>
+
+      <section className="ws-work-section ws-labs-section" aria-labelledby="labs-work">
+        <div className="ws-section-head"><div><span>02</span><h2 id="labs-work">Labs</h2></div><p>Focused experiments with public evidence.</p></div>
+        <div className="ws-lab-grid">
+          {labWork.map((project) => (
+            <button type="button" key={project.slug} onMouseEnter={() => select(project.slug)}
+              onFocus={() => select(project.slug)} onClick={() => open(project)}>
+              <ProjectThumb project={project} />
+              <span><em>{project.eyebrow}</em><strong>{project.title}</strong></span>
+              <Icon name="arrow" />
+            </button>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
 
-function CaseStudy({ project, onBack }: { project: WorkspaceProject; onBack: () => void }) {
+function AskCanvas({ query, setQuery, answer, results, submit, choose, select, open }: {
+  query: string; setQuery: (value: string) => void; answer: string | null; results: WorkspaceProject[];
+  submit: () => void; choose: (query: string) => void; select: (slug: string) => void; open: (project: WorkspaceProject) => void;
+}) {
   return (
-    <article className="aw-case" aria-labelledby="aw-case-title">
-      <button type="button" onClick={onBack} className="aw-case-back"><ArrowLeftIcon className="size-4" /> Back to workspace</button>
-      <header className="aw-case-hero">
-        <div><p className="aw-label">{project.eyebrow} · {project.year}</p><h1 id="aw-case-title">{project.title}</h1></div>
+    <div className="ws-chat ws-enter">
+      <header className="ws-chat-header">
+        <div><span className="ws-presence" /><span>Ask Adjie Workspace</span></div>
+        <p>Deterministic answers from approved public content</p>
+      </header>
+      <div className="ws-conversation">
+        {!answer ? (
+          <div className="ws-chat-welcome">
+            <span className="ws-ai-mark"><Icon name="spark" /></span>
+            <h1>What would you like to understand?</h1>
+            <p>Ask about operational systems, applied AI, or how Adjie approaches reliability.</p>
+            <div className="ws-suggestions">
+              {prompts.map((prompt) => <button type="button" key={prompt.label} onClick={() => choose(prompt.query)}><span>{prompt.label}</span><Icon name="arrow" /></button>)}
+            </div>
+          </div>
+        ) : (
+          <div className="ws-thread">
+            <div className="ws-message-user"><span>You</span><p>{query}</p></div>
+            <div className="ws-message-assistant">
+              <span className="ws-ai-mark"><Icon name="spark" /></span>
+              <div><span>Workspace</span><p>{answer}</p>
+                <div className="ws-chat-results">
+                  {results.map((project) => <ProjectRow key={project.slug} project={project} selected={false}
+                    onSelect={() => select(project.slug)} onOpen={() => open(project)} />)}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="ws-chat-composer"><Composer query={query} setQuery={setQuery} submit={submit} /></div>
+    </div>
+  );
+}
+
+function CaseCanvas({ project, back }: { project: WorkspaceProject; back: () => void }) {
+  return (
+    <article className="ws-document ws-case ws-enter">
+      <button type="button" className="ws-case-back" onClick={back}><ArrowLeftIcon className="size-4" /> Back to work</button>
+      <header className="ws-case-head">
+        <div><span className="ws-eyebrow">{project.eyebrow} · {project.year}</span><h1>{project.title}</h1></div>
         <p>{project.summary}</p>
       </header>
-      <div className="aw-case-image"><ProjectVisual project={project} priority /></div>
-      <section className="aw-case-facts" aria-label="Project evidence">
-        <div><p className="aw-label">Adjie’s role</p><p>{project.role}</p></div>
-        <div><p className="aw-label">What it demonstrates</p><ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul></div>
+      <div className="ws-case-cover"><ProjectThumb project={project} priority /></div>
+      <section className="ws-case-body">
+        <div><span className="ws-eyebrow">Adjie’s role</span><p>{project.role}</p></div>
+        <div><span className="ws-eyebrow">Work demonstrated</span><ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul></div>
       </section>
-      <section className="aw-case-evidence">
-        <div className="aw-section-title"><div><p className="aw-label">Evidence</p><h2>Proof over promises.</h2></div></div>
-        <div className="aw-case-metrics">
-          {project.evidence.map((item) => <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}
-        </div>
+      <section className="ws-proof">
+        <div className="ws-section-head"><div><span>03</span><h2>Evidence</h2></div><p>Specific signals behind the project.</p></div>
+        <div>{project.evidence.map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}</div>
       </section>
       {project.gallery && (
-        <section className="aw-gallery" aria-label="Project gallery">
-          {project.gallery.map((shot, index) => (
-            <figure key={shot.src} className={index === 0 ? "is-wide" : ""}>
-              <div><Image src={shot.src} alt={shot.caption} fill sizes="(max-width: 760px) 100vw, 760px" className="object-cover object-top" /></div>
-              <figcaption><span>0{index + 1}</span>{shot.caption}</figcaption>
-            </figure>
-          ))}
+        <section className="ws-case-gallery">
+          {project.gallery.map((shot, index) => <figure key={shot.src} className={index === 0 ? "is-wide" : ""}>
+            <div><Image src={shot.src} alt={shot.caption} fill sizes="(max-width: 800px) 100vw, 760px" className="object-cover object-top" /></div>
+            <figcaption>{shot.caption}</figcaption>
+          </figure>)}
         </section>
       )}
-      {project.assetNote && <p className="aw-asset-note">{project.assetNote}</p>}
-      <footer className="aw-case-footer">
-        {project.href && <Link href={project.href}>Read the published case <ArrowUpRightIcon className="size-4" /></Link>}
+      <footer className="ws-case-actions">
+        {project.href && <Link href={project.href}>Published case study <ArrowUpRightIcon className="size-4" /></Link>}
         <a href={`mailto:${site.email}`}>Discuss this work</a>
       </footer>
     </article>
@@ -198,111 +258,90 @@ export function WorkspacePrototype() {
   const [resultSlugs, setResultSlugs] = useState<string[]>([]);
   const [selectedSlug, setSelectedSlug] = useState("suhulog");
   const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
 
-  const selectedProject = allWorkspaceProjects.find((item) => item.slug === selectedSlug) ?? featuredWork[0];
-  const openProject = allWorkspaceProjects.find((item) => item.slug === openSlug);
-  const results = useMemo(
-    () => resultSlugs.map((slug) => allWorkspaceProjects.find((item) => item.slug === slug)).filter(Boolean) as WorkspaceProject[],
-    [resultSlugs],
-  );
+  useEffect(() => {
+    document.body.classList.add("workspace-active");
+    return () => document.body.classList.remove("workspace-active");
+  }, []);
 
-  function switchMode(next: WorkspaceMode) { setMode(next); setOpenSlug(null); }
+  const selected = allWorkspaceProjects.find((project) => project.slug === selectedSlug) ?? featuredWork[0];
+  const opened = allWorkspaceProjects.find((project) => project.slug === openSlug);
+  const results = useMemo(() => resultSlugs
+    .map((slug) => allWorkspaceProjects.find((project) => project.slug === slug))
+    .filter(Boolean) as WorkspaceProject[], [resultSlugs]);
+
   function runAsk(value = query) {
     const clean = value.trim();
     if (!clean) return;
     const normalized = clean.toLowerCase();
     const match = normalized.includes("ai") || normalized.includes("vision") ? prompts[1]
       : normalized.includes("reliab") || normalized.includes("quality") || normalized.includes("safe") ? prompts[2] : prompts[0];
-    setQuery(clean); setAnswer(match.answer); setResultSlugs(match.projects); setSelectedSlug(match.projects[0]); setMode("ask");
+    setQuery(clean);
+    setAnswer(match.answer);
+    setResultSlugs(match.projects);
+    setSelectedSlug(match.projects[0]);
+    setMode("ask");
   }
-  function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); runAsk(); }
-  function open(project: WorkspaceProject) {
-    setSelectedSlug(project.slug); setOpenSlug(project.slug); window.scrollTo({ top: 0, behavior: "smooth" });
+  function openProject(project: WorkspaceProject) {
+    setSelectedSlug(project.slug);
+    setOpenSlug(project.slug);
+    setInspectorOpen(false);
+  }
+  function setWorkspaceMode(next: WorkspaceMode) {
+    setMode(next);
+    setOpenSlug(null);
   }
 
   return (
-    <div className={`aw-shell mode-${mode} ${openProject ? "has-case" : ""}`}>
-      <nav className="aw-rail" aria-label="Workspace navigation">
-        <button className="aw-monogram" type="button" onClick={() => switchMode("browse")} aria-label="Adjie Workspace home">AR</button>
-        <div className="aw-mode-switch">
-          <button type="button" className={mode === "browse" ? "is-active" : ""} onClick={() => switchMode("browse")} aria-pressed={mode === "browse"}><span>01</span>Browse</button>
-          <button type="button" className={mode === "ask" ? "is-active" : ""} onClick={() => switchMode("ask")} aria-pressed={mode === "ask"}><span>02</span>Ask</button>
+    <div className="ws-app">
+      <nav className="ws-rail" aria-label="Adjie Workspace">
+        <button type="button" className="ws-logo" onClick={() => setWorkspaceMode("browse")} aria-label="Adjie Workspace home">A</button>
+        <div className="ws-rail-tools">
+          <button type="button" className={mode === "browse" && !opened ? "is-active" : ""} onClick={() => setWorkspaceMode("browse")} aria-label="Browse work"><Icon name="home" /><span>Home</span></button>
+          <button type="button" className={opened ? "is-active" : ""} onClick={() => setWorkspaceMode("browse")} aria-label="Featured work"><Icon name="work" /><span>Work</span></button>
+          <button type="button" onClick={() => { setWorkspaceMode("browse"); window.setTimeout(() => document.getElementById("labs-work")?.scrollIntoView({ behavior: "smooth" }), 0); }} aria-label="Labs"><Icon name="labs" /><span>Labs</span></button>
+          <button type="button" className={mode === "ask" ? "is-active" : ""} onClick={() => setWorkspaceMode("ask")} aria-label="Ask workspace"><Icon name="ask" /><span>Ask</span></button>
         </div>
-        <div className="aw-rail-links">
+        <div className="ws-rail-bottom">
           <a href={`mailto:${site.email}`} aria-label="Contact Adjie"><MailIcon className="size-4" /><span>Contact</span></a>
           <a href={site.cv} target="_blank" rel="noopener noreferrer" aria-label="Open résumé"><FileIcon className="size-4" /><span>Résumé</span></a>
         </div>
       </nav>
-      <main className="aw-stage">
-        <div className="aw-stage-bar"><span>Adjie Workspace</span><span className="aw-stage-position">Operational software × applied AI</span><span>Makassar · ID</span></div>
-        {openProject ? <CaseStudy project={openProject} onBack={() => setOpenSlug(null)} /> : mode === "browse" ? (
-          <div className="aw-view aw-browse-view">
-            <section className="aw-intro" aria-labelledby="aw-title">
-              <p className="aw-label">Product engineer · AI systems</p>
-              <h1 id="aw-title">Work built for the moment it meets reality.</h1>
-              <div className="aw-intro-lower">
-                <p>Adjie builds operational software and applied AI systems. Browse the work, inspect the evidence, or ask a focused question.</p>
-                <button type="button" onClick={() => switchMode("ask")}><SparkIcon /> Ask the workspace <Arrow /></button>
-              </div>
-            </section>
-            <section className="aw-featured" aria-labelledby="aw-featured-title">
-              <div className="aw-section-title">
-                <div><p className="aw-label">01 · Featured work</p><h2 id="aw-featured-title">Systems with a job to do.</h2></div>
-                <p>Selected for operational depth, evidence, and real-world constraints.</p>
-              </div>
-              <div className="aw-project-grid">
-                {featuredWork.map((project, index) => (
-                  <ProjectTile key={project.slug} project={project} index={index} active={selectedSlug === project.slug}
-                    onPreview={() => setSelectedSlug(project.slug)} onOpen={() => open(project)} />
-                ))}
-              </div>
-            </section>
-            <section className="aw-labs" aria-labelledby="aw-labs-title">
-              <div className="aw-section-title"><div><p className="aw-label">02 · Labs</p><h2 id="aw-labs-title">Focused experiments.</h2></div></div>
-              <div className="aw-lab-list">
-                {labWork.map((project, index) => (
-                  <button type="button" key={project.slug} onMouseEnter={() => setSelectedSlug(project.slug)}
-                    onFocus={() => setSelectedSlug(project.slug)} onClick={() => open(project)}>
-                    <span>0{index + 1}</span><strong>{project.title}</strong><em>{project.eyebrow}</em><Arrow />
-                  </button>
-                ))}
-              </div>
-            </section>
+
+      <section className="ws-workspace">
+        <header className="ws-toolbar">
+          <div className="ws-breadcrumb"><span>Adjie Workspace</span><b>/</b><strong>{opened ? opened.title : mode === "ask" ? "Ask" : "Featured work"}</strong></div>
+          <div className="ws-view-switch" aria-label="Workspace view">
+            <button type="button" className={mode === "browse" ? "is-active" : ""} onClick={() => setWorkspaceMode("browse")}><Icon name="grid" /> Browse</button>
+            <button type="button" className={mode === "ask" ? "is-active" : ""} onClick={() => setWorkspaceMode("ask")}><Icon name="spark" /> Ask</button>
           </div>
-        ) : (
-          <div className="aw-view aw-ask-view">
-            <section className="aw-ask-head" aria-labelledby="aw-ask-title">
-              <p className="aw-label">Ask · approved public work</p>
-              <h1 id="aw-ask-title">Start with what you want to understand.</h1>
-              <form onSubmit={submit}><AskComposer query={query} setQuery={setQuery} onSubmit={() => runAsk()} /></form>
-              <div className="aw-prompt-list" aria-label="Suggested questions">
-                {prompts.map((prompt) => <button type="button" key={prompt.label} onClick={() => runAsk(prompt.query)}>{prompt.label}<Arrow /></button>)}
-              </div>
-            </section>
-            <section className={`aw-response ${answer ? "has-answer" : ""}`} aria-live="polite">
-              {answer ? (
-                <><div className="aw-response-mark"><SparkIcon /></div><div className="aw-response-copy">
-                  <p className="aw-label">Workspace response</p><h2>{answer}</h2>
-                  <div className="aw-results">
-                    {results.map((project) => <ProjectStrip key={project.slug} project={project}
-                      onPreview={() => setSelectedSlug(project.slug)} onOpen={() => open(project)} />)}
-                  </div>
-                </div></>
-              ) : (
-                <div className="aw-ask-empty"><span>01</span><p>Ask a focused question.</p><span>02</span><p>See relevant work selected from approved content.</p><span>03</span><p>Open a case and inspect the evidence.</p></div>
-              )}
-            </section>
+          <button type="button" className="ws-context-toggle" onClick={() => setInspectorOpen(true)}><Icon name="panel" /> Context</button>
+        </header>
+
+        <div className="ws-canvas">
+          <div className={`ws-canvas-frame ${mode === "ask" && !opened ? "is-chat" : ""}`}>
+            <div className="ws-frame-top">
+              <div><i /><i /><i /></div>
+              <span>{opened ? `Case study / ${opened.title}` : mode === "ask" ? "Ask / approved public work" : "Portfolio / selected work"}</span>
+              <em>{mode === "ask" ? "Local response" : "100%"}</em>
+            </div>
+            <div className="ws-frame-scroll">
+              {opened ? <CaseCanvas project={opened} back={() => setOpenSlug(null)} />
+                : mode === "ask" ? <AskCanvas query={query} setQuery={setQuery} answer={answer} results={results}
+                    submit={() => runAsk()} choose={runAsk} select={setSelectedSlug} open={openProject} />
+                  : <BrowseCanvas selectedSlug={selectedSlug} select={setSelectedSlug} open={openProject} ask={() => setWorkspaceMode("ask")} />}
+            </div>
           </div>
-        )}
-      </main>
-      {!openProject && <ContextPanel project={selectedProject} onOpen={() => open(selectedProject)} />}
-      {!openProject && (
-        <div className="aw-mobile-dock">
-          <div><span>Ask Adjie Workspace</span><small>Local approved content</small></div>
-          <button type="button" onClick={() => switchMode(mode === "ask" ? "browse" : "ask")}><SparkIcon /></button>
-          {mode === "ask" && <AskComposer compact query={query} setQuery={setQuery} onSubmit={() => runAsk()} />}
         </div>
-      )}
+        <footer className="ws-statusbar">
+          <div><span className="ws-presence" /> Available for selected product work</div>
+          <div><span>Static prototype</span><span>EN</span></div>
+        </footer>
+      </section>
+
+      <Inspector project={selected} open={inspectorOpen} close={() => setInspectorOpen(false)} onOpen={() => openProject(selected)} />
+      {inspectorOpen && <button className="ws-scrim" type="button" onClick={() => setInspectorOpen(false)} aria-label="Close context panel" />}
     </div>
   );
 }

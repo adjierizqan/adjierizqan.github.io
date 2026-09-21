@@ -20,10 +20,11 @@
 
 ## Donor record
 
-- `rollacode/ai-portfolio` (MIT): state-derived browse/ask workspace, reactive content selection, contextual panel, and compact mobile conversation entry.
-- Motion Primitives (MIT): transition-panel pacing, staggered content reveal, and progressive edge treatment.
+- `onlook-dev/onlook` (Apache-2.0): persistent application chrome, centered canvas, compact toolbar, navigation rail, and contextual inspector.
+- `vercel/chatbot` (Apache-2.0): multiline prompt composer, submit affordance, and restrained conversation structure.
+- Motion Primitives (MIT): panel and state transition pacing.
 
-Both donors informed interaction patterns. Their branding, content, visual identity, and application structure were not copied. The prototype keeps this repository's content model and local deterministic Ask behavior.
+The donors informed selected interface patterns. Their branding, content, runtime, application structure, and backend dependencies were not copied. The prototype keeps this repository's content model, static export, and local deterministic Ask behavior.
 
 ## Public content boundary
 
