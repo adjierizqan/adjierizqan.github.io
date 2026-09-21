@@ -187,57 +187,106 @@ function LibraryView({ kind, openProject }: { kind: "work" | "labs"; openProject
   );
 }
 
-function ProjectArtifact({ project }: { project: WorkspaceProject }) {
-  if (project.image) {
-    return (
-      <figure className="ws-artifact-image">
-        <Image src={project.image} alt={`${project.title} project preview`} fill priority sizes="(max-width: 800px) 100vw, 52vw" className="object-cover object-top" />
-      </figure>
-    );
-  }
-
+function ArtifactPane({ project, close }: { project: WorkspaceProject; close: () => void }) {
   return (
-    <div className="ws-artifact-document">
-      <header><span>System evidence</span><small>{project.year}</small></header>
-      <strong>{project.title}</strong>
-      <div>
-        {project.evidence.map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}
-      </div>
-      <p>{project.assetNote}</p>
-    </div>
-  );
-}
+    <aside className="ws-artifact ws-artifact-reveal" aria-label={`${project.title} artifact`}>
+      <header className="ws-artifact-head">
+        <div><span>Project artifact</span><strong>{project.title}</strong></div>
+        <button type="button" onClick={close} aria-label="Close project artifact"><Glyph name="close" /></button>
+      </header>
+      <div className="ws-artifact-scroll">
+        {project.image ? (
+          <figure className="ws-artifact-visual">
+            <Image src={project.image} alt={`${project.title} verified project preview`} fill priority sizes="(max-width: 760px) 100vw, 48vw" className="object-cover object-top" />
+          </figure>
+        ) : (
+          <section className="ws-artifact-text">
+            <span>{project.eyebrow} · {project.year}</span>
+            <h2>{project.title}</h2>
+          </section>
+        )}
 
-function ProjectView({ project, back }: { project: WorkspaceProject; back: () => void }) {
-  return (
-    <main className="ws-project ws-reveal">
-      <button type="button" className="ws-back" onClick={back}><ArrowLeftIcon className="size-4" /> Back</button>
-      <article>
-        <header className="ws-project-head">
-          <div><span>{project.eyebrow} · {project.year}</span><h1>{project.title}</h1></div>
+        <section className="ws-artifact-section">
+          <span>System framing</span>
           <p>{project.summary}</p>
-        </header>
-        <ProjectArtifact project={project} />
-        <div className="ws-project-detail">
-          <section><span>Adjie’s role</span><p>{project.role}</p></section>
-          <section><span>What the work demonstrates</span><ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul></section>
-        </div>
-        <section className="ws-evidence">
-          <header><span>Verified evidence</span><p>Public signals available for this project.</p></header>
-          <div>{project.evidence.map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}</div>
+          <dl><dt>Adjie’s role</dt><dd>{project.role}</dd></dl>
         </section>
+
+        <section className="ws-artifact-section">
+          <span>Evidence</span>
+          <div className="ws-artifact-evidence">
+            {project.evidence.map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}
+          </div>
+        </section>
+
+        <section className="ws-artifact-section">
+          <span>Implementation highlights</span>
+          <ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul>
+        </section>
+
         {project.gallery && (
-          <section className="ws-gallery">
-            {project.gallery.map((item) => (
-              <figure key={item.src}><div><Image src={item.src} alt={item.caption} fill sizes="(max-width: 800px) 100vw, 46vw" className="object-cover object-top" /></div><figcaption>{item.caption}</figcaption></figure>
+          <section className="ws-artifact-gallery">
+            {project.gallery.slice(0, 3).map((item) => (
+              <figure key={item.src}>
+                <div><Image src={item.src} alt={item.caption} fill sizes="(max-width: 760px) 100vw, 42vw" className="object-cover object-top" /></div>
+                <figcaption>{item.caption}</figcaption>
+              </figure>
             ))}
           </section>
         )}
-        <footer className="ws-project-actions">
+
+        {project.assetNote && <p className="ws-asset-boundary">{project.assetNote}</p>}
+
+        <footer className="ws-artifact-actions">
           {project.href && <Link href={project.href}>Full case study <ArrowUpRightIcon className="size-4" /></Link>}
           <a href={`mailto:${site.email}`}>Discuss this work</a>
         </footer>
-      </article>
+      </div>
+    </aside>
+  );
+}
+
+function ActiveWorkspace({ project, answer, query, results, setQuery, submit, selectProject, close }: {
+  project: WorkspaceProject;
+  answer: string | null;
+  query: string;
+  results: WorkspaceProject[];
+  setQuery: (value: string) => void;
+  submit: () => void;
+  selectProject: (project: WorkspaceProject) => void;
+  close: () => void;
+}) {
+  const suggestions = results.length > 1 ? results : featuredWork;
+
+  return (
+    <main className="ws-active-workspace ws-reveal">
+      <section className="ws-active-context">
+        <header className="ws-context-head">
+          <button type="button" onClick={close}><ArrowLeftIcon className="size-4" /> Workspace</button>
+          <span>Approved public content</span>
+        </header>
+        <div className="ws-context-thread">
+          <div className="ws-context-query">
+            <span>You</span>
+            <p>{answer ? query : `Show me ${project.title}.`}</p>
+          </div>
+          <div className="ws-context-answer">
+            <span>Adjie Workspace</span>
+            <p>{answer ?? project.summary}</p>
+            <small>The project artifact is open beside this conversation.</small>
+          </div>
+          <div className="ws-context-projects" aria-label="Related projects">
+            {suggestions.map((item) => (
+              <button type="button" key={item.slug} className={item.slug === project.slug ? "is-active" : ""} onClick={() => selectProject(item)}>
+                <span><strong>{item.title}</strong><small>{item.eyebrow}</small></span>
+                <Glyph name="arrow" />
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="ws-context-composer"><Composer query={query} setQuery={setQuery} submit={submit} /></div>
+      </section>
+      <ArtifactPane project={project} close={close} />
     </main>
   );
 }
@@ -318,7 +367,7 @@ export function WorkspacePrototype() {
     setQuery(clean);
     setAnswer(match.answer);
     setResultSlugs(match.projects);
-    setOpenSlug(null);
+    setOpenSlug(match.projects[0]);
     setView("ask");
   }
 
@@ -330,7 +379,8 @@ export function WorkspacePrototype() {
           <button type="button" onClick={() => setMobileNavOpen(true)} aria-label="Open navigation"><Glyph name="menu" /></button>
           <span>Adjie Workspace</span>
         </header>
-        {opened ? <ProjectView project={opened} back={() => setOpenSlug(null)} />
+        {opened ? <ActiveWorkspace project={opened} answer={view === "ask" ? answer : null} query={query} results={results}
+            setQuery={setQuery} submit={() => runAsk()} selectProject={openProject} close={() => setOpenSlug(null)} />
           : view === "home" ? <HomeView query={query} setQuery={setQuery} submit={() => runAsk()} openProject={openProject} />
             : view === "ask" ? <AskView query={query} setQuery={setQuery} answer={answer} results={results} submit={() => runAsk()} choose={runAsk} openProject={openProject} />
               : <LibraryView kind={view} openProject={openProject} />}
