@@ -472,6 +472,7 @@ function LabStockDossier({ project, query, setQuery, ask, back }: {
   ask: (value?: string) => void;
   back: () => void;
 }) {
+  const [briefReplay, setBriefReplay] = useState(0);
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({
     behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
     block: "start",
@@ -505,6 +506,27 @@ function LabStockDossier({ project, query, setQuery, ask, back }: {
         <div><dt>Stack</dt><dd>{project.stack.join(" · ")}</dd></div>
         <div><dt>Public evidence</dt><dd>Workflow and correctness behavior</dd></div>
       </dl>
+
+      <section className="aw-project-session" aria-labelledby="labstock-session-title">
+        <header>
+          <div><i /><span id="labstock-session-title">Guided project brief</span><small>LabStock context</small></div>
+          <button type="button" onClick={() => setBriefReplay((value) => value + 1)} aria-label="Replay LabStock project brief">↻ Replay brief</button>
+        </header>
+        <div key={briefReplay} className={`aw-project-session-content ${briefReplay > 0 ? "is-replaying" : ""}`}>
+          <div className="aw-session-query">
+            <span aria-hidden="true">Q</span>
+            <div><small>User query</small><p>Jelaskan project LabStock ini secara ringkas. Apa masalahnya, solusinya, fitur utama, dan status sekarang?</p></div>
+          </div>
+          <div className="aw-session-brief">
+            <span aria-hidden="true">W</span>
+            <div>
+              <small>Workspace briefing</small>
+              <p>LabStock mengubah workbook stok laboratorium menjadi ledger yang dapat ditelusuri, laporan bulanan dan tahunan, serta ekspor Excel yang kompatibel dengan template. Alur impornya mempertahankan provenance sumber, mengenali impor ulang agar tidak menggandakan pergerakan, dan menyimpan koreksi tanpa menghapus histori. Status proyek saat ini <strong>{project.status}</strong>; materi publik dibatasi pada bukti workflow dan correctness.</p>
+              <button type="button" onClick={() => ask(project.askSuggestion)}>Ask a follow-up →</button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="aw-dossier-glance" aria-labelledby="labstock-glance-title">
         <header><span>At a glance</span><h2 id="labstock-glance-title">The system in twenty seconds</h2></header>

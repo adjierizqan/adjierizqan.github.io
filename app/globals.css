@@ -700,6 +700,33 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-dossier-metadata > div + div { border-left: 1px solid #e5e7eb; padding-left: 1rem; }
 .aw-dossier-metadata dt { color: #8a8f98; font-size: var(--aw-text-micro); font-weight: 650; text-transform: uppercase; }
 .aw-dossier-metadata dd { margin-top: .35rem; color: #3c4047; font-size: var(--aw-text-ui); line-height: 1.45; }
+.aw-project-session { margin-top: 1.15rem; overflow: hidden; border: 1px solid #dedfdc; border-radius: .65rem; background: #faf9f6; }
+.aw-project-session > header { display: flex; min-height: 2.7rem; align-items: center; justify-content: space-between; border-bottom: 1px solid #e3e2de; padding: .55rem .8rem; }
+.aw-project-session > header > div { display: flex; align-items: center; gap: .55rem; }
+.aw-project-session > header i { width: .42rem; height: .42rem; border-radius: 50%; background: #4b9f7b; }
+.aw-project-session > header span { color: #373a40; font-size: var(--aw-text-ui); font-weight: 680; }
+.aw-project-session > header small { border-left: 1px solid #dddcd8; padding-left: .55rem; color: #858982; font-size: var(--aw-text-micro); }
+.aw-project-session > header button { color: #777b75; font-size: var(--aw-text-ui); font-weight: 590; }
+.aw-project-session > header button:hover { color: #292c32; }
+.aw-project-session-content { padding: 0 .85rem; }
+.aw-session-query,
+.aw-session-brief { display: grid; grid-template-columns: 2rem minmax(0,1fr); gap: .75rem; padding: .9rem 0; }
+.aw-session-brief { border-top: 1px solid #e3e2de; }
+.aw-session-query > span,
+.aw-session-brief > span { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: .38rem; background: #24262b; color: #fff; font-size: var(--aw-text-micro); font-weight: 720; }
+.aw-session-brief > span { border: 1px solid #d5d6d2; background: #fff; color: #3e4249; }
+.aw-session-query small,
+.aw-session-brief small { color: #858982; font-size: var(--aw-text-micro); font-weight: 650; letter-spacing: .035em; text-transform: uppercase; }
+.aw-session-query p,
+.aw-session-brief p { margin-top: .3rem; color: #2d3036; font-size: var(--aw-text-body); line-height: 1.6; }
+.aw-session-brief p { color: #555a61; }
+.aw-session-brief strong { color: #30333a; font-weight: 700; }
+.aw-session-brief button { margin-top: .55rem; color: #4d525a; font-size: var(--aw-text-ui); font-weight: 680; }
+.aw-session-brief button:hover { color: #17191e; }
+.aw-project-session-content.is-replaying .aw-session-query { animation: aw-session-query-replay 180ms ease-out both; }
+.aw-project-session-content.is-replaying .aw-session-brief { animation: aw-session-brief-replay 260ms 90ms cubic-bezier(.2,.75,.25,1) both; }
+@keyframes aw-session-query-replay { from { opacity: 0; transform: translateY(-3px); clip-path: inset(0 20% 0 0); } }
+@keyframes aw-session-brief-replay { from { opacity: 0; transform: translateY(4px); } }
 .aw-dossier-glance { margin-top: 1.8rem; }
 .aw-dossier-glance > header span { color: #888d96; font-size: var(--aw-text-micro); font-weight: 680; letter-spacing: .07em; text-transform: uppercase; }
 .aw-dossier-glance > header h2 { margin-top: .25rem; color: #202228; font-size: 1.25rem; font-weight: 730; letter-spacing: -.025em; }
@@ -1210,6 +1237,13 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-dossier-metadata { grid-template-columns: 1fr; }
   .aw-dossier-metadata > div { padding: .85rem 0; }
   .aw-dossier-metadata > div + div { border-top: 1px solid #e5e7eb; border-left: 0; padding-left: 0; }
+  .aw-project-session > header { align-items: start; gap: .75rem; }
+  .aw-project-session > header > div { align-items: start; flex-wrap: wrap; }
+  .aw-project-session > header small { flex-basis: calc(100% - 1rem); margin-left: 1rem; border-left: 0; padding-left: 0; }
+  .aw-session-query,
+  .aw-session-brief { grid-template-columns: 1.8rem minmax(0,1fr); gap: .65rem; }
+  .aw-session-query > span,
+  .aw-session-brief > span { width: 1.8rem; height: 1.8rem; }
   .aw-dossier-glance > div { grid-template-columns: 1fr; }
   .aw-dossier-glance article { min-height: 0; }
   .aw-dossier-glance article:nth-child(even) { border-left: 0; }
@@ -1294,4 +1328,6 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
   }
+  .aw-project-session-content.is-replaying .aw-session-query,
+  .aw-project-session-content.is-replaying .aw-session-brief { animation-delay: 0ms !important; }
 }
