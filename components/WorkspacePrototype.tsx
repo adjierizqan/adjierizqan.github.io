@@ -57,7 +57,7 @@ const projectTones: Record<string, string> = {
   "porsche-3d": "#d97706",
 };
 
-function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" | "ask" | "more" | "plus" | "search" | "send" | "menu" | "close" | "arrow" | "spark" | "context" }) {
+function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" | "ask" | "more" | "plus" | "search" | "send" | "menu" | "close" | "arrow" | "spark" | "context" | "speaker" | "sun" | "link" }) {
   const paths = {
     home: <><path d="m3 10 7-6 7 6" /><path d="M5.5 9v7h9V9" /></>,
     work: <><rect x="3" y="5" width="14" height="11" rx="1.5" /><path d="M7 5V3h6v2M3 9h14" /></>,
@@ -74,6 +74,9 @@ function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" 
     arrow: <><path d="M3.5 10h12.5M11.5 5.5 16 10l-4.5 4.5" /></>,
     spark: <path d="M10 2.5c.45 4.4 2.1 6.05 6.5 6.5-4.4.45-6.05 2.1-6.5 6.5C9.55 11.1 7.9 9.45 3.5 9 7.9 8.55 9.55 6.9 10 2.5Z" />,
     context: <><rect x="3" y="3" width="14" height="14" rx="2" /><path d="M12 3v14" /></>,
+    speaker: <><path d="M4 8h3l4-3v10l-4-3H4Z" /><path d="M14 7.5a4 4 0 0 1 0 5M16 5a7 7 0 0 1 0 10" /></>,
+    sun: <><circle cx="10" cy="10" r="3" /><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M15.7 4.3l-1.4 1.4M5.7 14.3l-1.4 1.4" /></>,
+    link: <><path d="M8.5 11.5 11.5 8.5" /><path d="M6.5 13.5H5a3 3 0 0 1 0-6h3M11.5 6.5H13a3 3 0 0 1 0 6h-3" /></>,
   };
   return <svg viewBox="0 0 20 20" aria-hidden="true">{paths[name]}</svg>;
 }
@@ -107,7 +110,7 @@ function Composer({ query, setQuery, submit }: {
           <button type="button" onClick={() => setQuery("What evidence is available for Adjie’s work?")}><Glyph name="book" /> Evidence</button>
           <button type="button" onClick={() => setQuery("How does Adjie approach reliability?")}><Glyph name="spark" /> Build notes</button>
         </div>
-        <button className="aw-send" type="button" onClick={submit} disabled={!query.trim()} aria-label="Send query"><Glyph name="send" /></button>
+        <div className="aw-composer-submit"><span>Adjie AI · Preview</span><button className="aw-send" type="button" onClick={submit} disabled={!query.trim()} aria-label="Send query"><Glyph name="send" /></button></div>
       </div>
     </div>
   );
@@ -139,6 +142,7 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
           <header className="aw-profile">
             <span className="aw-avatar is-light">AR</span>
             <span><strong>Adjie Rizqan</strong><small>Personal AI Workspace</small></span>
+            <button className="aw-pronounce" type="button" disabled title="Pronunciation audio is not yet available" aria-label="Pronunciation audio unavailable"><Glyph name="speaker" /></button>
             <button className="aw-mobile-close" type="button" onClick={close} aria-label="Close navigation"><Glyph name="close" /></button>
           </header>
 
@@ -209,7 +213,7 @@ function HomeWorkspace({ query, setQuery, submit, setView, selectProject }: {
       <section className="aw-identity">
         <div>
           <span>Good evening,</span>
-          <h1>Adjie Rizqan</h1>
+          <div className="aw-name"><h1>Adjie Rizqan</h1><button type="button" disabled title="Pronunciation audio is not yet available" aria-label="Pronunciation audio unavailable"><Glyph name="speaker" /></button></div>
           <p>Turn ideas into useful systems.</p>
         </div>
         <blockquote>“A more capable me,<br />for a more useful tomorrow.”</blockquote>
@@ -233,7 +237,7 @@ function HomeWorkspace({ query, setQuery, submit, setView, selectProject }: {
       </section>
 
       <section className="aw-recent">
-        <header><strong>Selected work</strong><button type="button" onClick={() => setView("work")}>View all <Glyph name="arrow" /></button></header>
+        <header><div><strong>Recent</strong><span><button className="is-active" type="button">Projects</button><button type="button" onClick={() => setView("work")}>Systems</button><button type="button" onClick={() => setView("labs")}>Labs</button></span></div><button type="button" onClick={() => setView("work")}>View all <Glyph name="arrow" /></button></header>
         <div>
           {featuredWork.map((project) => (
             <button type="button" key={project.slug} onClick={() => selectProject(project)}>
@@ -396,13 +400,12 @@ function ContextRail({ project, open, close, selectProject }: {
               </div>
             )}
             <p className="aw-context-framing">{project.summary}</p>
-          </section>
-
-          <section className="aw-context-section">
-            <header>Verified evidence</header>
-            <dl className="aw-context-evidence">
-              {project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
-            </dl>
+            <div className="aw-context-evidence-block">
+              <header>Verified evidence</header>
+              <dl className="aw-context-evidence">
+                {project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
+              </dl>
+            </div>
             <div className="aw-context-actions">
               {project.href && <Link href={project.href}>Open case study <ArrowUpRightIcon /></Link>}
               <a href={"mailto:" + site.email}>Discuss this work</a>
@@ -410,13 +413,19 @@ function ContextRail({ project, open, close, selectProject }: {
           </section>
 
           <section className="aw-context-section">
-            <header>Implementation highlights</header>
+            <header>Focus</header>
             <ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul>
           </section>
 
-          <section className="aw-context-section">
-            <header>Related work</header>
-            <div className="aw-related">{related.map((item) => <button type="button" key={item.slug} onClick={() => selectProject(item)}><i style={{ backgroundColor: projectTones[item.slug] }} /><span>{item.title}</span><Glyph name="arrow" /></button>)}</div>
+          <section className="aw-context-section aw-quick-links">
+            <header>Quick links</header>
+            <div>
+              <a href={site.github} target="_blank" rel="noopener noreferrer"><Glyph name="link" /> GitHub</a>
+              <a href={site.linkedin} target="_blank" rel="noopener noreferrer"><Glyph name="link" /> LinkedIn</a>
+              <a href={site.cv} target="_blank" rel="noopener noreferrer"><FileIcon /> Résumé</a>
+              <a href={"mailto:" + site.email}><MailIcon /> Contact</a>
+            </div>
+            <div className="aw-related"><span>Related work</span>{related.map((item) => <button type="button" key={item.slug} onClick={() => selectProject(item)}><i style={{ backgroundColor: projectTones[item.slug] }} /><span>{item.title}</span><Glyph name="arrow" /></button>)}</div>
           </section>
         </div>
       </aside>
@@ -477,6 +486,7 @@ export function WorkspacePrototype() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [contextOpen, setContextOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [strongContrast, setStrongContrast] = useState(false);
 
   const selected = allWorkspaceProjects.find((project) => project.slug === selectedSlug) ?? featuredWork[0];
   const results = useMemo(() => resultSlugs.map((slug) => allWorkspaceProjects.find((project) => project.slug === slug)).filter(Boolean) as WorkspaceProject[], [resultSlugs]);
@@ -578,7 +588,7 @@ export function WorkspacePrototype() {
   }
 
   return (
-    <div className="aw-desktop">
+    <div className={"aw-desktop " + (strongContrast ? "is-strong-contrast" : "")}>
       <div className="aw-wallpaper" aria-hidden="true" />
       <div
         ref={windowRef}
@@ -598,6 +608,7 @@ export function WorkspacePrototype() {
             <span>Build · Solve · Improve</span>
             <button type="button" onClick={() => setContextOpen(true)} className="aw-context-toggle"><Glyph name="context" /> Context</button>
             <button type="button" onClick={() => setPaletteOpen(true)}><kbd>⌘ K</kbd></button>
+            <button type="button" className="aw-appearance" onClick={() => setStrongContrast((value) => !value)} aria-pressed={strongContrast} aria-label="Toggle interface contrast"><Glyph name="sun" /></button>
             <span className="aw-avatar">AR</span>
           </div>
         </header>

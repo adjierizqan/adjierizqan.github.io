@@ -3,7 +3,7 @@ import { site } from "@/data/site";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-line/70 bg-background/80 backdrop-blur-md">
+    <header className="site-header sticky top-0 z-50 border-b border-line/70 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 w-full max-w-[90rem] items-center justify-between px-5 sm:px-6">
         <Link
           href="/"

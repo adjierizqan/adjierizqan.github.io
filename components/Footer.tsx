@@ -2,7 +2,7 @@ import { site } from "@/data/site";
 
 export function Footer() {
   return (
-    <footer className="border-t border-line/70">
+    <footer className="site-footer border-t border-line/70">
       <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-3 px-5 py-8 text-sm text-muted sm:flex-row sm:px-6">
         <p>© {new Date().getFullYear()} Adjie Rizqan</p>
         <div className="flex items-center gap-5">
