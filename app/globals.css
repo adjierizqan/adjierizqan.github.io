@@ -599,6 +599,50 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-project-objects section > small { display: flex; align-items: center; gap: .3rem; margin-top: .65rem; color: #777c85; font-size: .49rem; }
 .aw-project-objects section > small svg { width: .62rem; }
 
+.aw-project-back { color: #777c85; font-size: .57rem; font-weight: 620; }
+.aw-project-back:hover { color: #292c32; }
+.aw-project-detail-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: .75rem;
+  border-bottom: 1px solid #e3e5e8;
+  padding-bottom: 1rem;
+}
+.aw-project-detail-header > div > span { color: #858a93; font-size: .52rem; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; }
+.aw-project-detail-header h1 { margin-top: .28rem; color: #17191e; font-size: clamp(2rem,4vw,3rem); font-weight: 760; line-height: 1; letter-spacing: -.055em; }
+.aw-project-detail-header p { max-width: 38rem; margin-top: .6rem; color: #686d76; font-size: .66rem; line-height: 1.65; }
+.aw-project-detail-header > small { max-width: 13rem; flex: 0 0 auto; color: #858a93; font-size: .51rem; line-height: 1.45; text-align: right; }
+.aw-project-hero { position: relative; height: clamp(16rem,38vh,22rem); overflow: hidden; margin-top: 1rem; border: 1px solid #e1e3e8; border-radius: .7rem; background: #eceef1; }
+.aw-project-artifact { margin-top: 1rem; border-block: 1px solid #dfe2e6; background: #f7f8f9; padding: 1.4rem; }
+.aw-project-artifact > span { color: #8b9099; font-size: .49rem; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; }
+.aw-project-artifact h2 { margin-top: .55rem; color: #24262b; font-size: 1.5rem; font-weight: 740; letter-spacing: -.04em; }
+.aw-project-artifact > p { max-width: 35rem; margin-top: .45rem; color: #777c85; font-size: .58rem; line-height: 1.55; }
+.aw-project-artifact > dl { display: grid; grid-template-columns: repeat(3,1fr); gap: .75rem; margin-top: 1.25rem; }
+.aw-project-artifact > dl > div { border-top: 1px solid #d7dae0; padding-top: .55rem; }
+.aw-project-artifact dt { color: #999da5; font-size: .46rem; }
+.aw-project-artifact dd { margin-top: .25rem; color: #454950; font-size: .55rem; line-height: 1.4; }
+.aw-project-gallery { display: grid; grid-template-columns: repeat(3,1fr); gap: .65rem; margin-top: .75rem; }
+.aw-project-gallery figure > div { position: relative; height: 7.5rem; overflow: hidden; border: 1px solid #e2e4e8; border-radius: .55rem; background: #eceef1; }
+.aw-project-gallery figcaption { padding: .4rem .1rem 0; color: #858a93; font-size: .48rem; line-height: 1.4; }
+.aw-project-record { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.6rem; border-block: 1px solid #e3e5e8; padding: 1.2rem 0; }
+.aw-project-record > div + div { border-left: 1px solid #e3e5e8; padding-left: 2rem; }
+.aw-project-record h2 { color: #292c32; font-size: .68rem; font-weight: 720; }
+.aw-project-record p { margin-top: .45rem; color: #777c85; font-size: .54rem; line-height: 1.5; }
+.aw-project-record ul { margin-top: .65rem; }
+.aw-project-record li { border-top: 1px solid #eceef1; padding: .5rem 0; color: #5f646d; font-size: .54rem; line-height: 1.45; }
+.aw-project-record dl { margin-top: .35rem; }
+.aw-project-record dl > div { display: grid; grid-template-columns: 6rem 1fr; gap: .6rem; border-top: 1px solid #eceef1; padding: .55rem 0; }
+.aw-project-record dt { color: #91959e; font-size: .49rem; }
+.aw-project-record dd { color: #4e535c; font-size: .53rem; line-height: 1.4; }
+.aw-project-ask { margin-top: 1.5rem; padding-bottom: 1.5rem; }
+.aw-project-ask > header { display: flex; align-items: center; justify-content: space-between; }
+.aw-project-ask > header > span { color: #2b2e34; font-size: .68rem; font-weight: 710; }
+.aw-project-ask > header button { color: #737881; font-size: .52rem; }
+.aw-project-ask > header button:hover { color: #25272c; }
+.aw-project-ask .aw-composer { margin-top: .65rem; }
+
 .aw-knowledge-list { margin-top: 1rem; border-bottom: 1px solid #e3e5e8; }
 .aw-knowledge-list > button { display: grid; width: 100%; grid-template-columns: 12rem minmax(0,1fr); gap: 1rem; border-top: 1px solid #e3e5e8; padding: .9rem .2rem; text-align: left; }
 .aw-knowledge-list > button > span { display: grid; grid-template-columns: .5rem 1fr; align-items: center; gap: .45rem; }
@@ -718,8 +762,10 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-context-evidence dt { color: #8c919a; font-size: .54rem; }
 .aw-context-evidence dd { color: #454a53; font-size: .57rem; line-height: 1.35; }
 .aw-context-actions { display: grid; gap: .2rem; margin-top: .65rem; }
-.aw-context-actions a {
+.aw-context-actions a,
+.aw-context-actions button {
   display: flex;
+  width: 100%;
   min-height: 1.8rem;
   align-items: center;
   justify-content: space-between;
@@ -728,8 +774,10 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   color: #555a64;
   font-size: .61rem;
   font-weight: 620;
+  text-align: left;
 }
-.aw-context-actions a:hover { background: #f4f5f7; }
+.aw-context-actions a:hover,
+.aw-context-actions button:hover { background: #f4f5f7; }
 .aw-context-actions svg { width: .72rem; }
 .aw-context-section ul { border-top: 1px solid #e8eaed; }
 .aw-context-section li { border-bottom: 1px solid #e8eaed; padding: .5rem 0; color: #5f646e; font-size: .58rem; line-height: 1.45; }
@@ -939,6 +987,16 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-secondary-work > button:first-child,
   .aw-secondary-work > button:nth-child(n+2) { grid-column: span 12; grid-template-columns: 1fr; grid-template-rows: 9rem auto; }
   .aw-project-objects { grid-template-columns: 1fr; }
+  .aw-project-detail-header { align-items: start; }
+  .aw-project-detail-header > small { display: none; }
+  .aw-project-hero { height: 52vw; min-height: 13rem; }
+  .aw-project-artifact { padding: 1rem; }
+  .aw-project-artifact > dl,
+  .aw-project-gallery,
+  .aw-project-record { grid-template-columns: 1fr; }
+  .aw-project-gallery figure > div { height: 48vw; }
+  .aw-project-record { gap: 1rem; }
+  .aw-project-record > div + div { border-top: 1px solid #e3e5e8; border-left: 0; padding-top: 1rem; padding-left: 0; }
   .aw-knowledge-list > button { grid-template-columns: 1fr; }
   .aw-knowledge-list > button > div { grid-template-columns: 1fr; }
   .aw-knowledge-list dl { border-top: 1px solid #e3e5e8; border-left: 0; padding-top: .45rem; padding-left: 0; }

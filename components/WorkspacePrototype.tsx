@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   KeyboardEvent,
   PointerEvent as ReactPointerEvent,
@@ -11,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { ArrowUpRightIcon, FileIcon, MailIcon } from "@/components/Icons";
+import { FileIcon, MailIcon } from "@/components/Icons";
 import { site } from "@/data/site";
 import {
   allWorkspaceProjects,
@@ -20,7 +19,7 @@ import {
   type WorkspaceProject,
 } from "@/data/workspace";
 
-type WorkspaceView = "home" | "work" | "projects" | "labs" | "knowledge" | "ask";
+type WorkspaceView = "home" | "work" | "projects" | "labs" | "knowledge" | "ask" | "project";
 type Point = { x: number; y: number };
 type WindowState = "open" | "minimized" | "closed";
 type AudioTrack = { src: string; title: string; detail: string };
@@ -110,10 +109,11 @@ function MusicPlayer() {
   );
 }
 
-function Composer({ query, setQuery, submit }: {
+function Composer({ query, setQuery, submit, placeholder = "Ask anything about my work…" }: {
   query: string;
   setQuery: (value: string) => void;
   submit: () => void;
+  placeholder?: string;
 }) {
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -129,7 +129,7 @@ function Composer({ query, setQuery, submit }: {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         onKeyDown={onKeyDown}
-        placeholder="Ask anything about my work…"
+        placeholder={placeholder}
         aria-label="Ask anything about Adjie’s work"
       />
       <div className="aw-composer-tools">
@@ -333,6 +333,47 @@ function WorkWorkspace({ selectProject }: { selectProject: (project: WorkspacePr
   );
 }
 
+function ProjectWorkspace({ project, query, setQuery, ask, back }: {
+  project: WorkspaceProject;
+  query: string;
+  setQuery: (value: string) => void;
+  ask: (value?: string) => void;
+  back: () => void;
+}) {
+  return (
+    <main className="aw-center aw-project-detail aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+      <header className="aw-project-detail-header">
+        <div><span>{project.eyebrow} · {project.year}</span><h1>{project.title}</h1><p>{project.summary}</p></div>
+        <small>{project.role}</small>
+      </header>
+
+      {project.image ? (
+        <figure className="aw-project-hero"><Image src={project.image} alt={project.title + " public project view"} fill sizes="(max-width: 760px) 100vw, 820px" className="object-cover object-top" /></figure>
+      ) : (
+        <section className="aw-project-artifact" aria-label={project.title + " evidence overview"}>
+          <span>Public evidence state</span>
+          <h2>{project.title}</h2>
+          <p>{project.assetNote}</p>
+          <dl>{project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
+        </section>
+      )}
+
+      {project.gallery && project.gallery.length > 0 && <section className="aw-project-gallery" aria-label={project.title + " project gallery"}>{project.gallery.map((item) => <figure key={item.src}><div><Image src={item.src} alt={item.caption} fill sizes="(max-width: 760px) 90vw, 260px" className="object-cover object-top" /></div><figcaption>{item.caption}</figcaption></figure>)}</section>}
+
+      <section className="aw-project-record">
+        <div><h2>System</h2><p>{project.role}</p><ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul></div>
+        <div><h2>Evidence</h2><dl>{project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></div>
+      </section>
+
+      <section className="aw-project-ask">
+        <header><span>Ask about this project</span><button type="button" onClick={() => ask("How was " + project.title + " built?")}>Use suggested question</button></header>
+        <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder={"Ask about " + project.title + "…"} />
+      </section>
+    </main>
+  );
+}
+
 function ProjectDirectory({ projects, title, copy, selectProject }: {
   projects: WorkspaceProject[];
   title: string;
@@ -401,11 +442,13 @@ function AskWorkspace({ query, setQuery, answer, results, submit, choose, select
   );
 }
 
-function ContextRail({ project, open, close, navigate }: {
+function ContextRail({ project, open, close, navigate, openProject, askProject }: {
   project: WorkspaceProject;
   open: boolean;
   close: () => void;
   navigate: (view: WorkspaceView) => void;
+  openProject: () => void;
+  askProject: () => void;
 }) {
   const progress = [
     { project: "SuhuLog", detail: "Published case evidence", state: "done" },
@@ -441,7 +484,8 @@ function ContextRail({ project, open, close, navigate }: {
               </dl>
             </div>
             <div className="aw-context-actions">
-              {project.href && <Link href={project.href}>Open case study <ArrowUpRightIcon /></Link>}
+              <button type="button" onClick={openProject}>Open project workspace <Glyph name="arrow" /></button>
+              <button type="button" onClick={askProject}>Ask about this work <Glyph name="ask" /></button>
               <a href={"mailto:" + site.email}>Discuss this work</a>
             </div>
           </section>
@@ -566,6 +610,7 @@ export function WorkspacePrototype() {
 
   const selectProject = useCallback((project: WorkspaceProject) => {
     setSelectedSlug(project.slug);
+    setView("project");
     if (window.innerWidth < 1100) setContextOpen(true);
   }, []);
 
@@ -691,10 +736,11 @@ export function WorkspacePrototype() {
                 : view === "projects" ? <ProjectDirectory projects={allWorkspaceProjects} title="Projects" copy="A single workspace index for featured systems and focused experiments." selectProject={selectProject} />
                   : view === "labs" ? <ProjectDirectory projects={labWork} title="Labs" copy="Focused experiments in computer vision, 3D pipelines, and interactive systems." selectProject={selectProject} />
                     : view === "knowledge" ? <KnowledgeWorkspace selectProject={selectProject} />
-                      : <AskWorkspace query={query} setQuery={setQuery} answer={answer} results={results} submit={() => runAsk()} choose={runAsk} selectProject={selectProject} />}
+                      : view === "project" ? <ProjectWorkspace project={selected} query={query} setQuery={setQuery} ask={runAsk} back={() => setView("work")} />
+                        : <AskWorkspace query={query} setQuery={setQuery} answer={answer} results={results} submit={() => runAsk()} choose={runAsk} selectProject={selectProject} />}
           </section>
 
-          <ContextRail project={selected} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} />
+          <ContextRail project={selected} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); runAsk("How was " + selected.title + " built?"); }} />
         </div>
       </div>
 
