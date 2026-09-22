@@ -24,13 +24,9 @@ import {
 type WorkspaceView = "home" | "work" | "projects" | "labs" | "knowledge" | "ask" | "project";
 type Point = { x: number; y: number };
 type WindowState = "open" | "minimized" | "closed";
-type AudioTrack = { src: string; title: string; detail: string };
 type QuickLookImage = { src: string; caption: string };
 type AskStatus = "idle" | "sending" | "streaming" | "complete" | "error";
 
-// Add only a local, licensed public asset here. The player remains honest and
-// inactive until a track is deliberately supplied.
-const workspaceTrack: AudioTrack | null = null;
 const pronunciationTrack: string | null = null;
 
 function withViewTransition(update: () => void) {
@@ -95,27 +91,6 @@ function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" 
     pause: <><path d="M7 5v10M13 5v10" strokeWidth="2.4" /></>,
   };
   return <svg viewBox="0 0 20 20" aria-hidden="true">{paths[name]}</svg>;
-}
-
-function MusicPlayer() {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [playing, setPlaying] = useState(false);
-
-  function togglePlayback() {
-    const audio = audioRef.current;
-    if (!workspaceTrack || !audio) return;
-    if (audio.paused) void audio.play();
-    else audio.pause();
-  }
-
-  return (
-    <section className="aw-music" aria-label="Music">
-      {workspaceTrack && <audio ref={audioRef} src={workspaceTrack.src} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} preload="none" />}
-      <div className="aw-music-art" aria-hidden="true"><Glyph name="speaker" /></div>
-      <span><strong>{workspaceTrack?.title ?? "Music"}</strong><small>{workspaceTrack?.detail ?? "No licensed track added"}</small></span>
-      <button type="button" onClick={togglePlayback} disabled={!workspaceTrack} aria-label={workspaceTrack ? (playing ? "Pause music" : "Play music") : "Music unavailable"} title={workspaceTrack ? undefined : "Add a licensed local track to enable playback"}><Glyph name={playing ? "pause" : "play"} /></button>
-    </section>
-  );
 }
 
 function PronunciationButton({ className = "" }: { className?: string }) {
@@ -324,7 +299,7 @@ function HomeWorkspace({ query, setQuery, submit, ask, setView, selectProject }:
   ];
 
   return (
-    <main className="aw-center aw-enter">
+    <main className="aw-center aw-home aw-enter">
       <section className="aw-identity">
         <div>
           <span>Good evening,</span>
@@ -419,65 +394,28 @@ function WorkWorkspace({ selectProject }: { selectProject: (project: WorkspacePr
   );
 }
 
-function ProjectWorkspace({ project, query, setQuery, ask, back, openImage }: {
+type ProjectViewProps = {
   project: WorkspaceProject;
   query: string;
   setQuery: (value: string) => void;
   ask: (value?: string) => void;
   back: () => void;
   openImage: (index: number, trigger: HTMLElement) => void;
-}) {
-  if (project.slug === "labstock") {
-    return <LabStockDossier project={project} query={query} setQuery={setQuery} ask={ask} back={back} />;
-  }
+};
 
-  return (
-    <main className="aw-center aw-project-detail aw-enter">
-      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
-      <header className="aw-project-detail-header">
-        <div><span>{project.eyebrow} · {project.year}</span><h1>{project.title}</h1><p>{project.summary}</p></div>
-        <small>{project.role}</small>
-      </header>
+const PROJECT_DEMO_PROMPTS: Record<string, string> = {
+  labstock: "Jelaskan project LabStock ini secara ringkas. Apa masalahnya, solusinya, fitur utama, dan status sekarang?",
+  bdrs: "Apa yang sudah dibangun di BDRS, dan apa yang masih dalam tahap pengembangan atau perencanaan?",
+  suhulog: "Bagaimana SuhuLog mengubah pencatatan suhu menjadi workflow yang cepat dan tetap dapat diaudit?",
+  "tomato-ripeness": "What did TomatoVision test, and what do the evaluation results actually show?",
+};
 
-      {project.image ? (
-        <button type="button" className="aw-project-hero" onClick={(event) => openImage(0, event.currentTarget)} aria-label={"Quick Look: " + project.title + " project view"}><Image src={project.image} alt={project.title + " public project view"} fill sizes="(max-width: 760px) 100vw, 820px" className="object-cover object-top" /><span>Quick Look</span></button>
-      ) : (
-        <section className="aw-project-artifact" aria-label={project.title + " evidence overview"}>
-          <span>Public evidence state</span>
-          <h2>{project.title}</h2>
-          <p>{project.assetNote}</p>
-          <dl>{project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
-        </section>
-      )}
-
-      {project.gallery && project.gallery.length > 0 && <section className="aw-project-gallery" aria-label={project.title + " project gallery"}>{project.gallery.map((item, index) => <figure key={item.src}><button type="button" onClick={(event) => openImage(index + 1, event.currentTarget)} aria-label={"Quick Look: " + item.caption}><Image src={item.src} alt={item.caption} fill sizes="(max-width: 760px) 90vw, 260px" className="object-cover object-top" /></button><figcaption>{item.caption}</figcaption></figure>)}</section>}
-
-      <section className="aw-project-record">
-        <div><h2>Problem</h2><p>{project.problem}</p><h2>Solution</h2><p>{project.solution}</p><h2>How it works</h2><ul>{project.howItWorks.map((item) => <li key={item}>{item}</li>)}</ul></div>
-        <div><h2>Role</h2><p>{project.role}</p>{project.stack.length > 0 && <><h2>Stack</h2><p>{project.stack.join(" · ")}</p></>}<h2>Evidence</h2><dl>{project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl><h2>Why it matters</h2><p>{project.whyItMatters}</p><h2>Public limitations</h2><p>{project.publicLimitations}</p></div>
-      </section>
-
-      <section className="aw-project-ask">
-        <header><span>Ask about this project</span><button type="button" onClick={() => ask(project.askSuggestion)}>Use suggested question</button></header>
-        <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder={"Ask about " + project.title + "…"} />
-      </section>
-    </main>
-  );
-}
-
-const LABSTOCK_DEMO_PROMPT = "Jelaskan project LabStock ini secara ringkas. Apa masalahnya, solusinya, fitur utama, dan status sekarang?";
-
-function LabStockDossier({ project, query, setQuery, ask, back }: {
-  project: WorkspaceProject;
-  query: string;
-  setQuery: (value: string) => void;
-  ask: (value?: string) => void;
-  back: () => void;
-}) {
+function useProjectPresentation(prompt: string) {
   const projectViewportRef = useRef<HTMLElement>(null);
   const presentationTimersRef = useRef<{ start?: number; typing?: number; reveal?: number }>({});
   const [typedPrompt, setTypedPrompt] = useState("");
-  const [dossierVisible, setDossierVisible] = useState(false);
+  const [responseVisible, setResponseVisible] = useState(false);
+
   const clearPresentationTimers = useCallback(() => {
     const { start, typing, reveal } = presentationTimersRef.current;
     if (start !== undefined) window.clearTimeout(start);
@@ -485,153 +423,267 @@ function LabStockDossier({ project, query, setQuery, ask, back }: {
     if (reveal !== undefined) window.clearTimeout(reveal);
     presentationTimersRef.current = {};
   }, []);
+
   const runPresentation = useCallback((scrollToTop = false) => {
     clearPresentationTimers();
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (scrollToTop) {
-      projectViewportRef.current?.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
-    }
+    if (scrollToTop) projectViewportRef.current?.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
 
     if (reducedMotion) {
-      setTypedPrompt(LABSTOCK_DEMO_PROMPT);
-      setDossierVisible(true);
+      setTypedPrompt(prompt);
+      setResponseVisible(true);
       return;
     }
 
     setTypedPrompt("");
-    setDossierVisible(false);
+    setResponseVisible(false);
     let nextLength = 0;
     presentationTimersRef.current.typing = window.setInterval(() => {
       nextLength += 1;
-      setTypedPrompt(LABSTOCK_DEMO_PROMPT.slice(0, nextLength));
-      if (nextLength >= LABSTOCK_DEMO_PROMPT.length) {
+      setTypedPrompt(prompt.slice(0, nextLength));
+      if (nextLength >= prompt.length) {
         if (presentationTimersRef.current.typing !== undefined) {
           window.clearInterval(presentationTimersRef.current.typing);
           presentationTimersRef.current.typing = undefined;
         }
         presentationTimersRef.current.reveal = window.setTimeout(() => {
-          setDossierVisible(true);
+          setResponseVisible(true);
           presentationTimersRef.current.reveal = undefined;
         }, 520);
       }
     }, 18);
-  }, [clearPresentationTimers]);
+  }, [clearPresentationTimers, prompt]);
 
   useEffect(() => {
     presentationTimersRef.current.start = window.setTimeout(() => runPresentation(), 0);
     return clearPresentationTimers;
   }, [clearPresentationTimers, runPresentation]);
 
-  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({
-    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-    block: "start",
-  });
-  const architecture = [
-    { label: "Source", value: "Workbook rows" },
-    { label: "Import", value: "Mapping + provenance" },
-    { label: "Ledger", value: "Effective movements" },
-    { label: "Reports", value: "Monthly + yearly" },
-    { label: "Export", value: "Detail + recap" },
-  ];
+  return { projectViewportRef, typedPrompt, responseVisible, runPresentation };
+}
 
+function ProjectSession({ prompt, typedPrompt, replay, title }: {
+  prompt: string;
+  typedPrompt: string;
+  replay: () => void;
+  title: string;
+}) {
   return (
-    <main ref={projectViewportRef} className="aw-center aw-project-detail aw-labstock-dossier aw-enter">
-      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
-
-      <section className="aw-project-session" aria-labelledby="labstock-session-title">
-        <header>
-          <div><i /><span id="labstock-session-title">You · prompt</span><small>Scripted project opener</small></div>
-          <button type="button" onClick={() => runPresentation(true)} aria-label="Replay LabStock project presentation">↻ Replay Demo</button>
-        </header>
-        <div className="aw-session-query">
-          <span aria-hidden="true">Q</span>
-          <div>
-            <small>Project query</small>
-            <p aria-label={LABSTOCK_DEMO_PROMPT}>{typedPrompt}{typedPrompt.length < LABSTOCK_DEMO_PROMPT.length && <span className="aw-typing-caret" aria-hidden="true" />}</p>
-          </div>
+    <section className="aw-project-session" aria-label={title + " scripted project prompt"}>
+      <header>
+        <div><i /><span>You · prompt</span><small>Project opener</small></div>
+        <button type="button" onClick={replay} aria-label={"Replay " + title + " project presentation"}>↻ Replay Demo</button>
+      </header>
+      <div className="aw-session-query">
+        <span aria-hidden="true">Q</span>
+        <div>
+          <small>Project query</small>
+          <p aria-label={prompt}>{typedPrompt}{typedPrompt.length < prompt.length && <span className="aw-typing-caret" aria-hidden="true" />}</p>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {dossierVisible && <div className="aw-dossier-response">
-        <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
-
+function ProjectOpening({ project, action }: { project: WorkspaceProject; action?: { label: string; run: () => void } }) {
+  return (
+    <>
       <header className="aw-dossier-header">
         <div className="aw-dossier-heading">
           <div><span>{project.eyebrow}</span>{project.status && <small>{project.status}</small>}</div>
           <h1>{project.title}</h1>
           <p>{project.summary}</p>
         </div>
-        <div className="aw-dossier-actions">
-          <button type="button" onClick={() => scrollTo("labstock-architecture")}>Review system</button>
-        </div>
+        {action && <div className="aw-dossier-actions"><button type="button" onClick={action.run}>{action.label}</button></div>}
       </header>
-
-      <dl className="aw-dossier-metadata" aria-label="LabStock project metadata">
+      <dl className="aw-dossier-metadata" aria-label={project.title + " project metadata"}>
         <div><dt>Role</dt><dd>{project.role}</dd></div>
-        <div><dt>Stack</dt><dd>{project.stack.join(" · ")}</dd></div>
-        <div><dt>Public evidence</dt><dd>Workflow and correctness behavior</dd></div>
+        {project.stack.length > 0 && <div><dt>Stack</dt><dd>{project.stack.join(" · ")}</dd></div>}
+        <div><dt>Project record</dt><dd>{project.year}{project.status ? " · " + project.status : ""}</dd></div>
       </dl>
+    </>
+  );
+}
 
-      <section className="aw-dossier-glance" aria-labelledby="labstock-glance-title">
-        <header><span>At a glance</span><h2 id="labstock-glance-title">The system in twenty seconds</h2></header>
-        <div>
-          <article><span>Problem</span><p>Move spreadsheet inventory into a dependable ledger without losing source traceability.</p></article>
-          <article><span>What I built</span><p>A source-aware import, reporting, correction, and Excel export workflow.</p></article>
-          <article><span>Current status</span><p>{project.status}. Further work follows the maintenance process.</p></article>
-          <article><span>Evidence</span><p>Idempotent re-import, history-preserving corrections, and detail + recap export.</p></article>
-        </div>
-      </section>
+function EvidenceTable({ project }: { project: WorkspaceProject }) {
+  return (
+    <div className="aw-evidence-table-wrap">
+      <table className="aw-evidence-table">
+        <thead><tr><th scope="col">Behavior</th><th scope="col">Public evidence</th></tr></thead>
+        <tbody>{project.evidence.map((item) => <tr key={item.label}><th scope="row">{item.label}</th><td>{item.value}</td></tr>)}</tbody>
+      </table>
+    </div>
+  );
+}
 
-      <section className="aw-dossier-section" id="labstock-problem">
-        <header><span>01</span><h2>Problem</h2></header>
-        <div className="aw-dossier-copy"><p>{project.problem}</p><p>{project.whyItMatters}</p></div>
-      </section>
+function ProjectAsk({ project, query, setQuery, ask }: Pick<ProjectViewProps, "project" | "query" | "setQuery" | "ask">) {
+  return (
+    <section className="aw-project-ask aw-editorial-ask">
+      <header><span>Ask about {project.title}</span><button type="button" onClick={() => ask(project.askSuggestion)}>Use suggested question</button></header>
+      <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder={"Ask anything about " + project.title + "…"} />
+    </section>
+  );
+}
 
-      <section className="aw-dossier-section" id="labstock-architecture">
-        <header><span>02</span><h2>System / Architecture</h2></header>
-        <div className="aw-dossier-flow" aria-label="LabStock data flow">
-          {architecture.map((step, index) => <div key={step.label}><small>{String(index + 1).padStart(2, "0")}</small><strong>{step.label}</strong><span>{step.value}</span></div>)}
-        </div>
-        <p className="aw-dossier-note">Reports and exports derive from stored ledger data while provenance retains the connection to source evidence.</p>
-      </section>
+function ProjectMedia({ project, openImage, lead = false }: Pick<ProjectViewProps, "project" | "openImage"> & { lead?: boolean }) {
+  if (!project.image) return null;
+  return (
+    <section className={lead ? "aw-editorial-media is-lead" : "aw-editorial-media"} aria-label={project.title + " public project media"}>
+      <button type="button" className="aw-editorial-media-lead" onClick={(event) => openImage(0, event.currentTarget)} aria-label={"Quick Look: " + project.title + " project view"}>
+        <Image src={project.image} alt={project.title + " public project view"} fill sizes="(max-width: 760px) 100vw, 1000px" className="object-cover object-top" />
+        <span>Open in Quick Look</span>
+      </button>
+      {project.gallery && project.gallery.length > 0 && <div className="aw-editorial-gallery">{project.gallery.map((item, index) => <figure key={item.src}><button type="button" onClick={(event) => openImage(index + 1, event.currentTarget)} aria-label={"Quick Look: " + item.caption}><Image src={item.src} alt={item.caption} fill sizes="(max-width: 760px) 90vw, 300px" className="object-cover object-top" /></button><figcaption>{item.caption}</figcaption></figure>)}</div>}
+    </section>
+  );
+}
 
-      <section className="aw-dossier-section">
-        <header><span>03</span><h2>Important Engineering Decisions</h2></header>
-        <ol className="aw-dossier-decisions">
-          {project.howItWorks.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></li>)}
-        </ol>
-      </section>
+function LabStockDossier({ project, query, setQuery, ask, back }: ProjectViewProps) {
+  const prompt = PROJECT_DEMO_PROMPTS.labstock;
+  const { projectViewportRef, typedPrompt, responseVisible, runPresentation } = useProjectPresentation(prompt);
+  const architecture = [
+    { label: "Source workbook", value: "Workbook · sheet · row retained" },
+    { label: "Validated import", value: "Identity and period checked" },
+    { label: "Stock ledger", value: "Effective movements preserved" },
+    { label: "Reports", value: "Monthly and yearly views" },
+    { label: "Excel exports", value: "Detail and recap sheets" },
+  ];
+  const decisions = [
+    { title: "Source-aware import", body: "Each imported record keeps its workbook, sheet, and source-row evidence, so later reporting can be traced back to what was supplied." },
+    { title: "One effective inventory identity", body: "Source records map to the item identities used by the ledger, reports, and exports instead of creating parallel versions of the same stock." },
+    { title: "Re-import without rewriting history", body: "A repeated source is recognized before it can duplicate stock movements; corrections remain auditable instead of replacing prior history silently." },
+  ];
 
-      <section className="aw-dossier-section">
-        <header><span>04</span><h2>Evidence / Tests</h2></header>
-        <dl className="aw-dossier-evidence">
-          {project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
-        </dl>
-        <p className="aw-dossier-note">Only behavior supported by the canonical project record is published here; private operational data and infrastructure remain excluded.</p>
-      </section>
+  return (
+    <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-labstock-dossier aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+      <ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={() => runPresentation(true)} />
+      {responseVisible && <article className="aw-dossier-response">
+        <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
+        <ProjectOpening project={project} action={{ label: "View data flow", run: () => document.getElementById("labstock-data-flow")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }) }} />
 
-      <section className="aw-dossier-section">
-        <header><span>05</span><h2>Screenshots / Artifacts</h2></header>
-        <div className="aw-dossier-media-state">
-          <span>Public media boundary</span>
-          <strong>No sanitized product screenshot is published.</strong>
-          <p>{project.assetNote}</p>
-        </div>
-      </section>
+        <section className="aw-editorial-intro">
+          <span>Why it exists</span>
+          <div><h2>Inventory data needed a dependable path beyond the spreadsheet.</h2><p>{project.problem}</p><p>{project.whyItMatters}</p></div>
+        </section>
 
-      <section className="aw-dossier-section">
-        <header><span>06</span><h2>Limitations / Current Status</h2></header>
-        <div className="aw-dossier-copy"><p>{project.publicLimitations}</p><p>The canonical project lifecycle is <strong>{project.status}</strong>. This case study does not publish private URLs, infrastructure details, hospital records, or unsanitized media.</p></div>
-      </section>
+        <section className="aw-system-story" id="labstock-data-flow">
+          <header><span>How LabStock works</span><p>Every output stays connected to the stored ledger and its source evidence.</p></header>
+          <div className="aw-data-flow">{architecture.map((step, index) => <div key={step.label}><small>{String(index + 1).padStart(2, "0")}</small><strong>{step.label}</strong><span>{step.value}</span></div>)}</div>
+          <div className="aw-flow-notes"><p><strong>Same workbook again</strong><span>Recognized source → no duplicate movement</span></p><p><strong>Correction required</strong><span>New auditable correction → prior history retained</span></p></div>
+        </section>
 
-      <section className="aw-project-ask aw-dossier-ask" id="labstock-ask">
-        <header><div><span>07</span><h2>Ask about LabStock</h2></div><button type="button" onClick={() => ask(project.askSuggestion)}>Use suggested question</button></header>
-        <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder="Ask about LabStock’s import, ledger, reports, or export…" />
-      </section>
-      </div>}
+        <section className="aw-decision-story">
+          <header><span>What had to be reliable</span><h2>Three decisions hold the workflow together.</h2></header>
+          <div>{decisions.map((decision, index) => <article key={decision.title}><small>{String(index + 1).padStart(2, "0")}</small><h3>{decision.title}</h3><p>{decision.body}</p></article>)}</div>
+        </section>
+
+        <section className="aw-proof-story">
+          <header><span>What can be checked</span><h2>Behavior, not presentation claims.</h2></header>
+          <EvidenceTable project={project} />
+        </section>
+
+        <footer className="aw-project-boundary"><div><span>Current status</span><strong>{project.status}</strong></div><p>{project.publicLimitations}</p></footer>
+        <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+      </article>}
     </main>
   );
+}
+
+function BdrsDossier(props: ProjectViewProps) {
+  const { project, query, setQuery, ask, back } = props;
+  const prompt = PROJECT_DEMO_PROMPTS.bdrs;
+  const { projectViewportRef, typedPrompt, responseVisible, runPresentation } = useProjectPresentation(prompt);
+  return (
+    <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+      <ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={() => runPresentation(true)} />
+      {responseVisible && <article className="aw-dossier-response">
+        <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
+        <ProjectOpening project={project} />
+        <section className="aw-editorial-intro"><span>Operational boundary</span><div><h2>Blood-bank work needs domain workflow, traceability, and careful public boundaries.</h2><p>{project.problem}</p><p>{project.solution}</p></div></section>
+        <section className="aw-bdrs-status" aria-label="BDRS implementation status">
+          <article><span>Implemented</span><strong>{project.evidence[0]?.value}</strong><p>{project.howItWorks[0]}</p></article>
+          <article><span>Current work</span><strong>{project.evidence[1]?.value}</strong><p>The public technical and release record is still being reconciled.</p></article>
+          <article><span>Planned or withheld</span><strong>{project.evidence[2]?.value}</strong><p>Integration and deployment claims remain outside the case unless canonical evidence confirms them.</p></article>
+        </section>
+        <section className="aw-proof-story"><header><span>Public record</span><h2>What this case can state today.</h2></header><EvidenceTable project={project} /></section>
+        <footer className="aw-project-boundary"><div><span>Public limitation</span><strong>Conservative by design</strong></div><p>{project.publicLimitations}</p></footer>
+        <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+      </article>}
+    </main>
+  );
+}
+
+function SuhuLogDossier(props: ProjectViewProps) {
+  const { project, query, setQuery, ask, back, openImage } = props;
+  const prompt = PROJECT_DEMO_PROMPTS.suhulog;
+  const { projectViewportRef, typedPrompt, responseVisible, runPresentation } = useProjectPresentation(prompt);
+  return (
+    <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+      <ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={() => runPresentation(true)} />
+      {responseVisible && <article className="aw-dossier-response">
+        <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
+        <ProjectOpening project={project} />
+        <ProjectMedia project={project} openImage={openImage} lead />
+        <section className="aw-editorial-intro"><span>The workflow</span><div><h2>From QR label to the monthly record.</h2><p>{project.problem}</p></div></section>
+        <ol className="aw-workflow-line">{project.howItWorks.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></li>)}</ol>
+        <section className="aw-proof-story"><header><span>Released evidence</span><h2>The same records drive monitoring and export.</h2></header><EvidenceTable project={project} /></section>
+        <footer className="aw-project-boundary"><div><span>Public boundary</span><strong>Sanitized portfolio evidence</strong></div><p>{project.publicLimitations}</p></footer>
+        <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+      </article>}
+    </main>
+  );
+}
+
+function TomatoVisionDossier(props: ProjectViewProps) {
+  const { project, query, setQuery, ask, back, openImage } = props;
+  const prompt = PROJECT_DEMO_PROMPTS["tomato-ripeness"];
+  const { projectViewportRef, typedPrompt, responseVisible, runPresentation } = useProjectPresentation(prompt);
+  return (
+    <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+      <ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={() => runPresentation(true)} />
+      {responseVisible && <article className="aw-dossier-response">
+        <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
+        <ProjectOpening project={project} />
+        <section className="aw-research-question"><span>Research question</span><h2>Can architectural changes and ensemble inference improve maturity detection under greenhouse occlusion and scale variation?</h2><p>{project.problem}</p></section>
+        <ProjectMedia project={project} openImage={openImage} lead />
+        <section className="aw-experiment-line" aria-label="TomatoVision experiment sequence">
+          <div><span>Baseline</span><strong>YOLOv11</strong><p>{project.evidence[0]?.value}</p></div>
+          <div><span>Architecture study</span><strong>Swin + multi-scale SPPF</strong><p>{project.evidence[1]?.value}</p></div>
+          <div><span>Ensemble</span><strong>Three-model WBF</strong><p>{project.evidence[2]?.value}</p></div>
+          <div><span>Stricter metric</span><strong>mAP@0.5:0.95</strong><p>{project.evidence[3]?.value}</p></div>
+        </section>
+        <section className="aw-research-method"><div><span>Experimental setup</span><p>{project.solution}</p></div><ol>{project.howItWorks.map((item) => <li key={item}>{item}</li>)}</ol></section>
+        <footer className="aw-project-boundary"><div><span>Research boundary</span><strong>Evaluated study · not a deployed product</strong></div><p>{project.publicLimitations}</p></footer>
+        <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+      </article>}
+    </main>
+  );
+}
+
+function CompactProjectResponse({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
+  return (
+    <main className="aw-center aw-project-detail aw-compact-project aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+      <ProjectOpening project={project} />
+      <ProjectMedia project={project} openImage={openImage} lead />
+      <section className="aw-compact-record"><div><span>What it explores</span><p>{project.problem}</p><p>{project.solution}</p></div><div><span>Technical outline</span><ul>{project.howItWorks.map((item) => <li key={item}>{item}</li>)}</ul></div></section>
+      <EvidenceTable project={project} />
+      <footer className="aw-project-boundary"><div><span>Status</span><strong>{project.eyebrow}</strong></div><p>{project.publicLimitations}</p></footer>
+      <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+    </main>
+  );
+}
+
+function ProjectWorkspace(props: ProjectViewProps) {
+  if (props.project.slug === "labstock") return <LabStockDossier {...props} />;
+  if (props.project.slug === "bdrs") return <BdrsDossier {...props} />;
+  if (props.project.slug === "suhulog") return <SuhuLogDossier {...props} />;
+  if (props.project.slug === "tomato-ripeness") return <TomatoVisionDossier {...props} />;
+  return <CompactProjectResponse {...props} />;
 }
 
 function ProjectDirectory({ projects, title, copy, selectProject }: {
@@ -706,84 +758,6 @@ function AskWorkspace({ query, setQuery, history, currentQuestion, answer, statu
         </section>
       )}
     </main>
-  );
-}
-
-function ContextRail({ project, revision, open, close, navigate, openProject, askProject, openImage }: {
-  project: WorkspaceProject;
-  revision: number;
-  open: boolean;
-  close: () => void;
-  navigate: (view: WorkspaceView) => void;
-  openProject: () => void;
-  askProject: () => void;
-  openImage: (index: number, trigger: HTMLElement) => void;
-}) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const progress = [
-    { project: "SuhuLog", detail: "Published case evidence", state: "done" },
-    { project: "TomatoVision", detail: "Evaluation documented", state: "done" },
-    { project: "BDRS", detail: "Evidence review", state: "current" },
-    { project: "LabStock", detail: "Sanitized imagery", state: "next" },
-  ] as const;
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0 });
-  }, [project.slug, revision]);
-
-  return (
-    <>
-      <aside className={"aw-context " + (open ? "is-open" : "")}>
-        <header className="aw-context-title"><span><i /> Current Context</span><button type="button" onClick={close} aria-label="Close context"><Glyph name="close" /></button></header>
-        <div ref={scrollRef} className="aw-context-scroll">
-          <section className="aw-context-project">
-            <header className="aw-context-identity">
-              <span className="aw-project-symbol" style={{ color: projectTones[project.slug] ?? "#64748b" }}>{project.title.slice(0, 2).toUpperCase()}</span>
-              <span><strong>{project.title}</strong><small>{project.eyebrow}</small></span>
-            </header>
-            {project.image ? (
-              <button type="button" className="aw-context-preview" onClick={(event) => openImage(0, event.currentTarget)} aria-label={"Quick Look: " + project.title + " project preview"}><Image src={project.image} alt={project.title + " verified project preview"} fill sizes="320px" className="object-cover object-top" /></button>
-            ) : (
-              <div className="aw-text-preview">
-                <span>Evidence-led case</span>
-                <strong>{project.title}</strong>
-                <small>{project.assetNote}</small>
-              </div>
-            )}
-            <p className="aw-context-framing">{project.whyItMatters}</p>
-            <div className="aw-context-evidence-block">
-              <header>Verified evidence</header>
-              <dl className="aw-context-evidence">
-                {project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
-              </dl>
-            </div>
-            <div className="aw-context-actions">
-              <button type="button" onClick={openProject}>Open project workspace <Glyph name="arrow" /></button>
-              <button type="button" onClick={askProject}>Ask about this work <Glyph name="ask" /></button>
-              <a href={"mailto:" + site.email}>Discuss this work</a>
-            </div>
-          </section>
-
-          <section className="aw-context-section aw-focus-card">
-            <header><span>Focus</span><small>Project progress</small></header>
-            <ol>{progress.map((item) => <li className={"is-" + item.state} key={item.project}><i aria-hidden="true" /><span><strong>{item.project}</strong><small>{item.state === "done" ? "Done" : item.state === "current" ? "Current" : "Next"} · {item.detail}</small></span></li>)}</ol>
-          </section>
-
-          <section className="aw-context-section aw-quick-links">
-            <header>Quick Tools</header>
-            <div>
-              <a href={site.cv} target="_blank" rel="noopener noreferrer"><FileIcon /> Résumé</a>
-              <a href={site.github} target="_blank" rel="noopener noreferrer"><Glyph name="link" /> GitHub</a>
-              <a href={"mailto:" + site.email}><MailIcon /> Contact</a>
-              <button type="button" onClick={() => navigate("projects")}><Glyph name="projects" /> Open Projects</button>
-            </div>
-          </section>
-
-          <MusicPlayer />
-        </div>
-      </aside>
-      {open && <button className="aw-context-scrim" type="button" onClick={close} aria-label="Close context" />}
-    </>
   );
 }
 
@@ -863,7 +837,6 @@ export function WorkspacePrototype() {
   const [askStatus, setAskStatus] = useState<AskStatus>("idle");
   const [askError, setAskError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [contextOpen, setContextOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [strongContrast, setStrongContrast] = useState(false);
   const [windowState, setWindowState] = useState<WindowState>("open");
@@ -913,7 +886,6 @@ export function WorkspacePrototype() {
       if (event.key === "Escape") {
         if (paletteOpen) closePalette();
         setSidebarOpen(false);
-        setContextOpen(false);
       }
     }
     window.addEventListener("keydown", onKeyDown);
@@ -934,7 +906,6 @@ export function WorkspacePrototype() {
       setView("project");
       setQuickLookIndex(null);
       setProjectRevision((value) => value + 1);
-      if (window.innerWidth < 1100) setContextOpen(true);
     });
   }, []);
 
@@ -1098,7 +1069,6 @@ export function WorkspacePrototype() {
           </div>
           <div className="aw-title-actions" data-no-drag>
             <span>Build · Solve · Improve</span>
-            <button type="button" onClick={() => setContextOpen(true)} className="aw-context-toggle"><Glyph name="context" /> Context</button>
             <button type="button" onClick={openPalette}><kbd>⌘ K</kbd></button>
             <button type="button" className="aw-appearance" onClick={() => setStrongContrast((value) => !value)} aria-pressed={strongContrast} aria-label="Toggle interface contrast"><Glyph name="sun" /></button>
             <span className="aw-avatar">AR</span>
@@ -1112,7 +1082,7 @@ export function WorkspacePrototype() {
             <header className="aw-mobile-header">
               <button type="button" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Glyph name="menu" /></button>
               <strong>Adjie Workspace</strong>
-              <button type="button" onClick={() => setContextOpen(true)} aria-label="Open current context"><Glyph name="context" /></button>
+              <span className="aw-mobile-header-spacer" aria-hidden="true" />
             </header>
             {view === "home" ? <HomeWorkspace query={query} setQuery={setQuery} submit={() => void runAsk()} ask={(question) => void runAsk(question)} setView={setView} selectProject={selectProject} />
               : view === "work" ? <WorkWorkspace selectProject={selectProject} />
@@ -1122,8 +1092,6 @@ export function WorkspacePrototype() {
                       : view === "project" ? <ProjectWorkspace key={selected.slug + "-" + projectRevision} project={selected} query={query} setQuery={setQuery} ask={(question) => void runAsk(question ?? query, selected.slug)} back={() => setView("work")} openImage={openQuickLook} />
                         : <AskWorkspace query={query} setQuery={setQuery} history={askHistory} currentQuestion={currentQuestion} answer={answer} status={askStatus} error={askError} submit={() => void runAsk()} stop={stopAsk} choose={(question) => void runAsk(question)} openProjects={() => setView("projects")} />}
           </section>
-
-          <ContextRail project={selected} revision={projectRevision} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); void runAsk(selected.askSuggestion, selected.slug); }} openImage={openQuickLook} />
         </div>
       </div>
 
