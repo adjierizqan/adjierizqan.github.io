@@ -498,7 +498,7 @@ function KnowledgeWorkspace({ selectProject }: { selectProject: (project: Worksp
   );
 }
 
-function AskWorkspace({ query, setQuery, history, currentQuestion, answer, status, error, results, submit, stop, choose, selectProject, openProjects }: {
+function AskWorkspace({ query, setQuery, history, currentQuestion, answer, status, error, submit, stop, choose, openProjects }: {
   query: string;
   setQuery: (value: string) => void;
   history: PortfolioChatMessage[];
@@ -506,17 +506,15 @@ function AskWorkspace({ query, setQuery, history, currentQuestion, answer, statu
   answer: string | null;
   status: AskStatus;
   error: string | null;
-  results: WorkspaceProject[];
   submit: () => void;
   stop: () => void;
   choose: (value: string) => void;
-  selectProject: (project: WorkspaceProject) => void;
   openProjects: () => void;
 }) {
   const active = status === "sending" || status === "streaming";
   const hasConversation = history.length > 0 || currentQuestion !== null || answer !== null || error !== null;
   return (
-    <main className="aw-center aw-ask aw-enter">
+    <main className={`aw-center aw-ask aw-enter ${hasConversation ? "is-conversation" : "is-empty"}`}>
       {!hasConversation ? (
         <section className="aw-ask-empty">
           <span>Ask Adjie Workspace</span>
@@ -530,7 +528,6 @@ function AskWorkspace({ query, setQuery, history, currentQuestion, answer, statu
           {history.map((message, index) => <div className={"aw-message " + (message.role === "user" ? "is-user" : "")} key={message.role + index}><span>{message.role === "user" ? "You" : "Workspace"}</span><p>{message.content}</p></div>)}
           {currentQuestion && <div className="aw-message is-user"><span>You</span><p>{currentQuestion}</p></div>}
           {(answer !== null || active || error) && <div className="aw-message"><span>Workspace{active ? " · responding" : ""}</span><p aria-live="polite">{answer || (active ? "Thinking…" : error)}</p></div>}
-          <div className="aw-result-list">{results.map((project) => <button type="button" key={project.slug} onClick={() => selectProject(project)}><span><strong>{project.title}</strong><small>{project.eyebrow}</small></span><Glyph name="arrow" /></button>)}</div>
           {error && <div className="aw-result-list"><button type="button" onClick={openProjects}><span><strong>Explore projects</strong><small>Browse without AI</small></span><Glyph name="arrow" /></button><a href={site.cv} target="_blank" rel="noopener noreferrer"><span><strong>Résumé</strong><small>Open PDF</small></span><Glyph name="arrow" /></a><a href={"mailto:" + site.email}><span><strong>Contact</strong><small>Email Adjie</small></span><Glyph name="arrow" /></a></div>}
           <Composer query={query} setQuery={setQuery} submit={submit} stop={stop} busy={active} />
         </section>
@@ -692,7 +689,6 @@ export function WorkspacePrototype() {
   const [answer, setAnswer] = useState<string | null>(null);
   const [askStatus, setAskStatus] = useState<AskStatus>("idle");
   const [askError, setAskError] = useState<string | null>(null);
-  const [resultSlugs, setResultSlugs] = useState<string[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [contextOpen, setContextOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -703,7 +699,6 @@ export function WorkspacePrototype() {
   const [projectRevision, setProjectRevision] = useState(0);
 
   const selected = allWorkspaceProjects.find((project) => project.slug === selectedSlug) ?? featuredWork[0];
-  const results = useMemo(() => resultSlugs.map((slug) => allWorkspaceProjects.find((project) => project.slug === slug)).filter(Boolean) as WorkspaceProject[], [resultSlugs]);
   const quickLookImages = useMemo<QuickLookImage[]>(() => [
     ...(selected.image ? [{ src: selected.image, caption: selected.title + " project view" }] : []),
     ...(selected.gallery ?? []),
@@ -794,7 +789,6 @@ export function WorkspacePrototype() {
     setAnswer(null);
     setAskStatus("idle");
     setAskError(null);
-    setResultSlugs([]);
   }
 
   function stopAsk() {
@@ -804,10 +798,6 @@ export function WorkspacePrototype() {
   async function runAsk(value = query, projectId?: string) {
     const clean = value.trim();
     if (!clean || askStatus === "sending" || askStatus === "streaming") return;
-    const normalized = clean.toLowerCase();
-    const match = normalized.includes("ai") || normalized.includes("vision") || normalized.includes("tomato") ? prompts[1]
-      : normalized.includes("reliab") || normalized.includes("quality") || normalized.includes("safe") ? prompts[2]
-        : prompts[0];
     const priorHistory = [
       ...askHistory,
       ...(currentQuestion && answer ? [
@@ -823,7 +813,6 @@ export function WorkspacePrototype() {
     setAnswer("");
     setAskError(null);
     setAskStatus("sending");
-    setResultSlugs(projectId ? [projectId] : normalized.includes("main project") ? featuredWork.map((project) => project.slug) : match.projects);
     setView("ask");
 
     let partial = "";
@@ -958,7 +947,7 @@ export function WorkspacePrototype() {
                   : view === "labs" ? <ProjectDirectory projects={labWork} title="Labs" copy="Focused experiments in computer vision, 3D pipelines, and interactive systems." selectProject={selectProject} />
                     : view === "knowledge" ? <KnowledgeWorkspace selectProject={selectProject} />
                       : view === "project" ? <ProjectWorkspace key={selected.slug + "-" + projectRevision} project={selected} query={query} setQuery={setQuery} ask={(question) => void runAsk(question ?? query, selected.slug)} back={() => setView("work")} openImage={openQuickLook} />
-                        : <AskWorkspace query={query} setQuery={setQuery} history={askHistory} currentQuestion={currentQuestion} answer={answer} status={askStatus} error={askError} results={results} submit={() => void runAsk()} stop={stopAsk} choose={(question) => void runAsk(question)} selectProject={selectProject} openProjects={() => setView("projects")} />}
+                        : <AskWorkspace query={query} setQuery={setQuery} history={askHistory} currentQuestion={currentQuestion} answer={answer} status={askStatus} error={askError} submit={() => void runAsk()} stop={stopAsk} choose={(question) => void runAsk(question)} openProjects={() => setView("projects")} />}
           </section>
 
           <ContextRail project={selected} revision={projectRevision} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); void runAsk(selected.askSuggestion, selected.slug); }} openImage={openQuickLook} />

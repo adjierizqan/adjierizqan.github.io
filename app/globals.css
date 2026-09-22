@@ -702,6 +702,8 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-ask { display: grid; place-items: center; }
 .aw-ask-empty,
 .aw-conversation { width: min(100%, 43rem); }
+.aw-ask.is-conversation { place-items: start center; }
+.aw-conversation { padding-bottom: 1.5rem; }
 .aw-ask-empty .aw-composer { margin-top: 2rem; }
 .aw-ask-empty > div:last-child { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .7rem; }
 .aw-ask-empty > div:last-child button {
@@ -714,11 +716,12 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   font-size: .56rem;
 }
 .aw-ask-empty > div:last-child svg { width: .65rem; }
-.aw-message { margin-top: 1.7rem; }
-.aw-message span { color: #999da5; font-size: .53rem; }
-.aw-message p { max-width: 37rem; margin-top: .4rem; color: #292b31; font-size: .8rem; line-height: 1.7; }
-.aw-message.is-user { display: grid; grid-template-columns: 3rem 1fr; gap: .7rem; margin-left: 3rem; }
-.aw-message.is-user p { border-radius: .65rem; background: #eceef1; padding: .75rem .85rem; font-size: .65rem; }
+.aw-message { margin-top: 1.15rem; }
+.aw-message:first-child { margin-top: 0; }
+.aw-message span { color: #777c85; font-size: var(--aw-text-micro); font-weight: 650; letter-spacing: .02em; }
+.aw-message p { max-width: 39rem; margin-top: .35rem; color: #25272c; font-size: var(--aw-text-body); line-height: 1.65; }
+.aw-message.is-user { display: grid; grid-template-columns: 3.25rem minmax(0,1fr); gap: .75rem; margin-left: 2.5rem; }
+.aw-message.is-user p { border-radius: .65rem; background: #eceef1; padding: .72rem .85rem; color: #292b31; font-size: var(--aw-text-body); line-height: 1.55; }
 .aw-result-list { margin-top: 1.3rem; border-bottom: 1px solid #e3e5e8; }
 .aw-result-list button,
 .aw-result-list a {
@@ -736,7 +739,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-result-list strong { font-size: .63rem; }
 .aw-result-list small { color: #8b8f98; font-size: .51rem; }
 .aw-result-list svg { width: .68rem; color: #999da5; }
-.aw-conversation .aw-composer { margin-top: 1.5rem; }
+.aw-conversation .aw-composer { margin-top: 1.25rem; }
 
 .aw-context {
   z-index: 3;
