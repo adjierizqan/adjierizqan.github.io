@@ -1,4 +1,5 @@
 export type PortfolioChatMessage = { role: "user" | "assistant"; content: string };
+const MAX_CHAT_MESSAGE_LENGTH = 800;
 
 export class PortfolioAiError extends Error {
   status?: number;
@@ -16,13 +17,21 @@ export function portfolioAskEndpoint() {
   return `${base.replace(/\/+$/, "")}/ask`;
 }
 
-function tokenFromEvent(payload: string) {
-  if (!payload || payload === "[DONE]") return "";
+type WorkersAiEvent = {
+  response?: unknown;
+  choices?: Array<{ delta?: { content?: unknown } }>;
+};
+
+function contentFromEvent(payload: string) {
+  if (!payload || payload === "[DONE]") return null;
   try {
-    const parsed = JSON.parse(payload) as { response?: unknown };
-    return typeof parsed.response === "string" ? parsed.response : "";
+    const parsed = JSON.parse(payload) as WorkersAiEvent;
+    const delta = parsed.choices?.[0]?.delta?.content;
+    if (typeof delta === "string") return { kind: "delta" as const, content: delta };
+    if (typeof parsed.response === "string") return { kind: "response" as const, content: parsed.response };
+    return null;
   } catch {
-    return "";
+    return null;
   }
 }
 
@@ -32,6 +41,17 @@ export async function readWorkersAiStream(response: Response, onToken: (token: s
   const decoder = new TextDecoder();
   let buffer = "";
   let answer = "";
+  let sawDelta = false;
+
+  const consumeLine = (line: string) => {
+    if (!line.startsWith("data:")) return;
+    const event = contentFromEvent(line.slice(5).trim());
+    if (!event?.content) return;
+    if (event.kind === "delta") sawDelta = true;
+    if (event.kind === "response" && sawDelta) return;
+    answer += event.content;
+    onToken(event.content);
+  };
 
   while (true) {
     const { done, value } = await reader.read();
@@ -40,12 +60,7 @@ export async function readWorkersAiStream(response: Response, onToken: (token: s
     buffer = events.pop() ?? "";
     for (const event of events) {
       for (const line of event.split("\n")) {
-        if (!line.startsWith("data:")) continue;
-        const token = tokenFromEvent(line.slice(5).trim());
-        if (token) {
-          answer += token;
-          onToken(token);
-        }
+        consumeLine(line);
       }
     }
     if (done) break;
@@ -53,12 +68,7 @@ export async function readWorkersAiStream(response: Response, onToken: (token: s
 
   if (buffer.trim()) {
     for (const line of buffer.split("\n")) {
-      if (!line.startsWith("data:")) continue;
-      const token = tokenFromEvent(line.slice(5).trim());
-      if (token) {
-        answer += token;
-        onToken(token);
-      }
+      consumeLine(line);
     }
   }
   return answer;
@@ -76,7 +86,14 @@ export async function streamPortfolioAnswer(input: {
   const response = await fetch(endpoint, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ message: input.message, projectId: input.projectId, history: input.history.slice(-6) }),
+    body: JSON.stringify({
+      message: input.message,
+      projectId: input.projectId,
+      history: input.history.slice(-6).map((message) => ({
+        ...message,
+        content: message.content.slice(0, MAX_CHAT_MESSAGE_LENGTH),
+      })),
+    }),
     signal: input.signal,
   });
   if (!response.ok) {
