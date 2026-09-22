@@ -376,7 +376,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   scrollbar-width: thin;
   scrollbar-color: #d4d6da transparent;
 }
-.aw-home { width: min(100%, 58rem); }
+.aw-home { width: min(100%, 56rem); }
 .aw-enter { animation: aw-enter 230ms cubic-bezier(.2,.75,.25,1) both; }
 @keyframes aw-enter { from { opacity: .25; transform: translateY(4px); } }
 .aw-identity { display: flex; align-items: start; justify-content: space-between; gap: 2rem; }
@@ -716,8 +716,14 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-dossier-response { margin-top: 1.3rem; animation: aw-dossier-response-in 320ms cubic-bezier(.2,.75,.25,1) both; }
 .aw-dossier-response-label { display: flex; align-items: center; gap: .55rem; border-bottom: 1px solid #e1e3e6; padding: 0 0 .7rem; color: #686d76; font-size: var(--aw-text-micro); font-weight: 680; letter-spacing: .055em; text-transform: uppercase; }
 .aw-dossier-response-label i { width: .42rem; height: .42rem; border-radius: 50%; background: #4b9f7b; }
+.aw-streamed-response { animation: none; }
+.aw-streamed-response .aw-dossier-heading h1 { min-height: .95em; }
+.aw-streamed-response .aw-dossier-heading p { min-height: 3.15em; }
+.aw-response-caret { display: inline-block; width: 1px; height: .88em; margin-left: .1rem; background: #4b5058; vertical-align: -.08em; animation: aw-typing-caret 620ms steps(1,end) infinite; }
+.aw-stream-structure { animation: aw-stream-structure-in 170ms cubic-bezier(.2,.75,.25,1) both; }
 @keyframes aw-typing-caret { 50% { opacity: 0; } }
 @keyframes aw-dossier-response-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes aw-stream-structure-in { from { opacity: 0; transform: translateY(3px); } }
 .aw-dossier-glance { margin-top: 1.8rem; }
 .aw-dossier-glance > header span { color: #888d96; font-size: var(--aw-text-micro); font-weight: 680; letter-spacing: .07em; text-transform: uppercase; }
 .aw-dossier-glance > header h2 { margin-top: .25rem; color: #202228; font-size: 1.25rem; font-weight: 730; letter-spacing: -.025em; }
@@ -1245,5 +1251,6 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
   }
-  .aw-typing-caret { animation: none !important; }
+  .aw-typing-caret,
+  .aw-response-caret { animation: none !important; }
 }

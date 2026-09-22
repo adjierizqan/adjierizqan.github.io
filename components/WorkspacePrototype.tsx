@@ -412,15 +412,17 @@ const PROJECT_DEMO_PROMPTS: Record<string, string> = {
 
 function useProjectPresentation(prompt: string) {
   const projectViewportRef = useRef<HTMLElement>(null);
-  const presentationTimersRef = useRef<{ start?: number; typing?: number; reveal?: number }>({});
+  const presentationTimersRef = useRef<{ start?: number; typing?: number; reveal?: number; streaming?: number }>({});
   const [typedPrompt, setTypedPrompt] = useState("");
   const [responseVisible, setResponseVisible] = useState(false);
+  const [responseProgress, setResponseProgress] = useState(0);
 
   const clearPresentationTimers = useCallback(() => {
-    const { start, typing, reveal } = presentationTimersRef.current;
+    const { start, typing, reveal, streaming } = presentationTimersRef.current;
     if (start !== undefined) window.clearTimeout(start);
     if (typing !== undefined) window.clearInterval(typing);
     if (reveal !== undefined) window.clearTimeout(reveal);
+    if (streaming !== undefined) window.clearInterval(streaming);
     presentationTimersRef.current = {};
   }, []);
 
@@ -432,11 +434,13 @@ function useProjectPresentation(prompt: string) {
     if (reducedMotion) {
       setTypedPrompt(prompt);
       setResponseVisible(true);
+      setResponseProgress(1);
       return;
     }
 
     setTypedPrompt("");
     setResponseVisible(false);
+    setResponseProgress(0);
     let nextLength = 0;
     presentationTimersRef.current.typing = window.setInterval(() => {
       nextLength += 1;
@@ -448,8 +452,19 @@ function useProjectPresentation(prompt: string) {
         }
         presentationTimersRef.current.reveal = window.setTimeout(() => {
           setResponseVisible(true);
+          const startedAt = performance.now();
+          const duration = 4000;
+          setResponseProgress(.001);
+          presentationTimersRef.current.streaming = window.setInterval(() => {
+            const progress = Math.min((performance.now() - startedAt) / duration, 1);
+            setResponseProgress(progress);
+            if (progress >= 1 && presentationTimersRef.current.streaming !== undefined) {
+              window.clearInterval(presentationTimersRef.current.streaming);
+              presentationTimersRef.current.streaming = undefined;
+            }
+          }, 40);
           presentationTimersRef.current.reveal = undefined;
-        }, 520);
+        }, 440);
       }
     }, 18);
   }, [clearPresentationTimers, prompt]);
@@ -459,7 +474,15 @@ function useProjectPresentation(prompt: string) {
     return clearPresentationTimers;
   }, [clearPresentationTimers, runPresentation]);
 
-  return { projectViewportRef, typedPrompt, responseVisible, runPresentation };
+  return { projectViewportRef, typedPrompt, responseVisible, responseProgress, runPresentation };
+}
+
+function StreamingText({ text, progress, start, end }: { text: string; progress: number; start: number; end: number }) {
+  if (progress < start) return null;
+  const localProgress = Math.min(Math.max((progress - start) / (end - start), 0), 1);
+  const visibleLength = Math.max(1, Math.ceil(text.length * localProgress));
+  const streaming = localProgress < 1;
+  return <>{text.slice(0, visibleLength)}{streaming && <span className="aw-response-caret" aria-hidden="true" />}</>;
 }
 
 function ProjectSession({ prompt, typedPrompt, replay, title }: {
@@ -505,12 +528,12 @@ function ProjectOpening({ project, action }: { project: WorkspaceProject; action
   );
 }
 
-function EvidenceTable({ project }: { project: WorkspaceProject }) {
+function EvidenceTable({ project, visibleRows = project.evidence.length }: { project: WorkspaceProject; visibleRows?: number }) {
   return (
     <div className="aw-evidence-table-wrap">
       <table className="aw-evidence-table">
         <thead><tr><th scope="col">Behavior</th><th scope="col">Public evidence</th></tr></thead>
-        <tbody>{project.evidence.map((item) => <tr key={item.label}><th scope="row">{item.label}</th><td>{item.value}</td></tr>)}</tbody>
+        <tbody>{project.evidence.slice(0, visibleRows).map((item) => <tr className="aw-stream-structure" key={item.label}><th scope="row">{item.label}</th><td>{item.value}</td></tr>)}</tbody>
       </table>
     </div>
   );
@@ -540,7 +563,7 @@ function ProjectMedia({ project, openImage, lead = false }: Pick<ProjectViewProp
 
 function LabStockDossier({ project, query, setQuery, ask, back }: ProjectViewProps) {
   const prompt = PROJECT_DEMO_PROMPTS.labstock;
-  const { projectViewportRef, typedPrompt, responseVisible, runPresentation } = useProjectPresentation(prompt);
+  const { projectViewportRef, typedPrompt, responseVisible, responseProgress, runPresentation } = useProjectPresentation(prompt);
   const architecture = [
     { label: "Source workbook", value: "Workbook · sheet · row retained" },
     { label: "Validated import", value: "Identity and period checked" },
@@ -553,38 +576,61 @@ function LabStockDossier({ project, query, setQuery, ask, back }: ProjectViewPro
     { title: "One effective inventory identity", body: "Source records map to the item identities used by the ledger, reports, and exports instead of creating parallel versions of the same stock." },
     { title: "Re-import without rewriting history", body: "A repeated source is recognized before it can duplicate stock movements; corrections remain auditable instead of replacing prior history silently." },
   ];
+  const visibleEvidenceRows = responseProgress < .82 ? 0 : Math.min(project.evidence.length, Math.ceil(((responseProgress - .82) / .08) * project.evidence.length));
 
   return (
     <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-labstock-dossier aw-enter">
       <button type="button" className="aw-project-back" onClick={back}>← Work</button>
       <ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={() => runPresentation(true)} />
-      {responseVisible && <article className="aw-dossier-response">
+      {responseVisible && <article className={"aw-dossier-response aw-streamed-response" + (responseProgress < 1 ? " is-streaming" : "")} aria-busy={responseProgress < 1}>
         <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
-        <ProjectOpening project={project} action={{ label: "View data flow", run: () => document.getElementById("labstock-data-flow")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }) }} />
 
-        <section className="aw-editorial-intro">
+        <header className="aw-dossier-header">
+          <div className="aw-dossier-heading">
+            <div><span>{project.eyebrow}</span>{project.status && <small>{project.status}</small>}</div>
+            <h1><StreamingText text={project.title} progress={responseProgress} start={0} end={.045} /></h1>
+            <p><StreamingText text={project.summary} progress={responseProgress} start={.045} end={.16} /></p>
+          </div>
+          {responseProgress >= .13 && <div className="aw-dossier-actions aw-stream-structure"><button type="button" onClick={() => document.getElementById("labstock-data-flow")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" })}>View data flow</button></div>}
+        </header>
+
+        {responseProgress >= .13 && <dl className="aw-dossier-metadata aw-stream-structure" aria-label="LabStock project metadata">
+          <div><dt>Role</dt><dd>{project.role}</dd></div>
+          <div><dt>Stack</dt><dd>{project.stack.join(" · ")}</dd></div>
+          <div><dt>Project record</dt><dd>{project.year} · {project.status}</dd></div>
+        </dl>}
+
+        {responseProgress >= .16 && <section className="aw-editorial-intro aw-stream-structure">
           <span>Why it exists</span>
-          <div><h2>Inventory data needed a dependable path beyond the spreadsheet.</h2><p>{project.problem}</p><p>{project.whyItMatters}</p></div>
-        </section>
+          <div>
+            <h2><StreamingText text="Inventory data needed a dependable path beyond the spreadsheet." progress={responseProgress} start={.16} end={.22} /></h2>
+            <p><StreamingText text={project.problem} progress={responseProgress} start={.22} end={.30} /></p>
+            <p><StreamingText text={project.whyItMatters} progress={responseProgress} start={.30} end={.36} /></p>
+          </div>
+        </section>}
 
-        <section className="aw-system-story" id="labstock-data-flow">
+        {responseProgress >= .36 && <section className="aw-system-story aw-stream-structure" id="labstock-data-flow">
           <header><span>How LabStock works</span><p>Every output stays connected to the stored ledger and its source evidence.</p></header>
-          <div className="aw-data-flow">{architecture.map((step, index) => <div key={step.label}><small>{String(index + 1).padStart(2, "0")}</small><strong>{step.label}</strong><span>{step.value}</span></div>)}</div>
-          <div className="aw-flow-notes"><p><strong>Same workbook again</strong><span>Recognized source → no duplicate movement</span></p><p><strong>Correction required</strong><span>New auditable correction → prior history retained</span></p></div>
-        </section>
+          <div className="aw-data-flow">{architecture.map((step, index) => responseProgress >= .38 + index * .025 ? <div className="aw-stream-structure" key={step.label}><small>{String(index + 1).padStart(2, "0")}</small><strong>{step.label}</strong><span>{step.value}</span></div> : null)}</div>
+          {responseProgress >= .51 && <div className="aw-flow-notes aw-stream-structure"><p><strong>Same workbook again</strong><span>Recognized source → no duplicate movement</span></p><p><strong>Correction required</strong><span>New auditable correction → prior history retained</span></p></div>}
+        </section>}
 
-        <section className="aw-decision-story">
-          <header><span>What had to be reliable</span><h2>Three decisions hold the workflow together.</h2></header>
-          <div>{decisions.map((decision, index) => <article key={decision.title}><small>{String(index + 1).padStart(2, "0")}</small><h3>{decision.title}</h3><p>{decision.body}</p></article>)}</div>
-        </section>
+        {responseProgress >= .52 && <section className="aw-decision-story aw-stream-structure">
+          <header><span>What had to be reliable</span><h2><StreamingText text="Three decisions hold the workflow together." progress={responseProgress} start={.52} end={.58} /></h2></header>
+          <div>{decisions.map((decision, index) => {
+            const start = .58 + index * .06;
+            const end = start + .06;
+            return responseProgress >= start ? <article className="aw-stream-structure" key={decision.title}><small>{String(index + 1).padStart(2, "0")}</small><h3>{decision.title}</h3><p><StreamingText text={decision.body} progress={responseProgress} start={start} end={end} /></p></article> : null;
+          })}</div>
+        </section>}
 
-        <section className="aw-proof-story">
-          <header><span>What can be checked</span><h2>Behavior, not presentation claims.</h2></header>
-          <EvidenceTable project={project} />
-        </section>
+        {responseProgress >= .77 && <section className="aw-proof-story aw-stream-structure">
+          <header><span>What can be checked</span><h2><StreamingText text="Behavior, not presentation claims." progress={responseProgress} start={.77} end={.82} /></h2></header>
+          {visibleEvidenceRows > 0 && <EvidenceTable project={project} visibleRows={visibleEvidenceRows} />}
+        </section>}
 
-        <footer className="aw-project-boundary"><div><span>Current status</span><strong>{project.status}</strong></div><p>{project.publicLimitations}</p></footer>
-        <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+        {responseProgress >= .90 && <footer className="aw-project-boundary aw-stream-structure"><div><span>Current status</span><strong>{project.status}</strong></div><p><StreamingText text={project.publicLimitations} progress={responseProgress} start={.90} end={.96} /></p></footer>}
+        {responseProgress >= .96 && <div className="aw-stream-structure"><ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} /></div>}
       </article>}
     </main>
   );
