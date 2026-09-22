@@ -20,7 +20,7 @@ import {
   type WorkspaceProject,
 } from "@/data/workspace";
 
-type WorkspaceView = "home" | "work" | "labs" | "ask";
+type WorkspaceView = "home" | "work" | "projects" | "labs" | "knowledge" | "ask";
 type Point = { x: number; y: number };
 
 const prompts = [
@@ -126,9 +126,9 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
   const nav: { label: string; view: WorkspaceView; icon: "home" | "work" | "projects" | "labs" | "book" | "ask" }[] = [
     { label: "Home", view: "home", icon: "home" },
     { label: "Work", view: "work", icon: "work" },
-    { label: "Projects", view: "work", icon: "projects" },
+    { label: "Projects", view: "projects", icon: "projects" },
     { label: "Labs", view: "labs", icon: "labs" },
-    { label: "Knowledge", view: "work", icon: "book" },
+    { label: "Knowledge", view: "knowledge", icon: "book" },
     { label: "Ask", view: "ask", icon: "ask" },
   ];
 
@@ -151,7 +151,7 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
               <button
                 type="button"
                 key={item.label}
-                className={view === item.view && item.label !== "Projects" && item.label !== "Knowledge" ? "is-active" : ""}
+                className={view === item.view ? "is-active" : ""}
                 onClick={() => { setView(item.view); close(); }}
               >
                 <Glyph name={item.icon} /><span>{item.label}</span>
@@ -248,6 +248,58 @@ function HomeWorkspace({ query, setQuery, submit, setView, selectProject }: {
   );
 }
 
+function WorkspaceHeader({ eyebrow, title, copy, meta }: { eyebrow: string; title: string; copy: string; meta?: string }) {
+  return (
+    <header className="aw-page-header">
+      <div><span>{eyebrow}</span><h1>{title}</h1><p>{copy}</p></div>
+      {meta && <small>{meta}</small>}
+    </header>
+  );
+}
+
+function WorkWorkspace({ selectProject }: { selectProject: (project: WorkspaceProject) => void }) {
+  const primary = featuredWork[0];
+  const secondary = featuredWork.slice(1);
+
+  return (
+    <main className="aw-center aw-work aw-enter">
+      <WorkspaceHeader eyebrow="Selected systems" title="Work" copy="Operational software and applied AI, organized around inspectable project evidence." meta="4 featured cases" />
+
+      <button type="button" className="aw-primary-work" onClick={() => selectProject(primary)}>
+        <section>
+          <span>Primary workspace artifact · {primary.year}</span>
+          <h2>{primary.title}</h2>
+          <p>{primary.summary}</p>
+          <strong>Open context <Glyph name="arrow" /></strong>
+        </section>
+        <div className="aw-system-artifact">
+          <header><span>Verified system boundary</span><small>Evidence-led</small></header>
+          <div className="aw-system-flow">
+            {primary.evidence.map((item, index) => <div key={item.label}><small>0{index + 1}</small><span>{item.label}</span><strong>{item.value}</strong></div>)}
+          </div>
+          <footer>No production screenshot is published without a verified sanitized asset.</footer>
+        </div>
+      </button>
+
+      <section className="aw-secondary-work" aria-label="More featured work">
+        {secondary.map((project) => (
+          <button type="button" key={project.slug} onClick={() => selectProject(project)}>
+            {project.image ? (
+              <figure><Image src={project.image} alt={project.title + " verified preview"} fill sizes="(max-width: 760px) 100vw, 300px" className="object-cover object-top" /></figure>
+            ) : (
+              <div className="aw-evidence-preview">
+                <span>Evidence state</span>
+                {project.evidence.map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}
+              </div>
+            )}
+            <section><span>{project.eyebrow}</span><h3>{project.title}</h3><p>{project.summary}</p><strong>Inspect project <Glyph name="arrow" /></strong></section>
+          </button>
+        ))}
+      </section>
+    </main>
+  );
+}
+
 function ProjectDirectory({ projects, title, copy, selectProject }: {
   projects: WorkspaceProject[];
   title: string;
@@ -256,13 +308,28 @@ function ProjectDirectory({ projects, title, copy, selectProject }: {
 }) {
   return (
     <main className="aw-center aw-directory aw-enter">
-      <header><span>Adjie Workspace</span><h1>{title}</h1><p>{copy}</p></header>
-      <div className="aw-directory-list">
+      <WorkspaceHeader eyebrow="Adjie Workspace" title={title} copy={copy} meta={projects.length + " project objects"} />
+      <div className="aw-project-objects">
         {projects.map((project) => (
           <button type="button" key={project.slug} onClick={() => selectProject(project)}>
-            {project.image ? <span className="aw-directory-image"><Image src={project.image} alt="" fill sizes="120px" className="object-cover object-top" /></span> : <span className="aw-directory-mark">{project.title.slice(0, 2).toUpperCase()}</span>}
-            <span><strong>{project.title}</strong><small>{project.eyebrow}</small><p>{project.summary}</p></span>
-            <Glyph name="arrow" />
+            {project.image ? <figure><Image src={project.image} alt={project.title + " verified preview"} fill sizes="(max-width: 760px) 100vw, 280px" className="object-cover object-top" /></figure> : <div className="aw-object-evidence">{project.evidence.slice(0, 2).map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}</div>}
+            <section><span>{project.eyebrow}</span><strong>{project.title}</strong><p>{project.summary}</p><small>Open context <Glyph name="arrow" /></small></section>
+          </button>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+function KnowledgeWorkspace({ selectProject }: { selectProject: (project: WorkspaceProject) => void }) {
+  return (
+    <main className="aw-center aw-knowledge aw-enter">
+      <WorkspaceHeader eyebrow="Public project record" title="Knowledge" copy="Verified signals and implementation boundaries from Adjie’s published work." meta="Evidence only" />
+      <div className="aw-knowledge-list">
+        {featuredWork.map((project) => (
+          <button type="button" key={project.slug} onClick={() => selectProject(project)}>
+            <span><i style={{ backgroundColor: projectTones[project.slug] }} /><strong>{project.title}</strong><small>{project.role}</small></span>
+            <div>{project.evidence.map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}</div>
           </button>
         ))}
       </div>
@@ -314,8 +381,8 @@ function ContextRail({ project, open, close, selectProject }: {
       <aside className={"aw-context " + (open ? "is-open" : "")}>
         <header className="aw-context-title"><span><i /> Current Context</span><button type="button" onClick={close} aria-label="Close context"><Glyph name="close" /></button></header>
         <div className="aw-context-scroll">
-          <section className="aw-context-card">
-            <header>
+          <section className="aw-context-project">
+            <header className="aw-context-identity">
               <span className="aw-project-symbol" style={{ color: projectTones[project.slug] ?? "#64748b" }}>{project.title.slice(0, 2).toUpperCase()}</span>
               <span><strong>{project.title}</strong><small>{project.eyebrow}</small></span>
             </header>
@@ -328,8 +395,12 @@ function ContextRail({ project, open, close, selectProject }: {
                 <small>{project.assetNote}</small>
               </div>
             )}
-            <p>{project.summary}</p>
-            <dl>
+            <p className="aw-context-framing">{project.summary}</p>
+          </section>
+
+          <section className="aw-context-section">
+            <header>Verified evidence</header>
+            <dl className="aw-context-evidence">
               {project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
             </dl>
             <div className="aw-context-actions">
@@ -338,13 +409,13 @@ function ContextRail({ project, open, close, selectProject }: {
             </div>
           </section>
 
-          <section className="aw-context-card is-plain">
-            <header><strong>Implementation highlights</strong></header>
+          <section className="aw-context-section">
+            <header>Implementation highlights</header>
             <ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul>
           </section>
 
-          <section className="aw-context-card is-plain">
-            <header><strong>Related work</strong></header>
+          <section className="aw-context-section">
+            <header>Related work</header>
             <div className="aw-related">{related.map((item) => <button type="button" key={item.slug} onClick={() => selectProject(item)}><i style={{ backgroundColor: projectTones[item.slug] }} /><span>{item.title}</span><Glyph name="arrow" /></button>)}</div>
           </section>
         </div>
@@ -541,9 +612,11 @@ export function WorkspacePrototype() {
               <button type="button" onClick={() => setContextOpen(true)} aria-label="Open current context"><Glyph name="context" /></button>
             </header>
             {view === "home" ? <HomeWorkspace query={query} setQuery={setQuery} submit={() => runAsk()} setView={setView} selectProject={selectProject} />
-              : view === "work" ? <ProjectDirectory projects={featuredWork} title="Featured work" copy="Operational software and applied AI systems selected for product depth and verified evidence." selectProject={selectProject} />
-                : view === "labs" ? <ProjectDirectory projects={labWork} title="Labs" copy="Focused experiments in computer vision, 3D pipelines, and interactive systems." selectProject={selectProject} />
-                  : <AskWorkspace query={query} setQuery={setQuery} answer={answer} results={results} submit={() => runAsk()} choose={runAsk} selectProject={selectProject} />}
+              : view === "work" ? <WorkWorkspace selectProject={selectProject} />
+                : view === "projects" ? <ProjectDirectory projects={allWorkspaceProjects} title="Projects" copy="A single workspace index for featured systems and focused experiments." selectProject={selectProject} />
+                  : view === "labs" ? <ProjectDirectory projects={labWork} title="Labs" copy="Focused experiments in computer vision, 3D pipelines, and interactive systems." selectProject={selectProject} />
+                    : view === "knowledge" ? <KnowledgeWorkspace selectProject={selectProject} />
+                      : <AskWorkspace query={query} setQuery={setQuery} answer={answer} results={results} submit={() => runAsk()} choose={runAsk} selectProject={selectProject} />}
           </section>
 
           <ContextRail project={selected} open={contextOpen} close={() => setContextOpen(false)} selectProject={selectProject} />
