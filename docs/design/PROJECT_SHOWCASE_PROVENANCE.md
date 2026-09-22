@@ -20,3 +20,7 @@ No third-party source code, media, models, branding, or binaries were copied int
 - `brunosimon/folio-2025` — MIT — camera choreography reference only; no code, identity, or media copied.
 
 The temporary donor checkouts lived outside the production tree under `/tmp` and are not part of the application or build.
+
+## Final V2 integration
+
+The seven project responses use distinct live HTML/CSS compositions inside Workspace. LabStock and BDRS use diagrams built only from canonical system facts. SuhuLog uses its five sanitized portfolio captures at their native 960 × 600 resolution. TomatoVision, Padel Vision, ObjectTwin, and Porsche 3D preserve PNG evidence for Quick Look and use quality-90 WebP derivatives from `public/projects/<slug>/web/` in the rendered project surface. No source media was upscaled.
