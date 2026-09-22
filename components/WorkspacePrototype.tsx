@@ -465,6 +465,8 @@ function ProjectWorkspace({ project, query, setQuery, ask, back, openImage }: {
   );
 }
 
+const LABSTOCK_DEMO_PROMPT = "Jelaskan project LabStock ini secara ringkas. Apa masalahnya, solusinya, fitur utama, dan status sekarang?";
+
 function LabStockDossier({ project, query, setQuery, ask, back }: {
   project: WorkspaceProject;
   query: string;
@@ -472,7 +474,55 @@ function LabStockDossier({ project, query, setQuery, ask, back }: {
   ask: (value?: string) => void;
   back: () => void;
 }) {
-  const [briefReplay, setBriefReplay] = useState(0);
+  const projectViewportRef = useRef<HTMLElement>(null);
+  const presentationTimersRef = useRef<{ start?: number; typing?: number; reveal?: number }>({});
+  const [typedPrompt, setTypedPrompt] = useState("");
+  const [dossierVisible, setDossierVisible] = useState(false);
+  const clearPresentationTimers = useCallback(() => {
+    const { start, typing, reveal } = presentationTimersRef.current;
+    if (start !== undefined) window.clearTimeout(start);
+    if (typing !== undefined) window.clearInterval(typing);
+    if (reveal !== undefined) window.clearTimeout(reveal);
+    presentationTimersRef.current = {};
+  }, []);
+  const runPresentation = useCallback((scrollToTop = false) => {
+    clearPresentationTimers();
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (scrollToTop) {
+      projectViewportRef.current?.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+    }
+
+    if (reducedMotion) {
+      setTypedPrompt(LABSTOCK_DEMO_PROMPT);
+      setDossierVisible(true);
+      return;
+    }
+
+    setTypedPrompt("");
+    setDossierVisible(false);
+    let nextLength = 0;
+    presentationTimersRef.current.typing = window.setInterval(() => {
+      nextLength += 1;
+      setTypedPrompt(LABSTOCK_DEMO_PROMPT.slice(0, nextLength));
+      if (nextLength >= LABSTOCK_DEMO_PROMPT.length) {
+        if (presentationTimersRef.current.typing !== undefined) {
+          window.clearInterval(presentationTimersRef.current.typing);
+          presentationTimersRef.current.typing = undefined;
+        }
+        presentationTimersRef.current.reveal = window.setTimeout(() => {
+          setDossierVisible(true);
+          presentationTimersRef.current.reveal = undefined;
+        }, 520);
+      }
+    }, 18);
+  }, [clearPresentationTimers]);
+
+  useEffect(() => {
+    presentationTimersRef.current.start = window.setTimeout(() => runPresentation(), 0);
+    return clearPresentationTimers;
+  }, [clearPresentationTimers, runPresentation]);
+
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({
     behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
     block: "start",
@@ -486,8 +536,25 @@ function LabStockDossier({ project, query, setQuery, ask, back }: {
   ];
 
   return (
-    <main className="aw-center aw-project-detail aw-labstock-dossier aw-enter">
+    <main ref={projectViewportRef} className="aw-center aw-project-detail aw-labstock-dossier aw-enter">
       <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+
+      <section className="aw-project-session" aria-labelledby="labstock-session-title">
+        <header>
+          <div><i /><span id="labstock-session-title">You · prompt</span><small>Scripted project opener</small></div>
+          <button type="button" onClick={() => runPresentation(true)} aria-label="Replay LabStock project presentation">↻ Replay Demo</button>
+        </header>
+        <div className="aw-session-query">
+          <span aria-hidden="true">Q</span>
+          <div>
+            <small>Project query</small>
+            <p aria-label={LABSTOCK_DEMO_PROMPT}>{typedPrompt}{typedPrompt.length < LABSTOCK_DEMO_PROMPT.length && <span className="aw-typing-caret" aria-hidden="true" />}</p>
+          </div>
+        </div>
+      </section>
+
+      {dossierVisible && <div className="aw-dossier-response">
+        <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
 
       <header className="aw-dossier-header">
         <div className="aw-dossier-heading">
@@ -497,7 +564,6 @@ function LabStockDossier({ project, query, setQuery, ask, back }: {
         </div>
         <div className="aw-dossier-actions">
           <button type="button" onClick={() => scrollTo("labstock-architecture")}>Review system</button>
-          <button type="button" className="is-primary" onClick={() => ask(project.askSuggestion)}>Ask about LabStock</button>
         </div>
       </header>
 
@@ -506,27 +572,6 @@ function LabStockDossier({ project, query, setQuery, ask, back }: {
         <div><dt>Stack</dt><dd>{project.stack.join(" · ")}</dd></div>
         <div><dt>Public evidence</dt><dd>Workflow and correctness behavior</dd></div>
       </dl>
-
-      <section className="aw-project-session" aria-labelledby="labstock-session-title">
-        <header>
-          <div><i /><span id="labstock-session-title">Guided project brief</span><small>LabStock context</small></div>
-          <button type="button" onClick={() => setBriefReplay((value) => value + 1)} aria-label="Replay LabStock project brief">↻ Replay brief</button>
-        </header>
-        <div key={briefReplay} className={`aw-project-session-content ${briefReplay > 0 ? "is-replaying" : ""}`}>
-          <div className="aw-session-query">
-            <span aria-hidden="true">Q</span>
-            <div><small>User query</small><p>Jelaskan project LabStock ini secara ringkas. Apa masalahnya, solusinya, fitur utama, dan status sekarang?</p></div>
-          </div>
-          <div className="aw-session-brief">
-            <span aria-hidden="true">W</span>
-            <div>
-              <small>Workspace briefing</small>
-              <p>LabStock mengubah workbook stok laboratorium menjadi ledger yang dapat ditelusuri, laporan bulanan dan tahunan, serta ekspor Excel yang kompatibel dengan template. Alur impornya mempertahankan provenance sumber, mengenali impor ulang agar tidak menggandakan pergerakan, dan menyimpan koreksi tanpa menghapus histori. Status proyek saat ini <strong>{project.status}</strong>; materi publik dibatasi pada bukti workflow dan correctness.</p>
-              <button type="button" onClick={() => ask(project.askSuggestion)}>Ask a follow-up →</button>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <section className="aw-dossier-glance" aria-labelledby="labstock-glance-title">
         <header><span>At a glance</span><h2 id="labstock-glance-title">The system in twenty seconds</h2></header>
@@ -584,6 +629,7 @@ function LabStockDossier({ project, query, setQuery, ask, back }: {
         <header><div><span>07</span><h2>Ask about LabStock</h2></div><button type="button" onClick={() => ask(project.askSuggestion)}>Use suggested question</button></header>
         <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder="Ask about LabStock’s import, ledger, reports, or export…" />
       </section>
+      </div>}
     </main>
   );
 }
