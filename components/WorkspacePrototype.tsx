@@ -291,11 +291,11 @@ function HomeWorkspace({ query, setQuery, submit, ask, setView, selectProject }:
   setView: (view: WorkspaceView) => void;
   selectProject: (project: WorkspaceProject) => void;
 }) {
-  const starters = [
-    { title: "Explore my projects", detail: "See what I’ve built", icon: "work" as const, action: () => ask("What are Adjie’s main projects?") },
-    { title: "Ask about my work", detail: "Technical context", icon: "ask" as const, action: () => ask("What kind of software does Adjie build?") },
-    { title: "Operational systems", detail: "Workflows and reliability", icon: "projects" as const, action: () => ask("Tell me about Adjie’s operational software projects.") },
-    { title: "Applied AI", detail: "Research and evaluation", icon: "spark" as const, action: () => ask("What applied AI and computer vision work has Adjie done?") },
+  const suggestions = [
+    { label: "Explore my projects", prompt: "What are Adjie’s main projects?", icon: "work" as const },
+    { label: "How does SuhuLog work?", prompt: "How does SuhuLog work?", icon: "ask" as const },
+    { label: "Show applied AI work", prompt: "What applied AI and computer vision work has Adjie done?", icon: "spark" as const },
+    { label: "Show verified evidence", prompt: "What evidence is available for Adjie’s work?", icon: "book" as const },
   ];
 
   return (
@@ -315,24 +315,24 @@ function HomeWorkspace({ query, setQuery, submit, ask, setView, selectProject }:
 
       <Composer query={query} setQuery={setQuery} submit={submit} />
 
-      <section className="aw-starters">
-        <h2>Start with</h2>
-        <div>{starters.map((item) => (
-          <button type="button" key={item.title} onClick={item.action}>
+      <section className="aw-suggestions" aria-label="Suggested questions">
+        <h2>Try asking</h2>
+        <div>{suggestions.map((item) => (
+          <button type="button" key={item.label} onClick={() => ask(item.prompt)}>
             <span><Glyph name={item.icon} /></span>
-            <strong>{item.title}</strong>
-            <small>{item.detail}</small>
+            <strong>{item.label}</strong>
+            <Glyph name="arrow" />
           </button>
         ))}</div>
       </section>
 
       <section className="aw-recent">
-        <header><div><strong>Recent</strong><span><button className="is-active" type="button">Projects</button><button type="button" onClick={() => setView("work")}>Systems</button><button type="button" onClick={() => setView("labs")}>Labs</button></span></div><button type="button" onClick={() => setView("work")}>View all <Glyph name="arrow" /></button></header>
+        <header><div><strong>Recent work</strong><span><button className="is-active" type="button">Featured</button><button type="button" onClick={() => setView("work")}>Systems</button><button type="button" onClick={() => setView("labs")}>Labs</button></span></div><button type="button" onClick={() => setView("work")}>View all <Glyph name="arrow" /></button></header>
         <div>
           {featuredWork.map((project) => (
             <button type="button" key={project.slug} onClick={() => selectProject(project)}>
-              <span className="aw-row-icon"><Glyph name={project.slug === "tomato-ripeness" ? "spark" : "ask"} /></span>
-              <span><strong>{project.title}</strong><small>{project.summary}</small></span>
+              <span className="aw-recent-identity"><strong>{project.title}</strong><small>{project.eyebrow}{project.status ? " · " + project.status : ""}</small></span>
+              <p>{project.summary}</p>
               <Glyph name="arrow" />
             </button>
           ))}

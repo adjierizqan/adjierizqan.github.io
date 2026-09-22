@@ -376,7 +376,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   scrollbar-width: thin;
   scrollbar-color: #d4d6da transparent;
 }
-.aw-home { width: min(100%, 56rem); }
+.aw-home { width: min(100%, 68rem); }
 .aw-enter { animation: aw-enter 230ms cubic-bezier(.2,.75,.25,1) both; }
 @keyframes aw-enter { from { opacity: .25; transform: translateY(4px); } }
 .aw-identity { display: flex; align-items: start; justify-content: space-between; gap: 2rem; }
@@ -480,36 +480,38 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-composer-submit { display: flex; align-items: center; gap: .65rem; }
 .aw-composer-submit > span { color: #676c75; font-size: .63rem; font-weight: 600; white-space: nowrap; }
 
-.aw-starters { margin-top: 1.75rem; }
-.aw-starters h2,
+.aw-suggestions { margin-top: 1.65rem; }
+.aw-suggestions h2,
 .aw-recent > header strong { color: #27292f; font-size: .72rem; font-weight: 700; }
-.aw-starters > div { display: grid; grid-template-columns: repeat(4,1fr); gap: .6rem; margin-top: .6rem; }
-.aw-starters button {
+.aw-suggestions > div { display: grid; grid-template-columns: repeat(2, 1fr); margin-top: .55rem; border-block: 1px solid #e1e3e7; }
+.aw-suggestions button {
   display: grid;
-  min-height: 8.6rem;
-  align-content: start;
-  border: 1px solid #e3e5e8;
-  border-radius: .72rem;
-  background: #fff;
-  padding: .78rem;
+  min-width: 0;
+  min-height: 3.05rem;
+  grid-template-columns: 1.65rem minmax(0, 1fr) 1rem;
+  align-items: center;
+  gap: .65rem;
+  padding: .55rem .65rem;
   text-align: left;
-  transition: border-color 130ms ease, box-shadow 130ms ease, transform 130ms ease;
+  transition: background 140ms ease, color 140ms ease;
 }
-.aw-starters button:hover { border-color: #c8cbd1; box-shadow: 0 2px 7px rgb(0 0 0 / 4%); transform: translateY(-1px); }
-.aw-starters button > span {
+.aw-suggestions button:nth-child(even) { border-left: 1px solid #e1e3e7; }
+.aw-suggestions button:nth-child(n+3) { border-top: 1px solid #e1e3e7; }
+.aw-suggestions button:hover { background: #f7f8f9; color: #17191e; }
+.aw-suggestions button > span {
   display: grid;
-  width: 1.65rem;
-  height: 1.65rem;
+  width: 1.55rem;
+  height: 1.55rem;
   place-items: center;
-  border-radius: .48rem;
-  background: #f0f1f3;
+  border-radius: .4rem;
+  background: #f1f2f4;
   color: #6e737d;
 }
-.aw-starters button svg { width: .78rem; }
-.aw-starters strong { margin-top: .7rem; color: #24262b; font-size: .7rem; font-weight: 700; }
-.aw-starters small { margin-top: .22rem; color: #858a93; font-size: .62rem; line-height: 1.4; }
+.aw-suggestions button svg { width: .72rem; }
+.aw-suggestions button > svg { color: #a0a4ac; }
+.aw-suggestions strong { overflow: hidden; color: #3e4249; font-size: var(--aw-text-ui); font-weight: 620; text-overflow: ellipsis; white-space: nowrap; }
 
-.aw-recent { margin-top: 1.75rem; padding-bottom: 1.5rem; }
+.aw-recent { margin-top: 2rem; padding-bottom: 1.5rem; }
 .aw-recent > header { display: flex; align-items: center; justify-content: space-between; padding-bottom: .65rem; }
 .aw-recent > header > div { display: flex; align-items: center; gap: .8rem; }
 .aw-recent > header > div > span { display: flex; align-items: center; gap: .2rem; }
@@ -517,38 +519,30 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-recent > header > div button.is-active { background: #eaecef; color: #26282d; font-weight: 680; }
 .aw-recent > header button { display: flex; align-items: center; gap: .35rem; color: #737781; font-size: .56rem; }
 .aw-recent > header svg { width: .68rem; }
-.aw-recent > div { display: grid; gap: .32rem; }
+.aw-recent > div { border-bottom: 1px solid #dfe2e6; }
 .aw-recent > div > button {
   display: grid;
-  min-height: 3.55rem;
-  grid-template-columns: 2rem minmax(0,1fr) 1rem;
+  width: 100%;
+  min-height: 4.15rem;
+  grid-template-columns: 11rem minmax(0,1fr) 1rem;
   align-items: center;
-  gap: .72rem;
-  border: 1px solid #eceef2;
-  border-radius: .7rem;
-  padding: .45rem .65rem;
+  gap: 1.35rem;
+  border-top: 1px solid #dfe2e6;
+  padding: .7rem .25rem;
   text-align: left;
+  transition: background 140ms ease, padding 140ms ease;
 }
-.aw-recent > div > button:hover { border-color: #d7d9df; background: #fafafb; }
-.aw-row-icon {
-  display: grid;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-  border-radius: .48rem;
-  background: #f1f2f4;
-  color: #777c85;
-}
-.aw-row-icon svg { width: .82rem; }
-.aw-recent button > span:nth-child(2) { display: grid; min-width: 0; gap: .18rem; }
+.aw-recent > div > button:hover { background: #f8f9fa; padding-inline: .65rem; }
+.aw-recent-identity { display: grid; min-width: 0; gap: .2rem; }
 .aw-recent strong { color: #282a30; font-size: .7rem; font-weight: 690; }
 .aw-recent small {
   overflow: hidden;
-  color: #989ca5;
+  color: #898e97;
   font-size: .61rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.aw-recent > div > button p { overflow: hidden; color: #686d76; font-size: var(--aw-text-ui); line-height: 1.5; text-overflow: ellipsis; white-space: nowrap; }
 .aw-recent button > svg { width: .68rem; color: #a3a6ad; }
 
 .aw-page-header {
@@ -1059,7 +1053,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-title-actions,
 .aw-project-shortcuts > header,
 .aw-composer-submit > span { font-size: var(--aw-text-micro); }
-.aw-starters h2,
+.aw-suggestions h2,
 .aw-recent > header strong,
 .aw-project-record h2,
 .aw-project-ask > header > span { font-size: var(--aw-text-section); }
@@ -1200,7 +1194,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-identity blockquote { display: none; }
   .aw-focus-tags { margin-top: 1.2rem; }
   .aw-composer-tools > div button:nth-child(n+3) { display: none; }
-  .aw-starters > div { grid-template-columns: repeat(2,1fr); }
+  .aw-suggestions > div { grid-template-columns: repeat(2,1fr); }
   .aw-page-header { align-items: start; }
   .aw-page-header > small { display: none; }
   .aw-primary-work { grid-template-columns: 1fr; }
@@ -1230,9 +1224,12 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 }
 @media (max-width: 430px) {
   .aw-focus-tags span:nth-child(n+4) { display: none; }
-  .aw-starters > div { grid-template-columns: 1fr 1fr; }
-  .aw-starters button { min-height: 6.4rem; }
-  .aw-recent small { max-width: 15rem; }
+  .aw-suggestions > div { grid-template-columns: 1fr; }
+  .aw-suggestions button:nth-child(even) { border-left: 0; }
+  .aw-suggestions button + button { border-top: 1px solid #e1e3e7; }
+  .aw-recent > div > button { grid-template-columns: minmax(0,1fr) 1rem; gap: .55rem; padding-block: .75rem; }
+  .aw-recent > div > button p { grid-column: 1 / -1; white-space: normal; }
+  .aw-recent small { max-width: 17rem; }
 }
 ::view-transition-old(root),
 ::view-transition-new(root) { animation: none; }
