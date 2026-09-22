@@ -22,6 +22,12 @@ import {
 
 type WorkspaceView = "home" | "work" | "projects" | "labs" | "knowledge" | "ask";
 type Point = { x: number; y: number };
+type WindowState = "open" | "minimized" | "closed";
+type AudioTrack = { src: string; title: string; detail: string };
+
+// Add only a local, licensed public asset here. The player remains honest and
+// inactive until a track is deliberately supplied.
+const workspaceTrack: AudioTrack | null = null;
 
 const prompts = [
   {
@@ -57,7 +63,7 @@ const projectTones: Record<string, string> = {
   "porsche-3d": "#d97706",
 };
 
-function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" | "ask" | "more" | "plus" | "search" | "send" | "menu" | "close" | "arrow" | "spark" | "context" | "speaker" | "sun" | "link" }) {
+function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" | "ask" | "more" | "plus" | "search" | "send" | "menu" | "close" | "arrow" | "spark" | "context" | "speaker" | "sun" | "link" | "play" | "pause" }) {
   const paths = {
     home: <><path d="m3 10 7-6 7 6" /><path d="M5.5 9v7h9V9" /></>,
     work: <><rect x="3" y="5" width="14" height="11" rx="1.5" /><path d="M7 5V3h6v2M3 9h14" /></>,
@@ -77,8 +83,31 @@ function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" 
     speaker: <><path d="M4 8h3l4-3v10l-4-3H4Z" /><path d="M14 7.5a4 4 0 0 1 0 5M16 5a7 7 0 0 1 0 10" /></>,
     sun: <><circle cx="10" cy="10" r="3" /><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M15.7 4.3l-1.4 1.4M5.7 14.3l-1.4 1.4" /></>,
     link: <><path d="M8.5 11.5 11.5 8.5" /><path d="M6.5 13.5H5a3 3 0 0 1 0-6h3M11.5 6.5H13a3 3 0 0 1 0 6h-3" /></>,
+    play: <path d="m7 4 9 6-9 6Z" fill="currentColor" stroke="none" />,
+    pause: <><path d="M7 5v10M13 5v10" strokeWidth="2.4" /></>,
   };
   return <svg viewBox="0 0 20 20" aria-hidden="true">{paths[name]}</svg>;
+}
+
+function MusicPlayer() {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  function togglePlayback() {
+    const audio = audioRef.current;
+    if (!workspaceTrack || !audio) return;
+    if (audio.paused) void audio.play();
+    else audio.pause();
+  }
+
+  return (
+    <section className="aw-music" aria-label="Music">
+      {workspaceTrack && <audio ref={audioRef} src={workspaceTrack.src} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} preload="none" />}
+      <div className="aw-music-art" aria-hidden="true"><Glyph name="speaker" /></div>
+      <span><strong>{workspaceTrack?.title ?? "Music"}</strong><small>{workspaceTrack?.detail ?? "No licensed track added"}</small></span>
+      <button type="button" onClick={togglePlayback} disabled={!workspaceTrack} aria-label={workspaceTrack ? (playing ? "Pause music" : "Play music") : "Music unavailable"} title={workspaceTrack ? undefined : "Add a licensed local track to enable playback"}><Glyph name={playing ? "pause" : "play"} /></button>
+    </section>
+  );
 }
 
 function Composer({ query, setQuery, submit }: {
@@ -372,13 +401,18 @@ function AskWorkspace({ query, setQuery, answer, results, submit, choose, select
   );
 }
 
-function ContextRail({ project, open, close, selectProject }: {
+function ContextRail({ project, open, close, navigate }: {
   project: WorkspaceProject;
   open: boolean;
   close: () => void;
-  selectProject: (project: WorkspaceProject) => void;
+  navigate: (view: WorkspaceView) => void;
 }) {
-  const related = featuredWork.filter((item) => item.slug !== project.slug).slice(0, 3);
+  const progress = [
+    { project: "SuhuLog", detail: "Published case evidence", state: "done" },
+    { project: "TomatoVision", detail: "Evaluation documented", state: "done" },
+    { project: "BDRS", detail: "Evidence review", state: "current" },
+    { project: "LabStock", detail: "Sanitized imagery", state: "next" },
+  ] as const;
 
   return (
     <>
@@ -412,21 +446,22 @@ function ContextRail({ project, open, close, selectProject }: {
             </div>
           </section>
 
-          <section className="aw-context-section">
-            <header>Focus</header>
-            <ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul>
+          <section className="aw-context-section aw-focus-card">
+            <header><span>Focus</span><small>Project progress</small></header>
+            <ol>{progress.map((item) => <li className={"is-" + item.state} key={item.project}><i aria-hidden="true" /><span><strong>{item.project}</strong><small>{item.state === "done" ? "Done" : item.state === "current" ? "Current" : "Next"} · {item.detail}</small></span></li>)}</ol>
           </section>
 
           <section className="aw-context-section aw-quick-links">
-            <header>Quick links</header>
+            <header>Quick Tools</header>
             <div>
-              <a href={site.github} target="_blank" rel="noopener noreferrer"><Glyph name="link" /> GitHub</a>
-              <a href={site.linkedin} target="_blank" rel="noopener noreferrer"><Glyph name="link" /> LinkedIn</a>
               <a href={site.cv} target="_blank" rel="noopener noreferrer"><FileIcon /> Résumé</a>
+              <a href={site.github} target="_blank" rel="noopener noreferrer"><Glyph name="link" /> GitHub</a>
               <a href={"mailto:" + site.email}><MailIcon /> Contact</a>
+              <button type="button" onClick={() => navigate("projects")}><Glyph name="projects" /> Open Projects</button>
             </div>
-            <div className="aw-related"><span>Related work</span>{related.map((item) => <button type="button" key={item.slug} onClick={() => selectProject(item)}><i style={{ backgroundColor: projectTones[item.slug] }} /><span>{item.title}</span><Glyph name="arrow" /></button>)}</div>
           </section>
+
+          <MusicPlayer />
         </div>
       </aside>
       {open && <button className="aw-context-scrim" type="button" onClick={close} aria-label="Close context" />}
@@ -476,6 +511,7 @@ function CommandPalette({ open, close, setView, selectProject }: {
 export function WorkspacePrototype() {
   const windowRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; start: Point; origin: Point } | null>(null);
+  const restorePositionRef = useRef<Point>({ x: 0, y: 0 });
   const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [view, setView] = useState<WorkspaceView>("home");
@@ -487,6 +523,8 @@ export function WorkspacePrototype() {
   const [contextOpen, setContextOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [strongContrast, setStrongContrast] = useState(false);
+  const [windowState, setWindowState] = useState<WindowState>("open");
+  const [maximized, setMaximized] = useState(false);
 
   const selected = allWorkspaceProjects.find((project) => project.slug === selectedSlug) ?? featuredWork[0];
   const results = useMemo(() => resultSlugs.map((slug) => allWorkspaceProjects.find((project) => project.slug === slug)).filter(Boolean) as WorkspaceProject[], [resultSlugs]);
@@ -553,7 +591,7 @@ export function WorkspacePrototype() {
   }
 
   function onPointerDown(event: ReactPointerEvent<HTMLElement>) {
-    if (window.innerWidth < 1100 || event.button !== 0 || (event.target as HTMLElement).closest("[data-no-drag]")) return;
+    if (window.innerWidth < 1100 || maximized || event.button !== 0 || (event.target as HTMLElement).closest("[data-no-drag]")) return;
     dragRef.current = { pointerId: event.pointerId, start: { x: event.clientX, y: event.clientY }, origin: position };
     event.currentTarget.setPointerCapture(event.pointerId);
     setDragging(true);
@@ -587,13 +625,34 @@ export function WorkspacePrototype() {
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   }
 
+  function toggleMaximize() {
+    if (window.innerWidth < 1100) return;
+    if (maximized) {
+      setMaximized(false);
+      setPosition(restorePositionRef.current);
+    } else {
+      restorePositionRef.current = position;
+      setPosition({ x: 0, y: 0 });
+      setMaximized(true);
+      setWindowState("open");
+    }
+  }
+
+  function openWorkspace(nextView?: WorkspaceView) {
+    if (nextView) setView(nextView);
+    setWindowState("open");
+  }
+
+  const windowTransform = "translate3d(" + position.x + "px, " + position.y + "px, 0)" + (windowState === "open" ? " scale(1)" : " scale(.94)");
+
   return (
     <div className={"aw-desktop " + (strongContrast ? "is-strong-contrast" : "")}>
       <div className="aw-wallpaper" aria-hidden="true" />
       <div
         ref={windowRef}
-        className={"aw-window " + (dragging ? "is-dragging" : "")}
-        style={{ transform: "translate3d(" + position.x + "px, " + position.y + "px, 0)" }}
+        className={"aw-window " + (dragging ? "is-dragging " : "") + (maximized ? "is-maximized " : "") + (windowState !== "open" ? "is-hidden" : "")}
+        style={{ transform: windowTransform }}
+        aria-hidden={windowState !== "open"}
       >
         <header
           className="aw-titlebar"
@@ -602,8 +661,13 @@ export function WorkspacePrototype() {
           onPointerMove={onPointerMove}
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
+          onDoubleClick={(event) => { if (!(event.target as HTMLElement).closest("[data-no-drag]")) toggleMaximize(); }}
         >
-          <div className="aw-traffic" aria-label="Window controls"><i /><i /><i /></div>
+          <div className="aw-traffic" aria-label="Window controls" data-no-drag>
+            <button type="button" className="is-close" onClick={() => setWindowState("closed")} aria-label="Close workspace" title="Close" />
+            <button type="button" className="is-minimize" onClick={() => setWindowState("minimized")} aria-label="Minimize workspace" title="Minimize" />
+            <button type="button" className="is-maximize" onClick={toggleMaximize} aria-label={maximized ? "Restore workspace" : "Maximize workspace"} title={maximized ? "Restore" : "Maximize"} />
+          </div>
           <div className="aw-title-actions" data-no-drag>
             <span>Build · Solve · Improve</span>
             <button type="button" onClick={() => setContextOpen(true)} className="aw-context-toggle"><Glyph name="context" /> Context</button>
@@ -630,9 +694,23 @@ export function WorkspacePrototype() {
                       : <AskWorkspace query={query} setQuery={setQuery} answer={answer} results={results} submit={() => runAsk()} choose={runAsk} selectProject={selectProject} />}
           </section>
 
-          <ContextRail project={selected} open={contextOpen} close={() => setContextOpen(false)} selectProject={selectProject} />
+          <ContextRail project={selected} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} />
         </div>
       </div>
+
+      <nav className="aw-dock" aria-label="Workspace dock">
+        {([
+          { label: "Workspace", icon: "home", view: undefined },
+          { label: "Work", icon: "work", view: "work" },
+          { label: "Projects", icon: "projects", view: "projects" },
+          { label: "Labs", icon: "labs", view: "labs" },
+          { label: "Ask", icon: "ask", view: "ask" },
+        ] as { label: string; icon: "home" | "work" | "projects" | "labs" | "ask"; view?: WorkspaceView }[]).map((item) => {
+          const active = windowState === "open" && (item.view ? view === item.view : view === "home");
+          const open = item.label === "Workspace" && windowState !== "closed";
+          return <button type="button" className={(active ? "is-active " : "") + (open ? "is-open" : "")} key={item.label} onClick={() => openWorkspace(item.view)} aria-label={item.label} title={item.label}><Glyph name={item.icon} /><i /></button>;
+        })}
+      </nav>
 
       <CommandPalette open={paletteOpen} close={() => setPaletteOpen(false)} setView={setView} selectProject={selectProject} />
     </div>
