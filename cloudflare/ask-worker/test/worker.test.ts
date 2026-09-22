@@ -75,8 +75,26 @@ describe("Adjie Workspace Ask Worker", () => {
   test("guards unrelated and missing-context answers in the system prompt", () => {
     const messages = buildModelMessages({ message: "Explain quantum gravity.", history: [] });
     expect(messages[0].content).toContain("Do not answer unrelated general-knowledge questions");
-    expect(messages[0].content).toContain("does not currently contain enough verified information");
+    expect(messages[0].content).toContain("public portfolio does not identify");
     expect(messages[0].content).not.toContain("THINK IT");
+  });
+
+  test("sets concise natural response style and primary project hierarchy", () => {
+    const prompt = buildModelMessages({ message: "What are Adjie’s main projects?", history: [] })[0].content;
+    expect(prompt).toContain("around 40–100 words");
+    expect(prompt).toContain("without a preamble or artificial heading");
+    expect(prompt).toContain("LabStock, BDRS, SuhuLog, and TomatoVision");
+    expect(prompt).toContain("describe only those four and stop");
+    expect(prompt).toContain("at most one brief, relevant follow-up sentence");
+    expect(prompt).toContain("Indonesian should be conversational and professional");
+    expect(prompt).toContain("outside Adjie Workspace’s portfolio scope");
+    expect(prompt).toContain("explain Adjie Workspace itself");
+    expect(prompt).toContain("Never use first-person capability statements");
+    expect(prompt).toContain("does not identify specific customers or clients");
+    expect(prompt).toContain("without saying a system is live, deployed, in production, or internal");
+    expect(prompt).toContain("Do not mention Labs or secondary work");
+    expect(prompt).toContain("Preserve domain wording from the context");
+    expect(prompt).toContain("familiar words and concrete verbs");
   });
 
   test("rejects empty, too-long, malformed, and unknown project requests", async () => {
