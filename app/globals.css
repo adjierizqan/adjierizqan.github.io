@@ -921,6 +921,88 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-media-pair video { width: 100%; height: 100%; min-height: 22rem; object-fit: contain; }
 .aw-media-pair figcaption { background: #fff; padding: .5rem .1rem; color: #737881; font-size: var(--aw-text-micro); }
 
+.aw-showcase-plate { margin: 2.6rem 0 0; }
+.aw-showcase-plate > span { position: relative; display: block; overflow: hidden; aspect-ratio: 24 / 17; border: 1px solid #d9dde2; background: #eceef0; }
+.aw-showcase-plate.is-dark > span { border-color: #30343a; background: #11150f; }
+.aw-showcase-plate img { transition: transform 280ms cubic-bezier(.2,.75,.25,1); }
+.aw-showcase-plate:hover img { transform: scale(1.006); }
+.aw-showcase-plate figcaption { border-bottom: 1px solid #dfe2e6; padding: .65rem .05rem; color: #747983; font-size: var(--aw-text-micro); line-height: 1.45; }
+
+.aw-image-compare { margin-top: 3.6rem; border-top: 1px solid #dfe2e6; padding-top: 1.2rem; }
+.aw-image-compare > header { display: flex; align-items: end; justify-content: space-between; gap: 2rem; }
+.aw-image-compare > header span,
+.aw-padel-player > header span,
+.aw-twin-studio > header span,
+.aw-porsche-sequence > header span { color: #848993; font-size: var(--aw-text-micro); font-weight: 680; letter-spacing: .055em; text-transform: uppercase; }
+.aw-image-compare > header h2,
+.aw-padel-player > header h2,
+.aw-twin-studio > header h2,
+.aw-porsche-sequence > header h2 { margin-top: .45rem; color: #202228; font-size: clamp(1.45rem, 2.4vw, 2rem); line-height: 1.16; letter-spacing: -.04em; }
+.aw-image-compare > header button { border-bottom: 1px solid #aeb3bb; padding: .35rem 0; color: #4f545d; font-size: var(--aw-text-ui); }
+.aw-image-compare-stage { position: relative; height: clamp(27rem, 60vh, 40rem); margin-top: 1.2rem; overflow: hidden; border: 1px solid #30343a; background: #11150f; }
+.aw-image-compare-stage > img,
+.aw-image-compare-overlay,
+.aw-image-compare-overlay img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.aw-image-compare-overlay { z-index: 1; overflow: hidden; }
+.aw-image-compare-stage > i { position: absolute; z-index: 3; top: 0; bottom: 0; width: 1px; background: rgb(255 255 255 / 82%); transform: translateX(-.5px); pointer-events: none; }
+.aw-image-compare-stage > i b { position: absolute; top: 50%; left: 50%; display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border: 1px solid rgb(255 255 255 / 72%); border-radius: 50%; background: rgb(17 21 15 / 84%); color: #fff; font-style: normal; transform: translate(-50%,-50%); }
+.aw-image-compare-stage > span { position: absolute; z-index: 4; top: .8rem; background: rgb(17 21 15 / 86%); padding: .42rem .58rem; color: #fff; font-family: var(--font-geist-mono), monospace; font-size: var(--aw-text-micro); }
+.aw-image-compare-stage > span.is-left { left: .8rem; }
+.aw-image-compare-stage > span.is-right { right: .8rem; }
+.aw-image-compare-stage input { position: absolute; z-index: 5; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; }
+.aw-image-compare-stage:has(input:focus-visible) { outline: 2px solid #2563eb; outline-offset: 3px; }
+.aw-image-compare > p { max-width: 47rem; margin-top: .8rem; color: #686d76; font-size: var(--aw-text-body); line-height: 1.6; }
+
+.aw-padel-player,
+.aw-twin-studio,
+.aw-porsche-sequence { margin-top: 3.6rem; border-top: 1px solid #dfe2e6; padding-top: 1.2rem; }
+.aw-padel-player > header,
+.aw-twin-studio > header,
+.aw-porsche-sequence > header { display: flex; align-items: end; justify-content: space-between; gap: 2rem; }
+.aw-padel-player > header small,
+.aw-porsche-sequence > header small { color: #8d929b; font-family: var(--font-geist-mono), monospace; font-size: var(--aw-text-micro); }
+.aw-padel-stage-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(17rem, .7fr); min-height: 35rem; margin-top: 1.15rem; border-block: 1px solid #dfe2e6; }
+.aw-padel-visual { position: relative; min-width: 0; overflow: hidden; background: #071728; cursor: zoom-in; }
+.aw-padel-visual > span { position: absolute; inset: 0; animation: aw-signature-frame-in 220ms cubic-bezier(.2,.75,.25,1) both; }
+.aw-padel-visual > b,
+.aw-twin-viewport > b { position: absolute; right: .8rem; bottom: .8rem; background: rgb(8 18 29 / 84%); padding: .42rem .56rem; color: #fff; font-size: var(--aw-text-micro); font-weight: 620; }
+.aw-padel-stage-grid > div { border-left: 1px solid #dfe2e6; }
+.aw-padel-stage-grid > div > button { position: relative; display: grid; width: 100%; grid-template-columns: 2rem minmax(0,1fr); column-gap: .65rem; border-bottom: 1px solid #e1e4e8; padding: .9rem; color: #737881; text-align: left; transition: background 160ms ease, padding-left 180ms ease; }
+.aw-padel-stage-grid > div > button:last-child { border-bottom: 0; }
+.aw-padel-stage-grid > div > button:hover { background: #f7f8f9; }
+.aw-padel-stage-grid > div > button.is-active { background: #eef6fb; padding-left: 1.05rem; color: #20252c; }
+.aw-padel-stage-grid > div > button.is-active::before { position: absolute; top: 0; bottom: 0; left: -1px; width: 2px; background: #169ed5; content: ""; }
+.aw-padel-stage-grid button small { grid-row: 1 / 3; font-family: var(--font-geist-mono), monospace; font-size: var(--aw-text-micro); }
+.aw-padel-stage-grid button strong { font-size: var(--aw-text-ui); }
+.aw-padel-stage-grid button p { grid-column: 2; margin-top: .2rem; font-size: var(--aw-text-micro); line-height: 1.4; }
+.aw-signature-video { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; align-items: end; gap: 1rem; margin-top: 1rem; border-bottom: 1px solid #dfe2e6; padding-bottom: .75rem; }
+.aw-signature-video video { width: 100%; max-height: 33rem; background: #111318; object-fit: contain; }
+.aw-signature-video figcaption { color: #737881; font-size: var(--aw-text-micro); line-height: 1.5; }
+
+.aw-twin-studio > header nav { display: flex; gap: .15rem; border: 1px solid #dfe2e6; padding: .2rem; }
+.aw-twin-studio > header nav button { padding: .42rem .62rem; color: #757a83; font-size: var(--aw-text-ui); }
+.aw-twin-studio > header nav button[aria-pressed="true"] { background: #2f2940; color: #fff; }
+.aw-twin-viewport { position: relative; display: block; width: 100%; height: clamp(31rem, 66vh, 43rem); margin-top: 1rem; overflow: hidden; border: 1px solid #d9d4de; background: #f1eef5; cursor: zoom-in; }
+.aw-twin-viewport > span { position: absolute; inset: 0; animation: aw-signature-frame-in 220ms cubic-bezier(.2,.75,.25,1) both; }
+.aw-twin-caption { display: grid; grid-template-columns: 11rem minmax(0,1fr); gap: 1rem; border-bottom: 1px solid #dfe2e6; padding: .75rem .05rem; }
+.aw-twin-caption strong { color: #36313d; font-size: var(--aw-text-ui); }
+.aw-twin-caption p { color: #70747c; font-size: var(--aw-text-body); }
+
+.aw-porsche-stage { height: clamp(31rem, 67vh, 44rem); margin-top: 1.1rem; overflow: hidden; background: #e9e7e1; }
+.aw-porsche-stage button,
+.aw-porsche-stage button > span { position: relative; display: block; width: 100%; height: 100%; }
+.aw-porsche-stage button > span { animation: aw-signature-frame-in 260ms cubic-bezier(.2,.75,.25,1) both; }
+.aw-porsche-stage video { display: block; width: 100%; height: 100%; background: #e9e7e1; object-fit: contain; }
+.aw-porsche-controls { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid #dfe2e6; }
+.aw-porsche-controls button { position: relative; min-width: 0; padding: .8rem .85rem 1rem 0; text-align: left; }
+.aw-porsche-controls button + button { border-left: 1px solid #dfe2e6; padding-left: .85rem; }
+.aw-porsche-controls button::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: #b91f36; content: ""; opacity: 0; transform: scaleX(.3); transition: opacity 160ms ease, transform 180ms ease; }
+.aw-porsche-controls button.is-active::after { opacity: 1; transform: scaleX(1); }
+.aw-porsche-controls small { color: #999da5; font-family: var(--font-geist-mono), monospace; font-size: var(--aw-text-micro); }
+.aw-porsche-controls strong { display: block; margin-top: .45rem; color: #30333a; font-size: var(--aw-text-ui); }
+.aw-porsche-controls span { display: block; margin-top: .35rem; color: #777c85; font-size: var(--aw-text-micro); line-height: 1.45; }
+@keyframes aw-signature-frame-in { from { opacity: .3; transform: scale(1.008); } }
+
 .aw-research-comparison { margin-top: 3.5rem; border-top: 1px solid #dfe2e6; padding-top: 1.2rem; }
 .aw-research-comparison > header span,
 .aw-secondary-signature > header span,
@@ -1300,6 +1382,27 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-media-pair,
   .aw-comparison-result,
   .aw-research-tradeoff { grid-template-columns: 1fr; }
+  .aw-showcase-plate { margin-top: 2rem; }
+  .aw-image-compare > header,
+  .aw-padel-player > header,
+  .aw-twin-studio > header,
+  .aw-porsche-sequence > header { align-items: start; flex-direction: column; gap: .8rem; }
+  .aw-image-compare-stage { height: 62vw; min-height: 17rem; }
+  .aw-padel-stage-grid { grid-template-columns: 1fr; min-height: 0; }
+  .aw-padel-visual { height: 58vw; min-height: 15rem; }
+  .aw-padel-stage-grid > div { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #dfe2e6; border-left: 0; }
+  .aw-padel-stage-grid > div > button { border-right: 1px solid #e1e4e8; }
+  .aw-padel-stage-grid > div > button:nth-child(even) { border-right: 0; }
+  .aw-padel-stage-grid > div > button.is-active::before { top: -1px; right: 0; bottom: auto; left: 0; width: auto; height: 2px; }
+  .aw-signature-video { grid-template-columns: 1fr; }
+  .aw-twin-studio > header nav { width: 100%; overflow-x: auto; }
+  .aw-twin-studio > header nav button { flex: 1 0 auto; }
+  .aw-twin-viewport,
+  .aw-porsche-stage { height: 62vw; min-height: 18rem; }
+  .aw-twin-caption { grid-template-columns: 1fr; gap: .3rem; }
+  .aw-porsche-controls { grid-template-columns: 1fr 1fr; }
+  .aw-porsche-controls button:nth-child(3) { border-left: 0; }
+  .aw-porsche-controls button:nth-child(n+3) { border-top: 1px solid #dfe2e6; }
   .aw-media-pair > button { min-height: 15rem; }
   .aw-media-pair video { min-height: 15rem; }
   .aw-status-progression > div,
@@ -1369,7 +1472,13 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-comparison-result { animation: none; }
   .aw-suhulog-frame { animation: none; }
   .aw-suhulog-steps button,
-  .aw-suhulog-steps button::before { transition: none; }
+  .aw-suhulog-steps button::before,
+  .aw-showcase-plate img,
+  .aw-padel-stage-grid > div > button,
+  .aw-porsche-controls button::after { transition: none; }
+  .aw-padel-visual > span,
+  .aw-twin-viewport > span,
+  .aw-porsche-stage button > span { animation: none; }
 }
 ::view-transition-old(root),
 ::view-transition-new(root) { animation: none; }
