@@ -11,6 +11,7 @@ function aiRecord(project: (typeof allWorkspaceProjects)[number]) {
     name: project.title,
     workspaceTarget: project.slug,
     category: project.eyebrow,
+    ...(project.status ? { publicStatus: project.status } : {}),
     summary: project.summary,
     problem: project.problem,
     solution: project.solution,

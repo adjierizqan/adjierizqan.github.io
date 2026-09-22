@@ -427,6 +427,10 @@ function ProjectWorkspace({ project, query, setQuery, ask, back, openImage }: {
   back: () => void;
   openImage: (index: number, trigger: HTMLElement) => void;
 }) {
+  if (project.slug === "labstock") {
+    return <LabStockDossier project={project} query={query} setQuery={setQuery} ask={ask} back={back} />;
+  }
+
   return (
     <main className="aw-center aw-project-detail aw-enter">
       <button type="button" className="aw-project-back" onClick={back}>← Work</button>
@@ -456,6 +460,107 @@ function ProjectWorkspace({ project, query, setQuery, ask, back, openImage }: {
       <section className="aw-project-ask">
         <header><span>Ask about this project</span><button type="button" onClick={() => ask(project.askSuggestion)}>Use suggested question</button></header>
         <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder={"Ask about " + project.title + "…"} />
+      </section>
+    </main>
+  );
+}
+
+function LabStockDossier({ project, query, setQuery, ask, back }: {
+  project: WorkspaceProject;
+  query: string;
+  setQuery: (value: string) => void;
+  ask: (value?: string) => void;
+  back: () => void;
+}) {
+  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({
+    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    block: "start",
+  });
+  const architecture = [
+    { label: "Source", value: "Workbook rows" },
+    { label: "Import", value: "Mapping + provenance" },
+    { label: "Ledger", value: "Effective movements" },
+    { label: "Reports", value: "Monthly + yearly" },
+    { label: "Export", value: "Detail + recap" },
+  ];
+
+  return (
+    <main className="aw-center aw-project-detail aw-labstock-dossier aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+
+      <header className="aw-dossier-header">
+        <div className="aw-dossier-heading">
+          <div><span>{project.eyebrow}</span>{project.status && <small>{project.status}</small>}</div>
+          <h1>{project.title}</h1>
+          <p>{project.summary}</p>
+        </div>
+        <div className="aw-dossier-actions">
+          <button type="button" onClick={() => scrollTo("labstock-architecture")}>Review system</button>
+          <button type="button" className="is-primary" onClick={() => ask(project.askSuggestion)}>Ask about LabStock</button>
+        </div>
+      </header>
+
+      <dl className="aw-dossier-metadata" aria-label="LabStock project metadata">
+        <div><dt>Role</dt><dd>{project.role}</dd></div>
+        <div><dt>Stack</dt><dd>{project.stack.join(" · ")}</dd></div>
+        <div><dt>Public evidence</dt><dd>Workflow and correctness behavior</dd></div>
+      </dl>
+
+      <section className="aw-dossier-glance" aria-labelledby="labstock-glance-title">
+        <header><span>At a glance</span><h2 id="labstock-glance-title">The system in twenty seconds</h2></header>
+        <div>
+          <article><span>Problem</span><p>Move spreadsheet inventory into a dependable ledger without losing source traceability.</p></article>
+          <article><span>What I built</span><p>A source-aware import, reporting, correction, and Excel export workflow.</p></article>
+          <article><span>Current status</span><p>{project.status}. Further work follows the maintenance process.</p></article>
+          <article><span>Evidence</span><p>Idempotent re-import, history-preserving corrections, and detail + recap export.</p></article>
+        </div>
+      </section>
+
+      <section className="aw-dossier-section" id="labstock-problem">
+        <header><span>01</span><h2>Problem</h2></header>
+        <div className="aw-dossier-copy"><p>{project.problem}</p><p>{project.whyItMatters}</p></div>
+      </section>
+
+      <section className="aw-dossier-section" id="labstock-architecture">
+        <header><span>02</span><h2>System / Architecture</h2></header>
+        <div className="aw-dossier-flow" aria-label="LabStock data flow">
+          {architecture.map((step, index) => <div key={step.label}><small>{String(index + 1).padStart(2, "0")}</small><strong>{step.label}</strong><span>{step.value}</span></div>)}
+        </div>
+        <p className="aw-dossier-note">Reports and exports derive from stored ledger data while provenance retains the connection to source evidence.</p>
+      </section>
+
+      <section className="aw-dossier-section">
+        <header><span>03</span><h2>Important Engineering Decisions</h2></header>
+        <ol className="aw-dossier-decisions">
+          {project.howItWorks.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></li>)}
+        </ol>
+      </section>
+
+      <section className="aw-dossier-section">
+        <header><span>04</span><h2>Evidence / Tests</h2></header>
+        <dl className="aw-dossier-evidence">
+          {project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
+        </dl>
+        <p className="aw-dossier-note">Only behavior supported by the canonical project record is published here; private operational data and infrastructure remain excluded.</p>
+      </section>
+
+      <section className="aw-dossier-section">
+        <header><span>05</span><h2>Screenshots / Artifacts</h2></header>
+        <div className="aw-dossier-media-state">
+          <span>Public media boundary</span>
+          <strong>No sanitized product screenshot is published.</strong>
+          <p>{project.assetNote}</p>
+        </div>
+      </section>
+
+      <section className="aw-dossier-section">
+        <header><span>06</span><h2>Limitations / Current Status</h2></header>
+        <div className="aw-dossier-copy"><p>{project.publicLimitations}</p><p>The canonical project lifecycle is <strong>{project.status}</strong>. This case study does not publish private URLs, infrastructure details, hospital records, or unsanitized media.</p></div>
+      </section>
+
+      <section className="aw-project-ask aw-dossier-ask" id="labstock-ask">
+        <header><div><span>07</span><h2>Ask about LabStock</h2></div><button type="button" onClick={() => ask(project.askSuggestion)}>Use suggested question</button></header>
+        <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder="Ask about LabStock’s import, ledger, reports, or export…" />
       </section>
     </main>
   );

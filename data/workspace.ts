@@ -3,6 +3,7 @@ export type WorkspaceProject = {
   title: string;
   eyebrow: string;
   year: string;
+  status?: string;
   summary: string;
   problem: string;
   solution: string;
@@ -25,6 +26,7 @@ export const featuredWork: WorkspaceProject[] = [
     title: "LabStock",
     eyebrow: "Operational software",
     year: "2026",
+    status: "Closed · maintenance",
     summary: "A laboratory inventory system that turns source workbooks into a traceable stock ledger, monthly and yearly reports, and template-compatible Excel exports.",
     problem: "Spreadsheet inventory data had to move through import, stock ledger, website reporting, and export without losing source traceability or turning corrections into silent rewrites.",
     solution: "Adjie built a source-aware import and reporting workflow that preserves workbook provenance, supports idempotent re-import, and keeps corrections auditable across the ledger, website reports, and exported workbooks.",
@@ -35,7 +37,7 @@ export const featuredWork: WorkspaceProject[] = [
       "Keeps monthly and yearly web reports and exported workbooks on the same ledger data.",
     ],
     role: "Product engineering · data correctness · release engineering",
-    stack: [],
+    stack: ["Next.js 16", "TypeScript", "PostgreSQL", "Drizzle ORM", "ExcelJS"],
     evidence: [
       { label: "Workflow", value: "Import → ledger → report → export" },
       { label: "Import safety", value: "Idempotent re-import" },
