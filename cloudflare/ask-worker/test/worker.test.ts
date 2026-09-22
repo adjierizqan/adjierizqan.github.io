@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { buildModelMessages, handleRequest, MAX_MESSAGE_LENGTH, MODEL, type Env } from "../src/index";
+import { buildModelMessages, handleRequest, MAX_MESSAGE_LENGTH, MODEL, type Env } from "../src/core";
 
 const origin = "http://localhost:4174";
 
@@ -19,6 +19,8 @@ function environment(answer = "Verified answer.", capture?: (input: unknown) => 
     AI: {
       async run(model, input) {
         expect(model).toBe(MODEL);
+        expect(input.reasoning_effort).toBe("low");
+        expect(input.chat_template_kwargs).toEqual({ enable_thinking: false });
         capture?.(input);
         return sse(answer);
       },
