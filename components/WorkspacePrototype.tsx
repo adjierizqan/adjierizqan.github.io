@@ -661,6 +661,62 @@ function BdrsDossier(props: ProjectViewProps) {
   );
 }
 
+function SuhuLogShowcase({ project, openImage }: Pick<ProjectViewProps, "project" | "openImage">) {
+  const frames = [
+    ...(project.image ? [{ src: project.image, caption: "SuhuLog workspace overview." }] : []),
+    ...(project.gallery ?? []),
+  ];
+  const labels = ["Overview", "Record", "Monitor", "Report", "QR entry"];
+  const [activeFrame, setActiveFrame] = useState(0);
+  const active = frames[activeFrame];
+
+  if (!active) return null;
+
+  return (
+    <section className="aw-suhulog-showcase" aria-label="SuhuLog product walkthrough">
+      <header>
+        <div><span>Product walkthrough</span><h2>One temperature record, from entry to report.</h2></div>
+        <small>{String(activeFrame + 1).padStart(2, "0")} / {String(frames.length).padStart(2, "0")}</small>
+      </header>
+      <div className="aw-suhulog-showcase-grid">
+        <button
+          type="button"
+          className="aw-suhulog-stage"
+          onClick={(event) => openImage(activeFrame, event.currentTarget)}
+          aria-label={"Quick Look: " + active.caption}
+        >
+          <span className="aw-suhulog-frame" key={active.src}>
+            <Image
+              src={active.src}
+              alt={active.caption}
+              fill
+              sizes="(max-width: 760px) 100vw, 760px"
+              className="object-cover object-top"
+            />
+          </span>
+          <span className="aw-suhulog-quicklook">Open in Quick Look</span>
+        </button>
+        <div className="aw-suhulog-steps" role="tablist" aria-label="SuhuLog workflow views">
+          {frames.map((frame, index) => (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeFrame === index}
+              className={activeFrame === index ? "is-active" : ""}
+              key={frame.src}
+              onClick={() => setActiveFrame(index)}
+            >
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <strong>{labels[index] ?? "Evidence"}</strong>
+              <p>{frame.caption}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function SuhuLogDossier(props: ProjectViewProps) {
   const { project, query, setQuery, ask, back, openImage } = props;
   const prompt = PROJECT_DEMO_PROMPTS.suhulog;
@@ -672,7 +728,7 @@ function SuhuLogDossier(props: ProjectViewProps) {
       {responseVisible && <article className="aw-dossier-response">
         <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
         <ProjectOpening project={project} />
-        <ProjectMedia project={project} openImage={openImage} lead />
+        <SuhuLogShowcase project={project} openImage={openImage} />
         <section className="aw-editorial-intro"><span>The workflow</span><div><h2>From QR label to the monthly record.</h2><p>{project.problem}</p></div></section>
         <ol className="aw-workflow-line">{project.howItWorks.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></li>)}</ol>
         <section className="aw-proof-story"><header><span>Released evidence</span><h2>The same records drive monitoring and export.</h2></header><EvidenceTable project={project} /></section>
