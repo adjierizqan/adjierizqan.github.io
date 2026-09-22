@@ -13,6 +13,7 @@ import {
 } from "react";
 import { FileIcon, MailIcon } from "@/components/Icons";
 import { site } from "@/data/site";
+import { streamPortfolioAnswer, type PortfolioChatMessage } from "@/lib/portfolio-ai";
 import {
   allWorkspaceProjects,
   featuredWork,
@@ -25,6 +26,7 @@ type Point = { x: number; y: number };
 type WindowState = "open" | "minimized" | "closed";
 type AudioTrack = { src: string; title: string; detail: string };
 type QuickLookImage = { src: string; caption: string };
+type AskStatus = "idle" | "sending" | "streaming" | "complete" | "error";
 
 // Add only a local, licensed public asset here. The player remains honest and
 // inactive until a track is deliberately supplied.
@@ -44,23 +46,17 @@ function withViewTransition(update: () => void) {
 const prompts = [
   {
     label: "Operational systems",
-    query: "What has Adjie built for operational teams?",
-    answer:
-      "Adjie's operational work connects real-world inputs to traceable records and familiar outputs. LabStock, SuhuLog, and BDRS show how he handles workflow, evidence, and reliability together.",
+    query: "Tell me about Adjie’s operational software projects.",
     projects: ["labstock", "suhulog", "bdrs"],
   },
   {
     label: "Applied AI",
     query: "Show me Adjie’s applied AI work.",
-    answer:
-      "TomatoVision is the clearest evaluated AI case. Padel Vision and ObjectTwin carry the same practical approach into video analytics and image-to-3D systems.",
     projects: ["tomato-ripeness", "padel-vision", "objecttwin"],
   },
   {
     label: "Reliability",
     query: "How does Adjie approach reliability?",
-    answer:
-      "The recurring pattern is explicit state, one source of truth, reversible corrections, and checks at the boundary a visitor can inspect.",
     projects: ["suhulog", "labstock"],
   },
 ];
@@ -194,10 +190,12 @@ function QuickLook({ images, index, close, navigate }: {
   );
 }
 
-function Composer({ query, setQuery, submit, placeholder = "Ask anything about my work…" }: {
+function Composer({ query, setQuery, submit, stop, busy = false, placeholder = "Ask anything about my work…" }: {
   query: string;
   setQuery: (value: string) => void;
   submit: () => void;
+  stop?: () => void;
+  busy?: boolean;
   placeholder?: string;
 }) {
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
@@ -216,6 +214,8 @@ function Composer({ query, setQuery, submit, placeholder = "Ask anything about m
         onKeyDown={onKeyDown}
         placeholder={placeholder}
         aria-label="Ask anything about Adjie’s work"
+        maxLength={800}
+        disabled={busy}
       />
       <div className="aw-composer-tools">
         <div>
@@ -224,7 +224,7 @@ function Composer({ query, setQuery, submit, placeholder = "Ask anything about m
           <button type="button" onClick={() => setQuery("What evidence is available for Adjie’s work?")}><Glyph name="book" /> Evidence</button>
           <button type="button" onClick={() => setQuery("How does Adjie approach reliability?")}><Glyph name="spark" /> Build notes</button>
         </div>
-        <div className="aw-composer-submit"><span>Adjie AI · Preview</span><button className="aw-send" type="button" onClick={submit} disabled={!query.trim()} aria-label="Send query"><Glyph name="send" /></button></div>
+        <div className="aw-composer-submit"><span>Adjie AI · Preview</span><button className="aw-send" type="button" onClick={busy ? stop : submit} disabled={busy ? !stop : !query.trim()} aria-label={busy ? "Stop response" : "Send query"}><Glyph name={busy ? "close" : "send"} /></button></div>
       </div>
     </div>
   );
@@ -308,18 +308,19 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
   );
 }
 
-function HomeWorkspace({ query, setQuery, submit, setView, selectProject }: {
+function HomeWorkspace({ query, setQuery, submit, ask, setView, selectProject }: {
   query: string;
   setQuery: (value: string) => void;
   submit: () => void;
+  ask: (question: string) => void;
   setView: (view: WorkspaceView) => void;
   selectProject: (project: WorkspaceProject) => void;
 }) {
   const starters = [
-    { title: "Explore my projects", detail: "See what I’ve built", icon: "work" as const, action: () => setView("work") },
-    { title: "Ask about my work", detail: "Technical context", icon: "ask" as const, action: () => setView("ask") },
-    { title: "Operational systems", detail: "Workflows and reliability", icon: "projects" as const, action: () => selectProject(featuredWork[0]) },
-    { title: "Applied AI", detail: "Research and evaluation", icon: "spark" as const, action: () => selectProject(featuredWork[3]) },
+    { title: "Explore my projects", detail: "See what I’ve built", icon: "work" as const, action: () => ask("What are Adjie’s main projects?") },
+    { title: "Ask about my work", detail: "Technical context", icon: "ask" as const, action: () => ask("What kind of software does Adjie build?") },
+    { title: "Operational systems", detail: "Workflows and reliability", icon: "projects" as const, action: () => ask("Tell me about Adjie’s operational software projects.") },
+    { title: "Applied AI", detail: "Research and evaluation", icon: "spark" as const, action: () => ask("What applied AI and computer vision work has Adjie done?") },
   ];
 
   return (
@@ -497,31 +498,41 @@ function KnowledgeWorkspace({ selectProject }: { selectProject: (project: Worksp
   );
 }
 
-function AskWorkspace({ query, setQuery, answer, results, submit, choose, selectProject }: {
+function AskWorkspace({ query, setQuery, history, currentQuestion, answer, status, error, results, submit, stop, choose, selectProject, openProjects }: {
   query: string;
   setQuery: (value: string) => void;
+  history: PortfolioChatMessage[];
+  currentQuestion: string | null;
   answer: string | null;
+  status: AskStatus;
+  error: string | null;
   results: WorkspaceProject[];
   submit: () => void;
+  stop: () => void;
   choose: (value: string) => void;
   selectProject: (project: WorkspaceProject) => void;
+  openProjects: () => void;
 }) {
+  const active = status === "sending" || status === "streaming";
+  const hasConversation = history.length > 0 || currentQuestion !== null || answer !== null || error !== null;
   return (
     <main className="aw-center aw-ask aw-enter">
-      {!answer ? (
+      {!hasConversation ? (
         <section className="aw-ask-empty">
           <span>Ask Adjie Workspace</span>
           <h1>What would you like to understand?</h1>
-          <p>Answers use approved public project content and deterministic V1 responses.</p>
-          <Composer query={query} setQuery={setQuery} submit={submit} />
+          <p>Answers use the verified public portfolio context.</p>
+          <Composer query={query} setQuery={setQuery} submit={submit} stop={stop} busy={active} />
           <div>{prompts.map((prompt) => <button type="button" key={prompt.label} onClick={() => choose(prompt.query)}>{prompt.label}<Glyph name="arrow" /></button>)}</div>
         </section>
       ) : (
         <section className="aw-conversation">
-          <div className="aw-message is-user"><span>You</span><p>{query}</p></div>
-          <div className="aw-message"><span>Workspace</span><p>{answer}</p></div>
+          {history.map((message, index) => <div className={"aw-message " + (message.role === "user" ? "is-user" : "")} key={message.role + index}><span>{message.role === "user" ? "You" : "Workspace"}</span><p>{message.content}</p></div>)}
+          {currentQuestion && <div className="aw-message is-user"><span>You</span><p>{currentQuestion}</p></div>}
+          {(answer !== null || active || error) && <div className="aw-message"><span>Workspace{active ? " · responding" : ""}</span><p aria-live="polite">{answer || (active ? "Thinking…" : error)}</p></div>}
           <div className="aw-result-list">{results.map((project) => <button type="button" key={project.slug} onClick={() => selectProject(project)}><span><strong>{project.title}</strong><small>{project.eyebrow}</small></span><Glyph name="arrow" /></button>)}</div>
-          <Composer query={query} setQuery={setQuery} submit={submit} />
+          {error && <div className="aw-result-list"><button type="button" onClick={openProjects}><span><strong>Explore projects</strong><small>Browse without AI</small></span><Glyph name="arrow" /></button><a href={site.cv} target="_blank" rel="noopener noreferrer"><span><strong>Résumé</strong><small>Open PDF</small></span><Glyph name="arrow" /></a><a href={"mailto:" + site.email}><span><strong>Contact</strong><small>Email Adjie</small></span><Glyph name="arrow" /></a></div>}
+          <Composer query={query} setQuery={setQuery} submit={submit} stop={stop} busy={active} />
         </section>
       )}
     </main>
@@ -670,12 +681,17 @@ export function WorkspacePrototype() {
   const restorePositionRef = useRef<Point>({ x: 0, y: 0 });
   const quickLookReturnFocusRef = useRef<HTMLElement | null>(null);
   const paletteReturnFocusRef = useRef<HTMLElement | null>(null);
+  const askAbortRef = useRef<AbortController | null>(null);
   const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [view, setView] = useState<WorkspaceView>("home");
   const [selectedSlug, setSelectedSlug] = useState("labstock");
   const [query, setQuery] = useState("");
+  const [askHistory, setAskHistory] = useState<PortfolioChatMessage[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<string | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
+  const [askStatus, setAskStatus] = useState<AskStatus>("idle");
+  const [askError, setAskError] = useState<string | null>(null);
   const [resultSlugs, setResultSlugs] = useState<string[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [contextOpen, setContextOpen] = useState(false);
@@ -717,9 +733,14 @@ export function WorkspacePrototype() {
       }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "n") {
         event.preventDefault();
+        askAbortRef.current?.abort();
         setView("home");
         setQuery("");
+        setAskHistory([]);
+        setCurrentQuestion(null);
         setAnswer(null);
+        setAskStatus("idle");
+        setAskError(null);
       }
       if (event.key === "Escape") {
         if (paletteOpen) closePalette();
@@ -765,24 +786,74 @@ export function WorkspacePrototype() {
   }, [quickLookImages.length]);
 
   function newSession() {
+    askAbortRef.current?.abort();
     setView("home");
     setQuery("");
+    setAskHistory([]);
+    setCurrentQuestion(null);
     setAnswer(null);
+    setAskStatus("idle");
+    setAskError(null);
     setResultSlugs([]);
   }
 
-  function runAsk(value = query) {
+  function stopAsk() {
+    askAbortRef.current?.abort();
+  }
+
+  async function runAsk(value = query, projectId?: string) {
     const clean = value.trim();
-    if (!clean) return;
+    if (!clean || askStatus === "sending" || askStatus === "streaming") return;
     const normalized = clean.toLowerCase();
     const match = normalized.includes("ai") || normalized.includes("vision") || normalized.includes("tomato") ? prompts[1]
       : normalized.includes("reliab") || normalized.includes("quality") || normalized.includes("safe") ? prompts[2]
         : prompts[0];
-    setQuery(clean);
-    setAnswer(match.answer);
-    setResultSlugs(match.projects);
-    setSelectedSlug(match.projects[0]);
+    const priorHistory = [
+      ...askHistory,
+      ...(currentQuestion && answer ? [
+        { role: "user" as const, content: currentQuestion },
+        { role: "assistant" as const, content: answer },
+      ] : []),
+    ].slice(-6);
+    const controller = new AbortController();
+    askAbortRef.current = controller;
+    setAskHistory(priorHistory);
+    setCurrentQuestion(clean);
+    setQuery("");
+    setAnswer("");
+    setAskError(null);
+    setAskStatus("sending");
+    setResultSlugs(projectId ? [projectId] : normalized.includes("main project") ? featuredWork.map((project) => project.slug) : match.projects);
     setView("ask");
+
+    let partial = "";
+    try {
+      const completed = await streamPortfolioAnswer({
+        message: clean,
+        projectId,
+        history: priorHistory,
+        signal: controller.signal,
+        onToken(token) {
+          partial += token;
+          setAnswer(partial);
+          setAskStatus("streaming");
+        },
+      });
+      if (!completed.trim()) throw new Error("Empty AI response");
+      setAnswer(completed);
+      setAskStatus("complete");
+    } catch {
+      if (controller.signal.aborted) {
+        setAnswer(partial || null);
+        setAskStatus(partial ? "complete" : "idle");
+      } else {
+        setAnswer(partial || null);
+        setAskError("Adjie AI is temporarily unavailable. You can still explore the projects directly.");
+        setAskStatus("error");
+      }
+    } finally {
+      if (askAbortRef.current === controller) askAbortRef.current = null;
+    }
   }
 
   function onPointerDown(event: ReactPointerEvent<HTMLElement>) {
@@ -881,16 +952,16 @@ export function WorkspacePrototype() {
               <strong>Adjie Workspace</strong>
               <button type="button" onClick={() => setContextOpen(true)} aria-label="Open current context"><Glyph name="context" /></button>
             </header>
-            {view === "home" ? <HomeWorkspace query={query} setQuery={setQuery} submit={() => runAsk()} setView={setView} selectProject={selectProject} />
+            {view === "home" ? <HomeWorkspace query={query} setQuery={setQuery} submit={() => void runAsk()} ask={(question) => void runAsk(question)} setView={setView} selectProject={selectProject} />
               : view === "work" ? <WorkWorkspace selectProject={selectProject} />
                 : view === "projects" ? <ProjectDirectory projects={allWorkspaceProjects} title="Projects" copy="A single workspace index for featured systems and focused experiments." selectProject={selectProject} />
                   : view === "labs" ? <ProjectDirectory projects={labWork} title="Labs" copy="Focused experiments in computer vision, 3D pipelines, and interactive systems." selectProject={selectProject} />
                     : view === "knowledge" ? <KnowledgeWorkspace selectProject={selectProject} />
-                      : view === "project" ? <ProjectWorkspace key={selected.slug + "-" + projectRevision} project={selected} query={query} setQuery={setQuery} ask={runAsk} back={() => setView("work")} openImage={openQuickLook} />
-                        : <AskWorkspace query={query} setQuery={setQuery} answer={answer} results={results} submit={() => runAsk()} choose={runAsk} selectProject={selectProject} />}
+                      : view === "project" ? <ProjectWorkspace key={selected.slug + "-" + projectRevision} project={selected} query={query} setQuery={setQuery} ask={(question) => void runAsk(question ?? query, selected.slug)} back={() => setView("work")} openImage={openQuickLook} />
+                        : <AskWorkspace query={query} setQuery={setQuery} history={askHistory} currentQuestion={currentQuestion} answer={answer} status={askStatus} error={askError} results={results} submit={() => void runAsk()} stop={stopAsk} choose={(question) => void runAsk(question)} selectProject={selectProject} openProjects={() => setView("projects")} />}
           </section>
 
-          <ContextRail project={selected} revision={projectRevision} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); runAsk("How was " + selected.title + " built?"); }} openImage={openQuickLook} />
+          <ContextRail project={selected} revision={projectRevision} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); void runAsk("How was " + selected.title + " built?", selected.slug); }} openImage={openQuickLook} />
         </div>
       </div>
 

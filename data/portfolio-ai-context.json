@@ -1,0 +1,192 @@
+{
+  "identity": {
+    "name": "Adjie Rizqan",
+    "positioning": "Adjie builds operational software and applied AI systems.",
+    "publicRoles": [
+      "AI Researcher",
+      "Computer Vision Engineer",
+      "Full-Stack Developer"
+    ],
+    "contact": {
+      "email": "adjierizqan@gmail.com",
+      "github": "https://github.com/adjierizqan",
+      "linkedin": "https://www.linkedin.com/in/muhammadrizqan/",
+      "resumeTarget": "/muhammad-rizqan-nur-adjie-cv-2026.pdf"
+    }
+  },
+  "education": [],
+  "coreCapabilities": [
+    "Operational software and workflow design",
+    "Full-stack web engineering",
+    "Computer vision research and evaluation",
+    "Source-aware data import and reporting",
+    "Interactive 3D web experiences",
+    "Release engineering and verification"
+  ],
+  "projects": [
+    {
+      "id": "labstock",
+      "name": "LabStock",
+      "workspaceTarget": "labstock",
+      "category": "Operational software",
+      "summary": "A laboratory inventory workspace connecting source-aware workbook import, a canonical stock ledger, monthly and yearly reporting, and Excel export.",
+      "role": "Product engineering, data correctness, and release engineering",
+      "system": [
+        "Import evidence stays traceable to its workbook, sheet, and row.",
+        "Corrections preserve ledger history instead of rewriting it silently.",
+        "Reports and exports are derived from the same effective item identities."
+      ],
+      "verifiedEvidence": [
+        "Workflow: import to ledger to report to export",
+        "Idempotent imports and auditable corrections",
+        "Monthly detail and recap workbook output"
+      ],
+      "publicSafeStatus": "The workspace contains a verified text evidence state; no hospital production screenshot is published."
+    },
+    {
+      "id": "bdrs",
+      "name": "BDRS",
+      "workspaceTarget": "bdrs",
+      "category": "Operational software",
+      "summary": "A blood-bank operations system. Public detail is intentionally limited while repository evidence is reconciled.",
+      "role": "Product engineering and workflow design",
+      "system": [
+        "Built around operational workflows rather than a generic administration dashboard."
+      ],
+      "verifiedEvidence": [
+        "Public case-study evidence remains under review.",
+        "No patient or production data is disclosed."
+      ],
+      "publicSafeStatus": "Do not claim a production release or deployment."
+    },
+    {
+      "id": "suhulog",
+      "name": "SuhuLog",
+      "workspaceTarget": "suhulog",
+      "category": "Operational software",
+      "summary": "Hospital laboratory temperature logging with QR entry, explicit out-of-range states, append-only corrections, and official monthly exports.",
+      "role": "Product design, full-stack engineering, and release engineering",
+      "technologies": [
+        "TypeScript",
+        "Node.js",
+        "Express 5",
+        "SQLite",
+        "EJS",
+        "Chart.js",
+        "Nginx"
+      ],
+      "system": [
+        "A QR label opens the entry flow for one exact monitoring point.",
+        "Morning and evening readings share one effective-record rule.",
+        "Corrections append a new record instead of overwriting history.",
+        "The monthly view, chart, Excel, and PDF use the same stored records."
+      ],
+      "verifiedEvidence": [
+        "Release v1.2.3",
+        "276 automated tests",
+        "Official Excel, PDF, and ZIP exports"
+      ],
+      "publicSafeStatus": "Sanitized project screenshots are available in the portfolio."
+    },
+    {
+      "id": "tomato-ripeness",
+      "name": "TomatoVision",
+      "workspaceTarget": "tomato-ripeness",
+      "category": "Applied AI and computer vision research",
+      "summary": "A greenhouse tomato maturity detector comparing a YOLOv11 baseline, modified single models, and a three-model Weighted Boxes Fusion ensemble.",
+      "role": "Computer vision research and evaluation",
+      "technologies": [
+        "YOLOv11",
+        "Swin Transformer",
+        "PyTorch",
+        "OpenCV",
+        "Weighted Boxes Fusion"
+      ],
+      "system": [
+        "Three maturity classes across occlusion and scale changes.",
+        "Swin Transformer and multi-scale SPPF model variants.",
+        "Ensemble results are reported separately from the best single model."
+      ],
+      "verifiedEvidence": [
+        "YOLOv11 baseline mAP@0.5: 0.795",
+        "Best single modified model mAP@0.5: 0.807",
+        "Three-model WBF mAP@0.5: 0.824",
+        "Three-model WBF mAP@0.5:0.95: 0.499"
+      ],
+      "publicSafeStatus": "A public project image and repository link are available."
+    },
+    {
+      "id": "padel-vision",
+      "name": "Padel Vision",
+      "workspaceTarget": "padel-vision",
+      "category": "Computer vision experiment",
+      "summary": "Monocular player and ball tracking with court projection and match analytics from a single broadcast camera.",
+      "role": "Computer vision research",
+      "technologies": [
+        "YOLOv11",
+        "PyTorch",
+        "OpenCV",
+        "Pose Estimation",
+        "Homography"
+      ],
+      "system": [
+        "Ball and player tracking",
+        "Court homography and top-down minimap",
+        "Annotated match output"
+      ],
+      "verifiedEvidence": [
+        "The input is a single broadcast camera."
+      ],
+      "publicSafeStatus": "A public project image, video, and repository link are available."
+    },
+    {
+      "id": "objecttwin",
+      "name": "ObjectTwin",
+      "workspaceTarget": "objecttwin",
+      "category": "Image-to-3D pipeline experiment",
+      "summary": "An image-to-3D generation workflow with swappable GPU backends and visible quality scoring.",
+      "role": "Full-stack and ML systems engineering",
+      "technologies": [
+        "Next.js",
+        "TypeScript",
+        "Three.js",
+        "Python",
+        "FastAPI"
+      ],
+      "system": [
+        "Pluggable model adapters",
+        "Stage-by-stage jobs and logs",
+        "Browser GLB inspection",
+        "Quality scoring with visible reasoning"
+      ],
+      "verifiedEvidence": [
+        "The documented interface uses Next.js, FastAPI, and Three.js."
+      ],
+      "publicSafeStatus": "A public project image, video, and repository link are available."
+    },
+    {
+      "id": "porsche-3d",
+      "name": "Porsche 3D",
+      "workspaceTarget": "porsche-3d",
+      "category": "Interactive web experiment",
+      "summary": "A fan-made real-time 3D configurator with orbit controls, paint changes, and camera transitions.",
+      "role": "Creative development",
+      "technologies": [
+        "Three.js",
+        "GSAP",
+        "JavaScript",
+        "WebGL"
+      ],
+      "system": [
+        "Six real-time 3D car models",
+        "Orbit interaction and live repainting",
+        "Animated camera transitions",
+        "Plain HTML and ES modules with no build step"
+      ],
+      "verifiedEvidence": [
+        "3D models are credited to Ddiaz Design on Sketchfab."
+      ],
+      "publicSafeStatus": "A public project image, video, and repository link are available."
+    }
+  ]
+}

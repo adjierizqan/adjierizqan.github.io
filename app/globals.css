@@ -719,7 +719,8 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-message.is-user { display: grid; grid-template-columns: 3rem 1fr; gap: .7rem; margin-left: 3rem; }
 .aw-message.is-user p { border-radius: .65rem; background: #eceef1; padding: .75rem .85rem; font-size: .65rem; }
 .aw-result-list { margin-top: 1.3rem; border-bottom: 1px solid #e3e5e8; }
-.aw-result-list button {
+.aw-result-list button,
+.aw-result-list a {
   display: flex;
   width: 100%;
   align-items: center;
@@ -727,8 +728,10 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   border-top: 1px solid #e3e5e8;
   padding: .65rem .1rem;
   text-align: left;
+  text-decoration: none;
 }
-.aw-result-list button > span { display: grid; gap: .15rem; }
+.aw-result-list button > span,
+.aw-result-list a > span { display: grid; gap: .15rem; }
 .aw-result-list strong { font-size: .63rem; }
 .aw-result-list small { color: #8b8f98; font-size: .51rem; }
 .aw-result-list svg { width: .68rem; color: #999da5; }
