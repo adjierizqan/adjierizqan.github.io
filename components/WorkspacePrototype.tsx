@@ -23,10 +23,22 @@ type WorkspaceView = "home" | "work" | "projects" | "labs" | "knowledge" | "ask"
 type Point = { x: number; y: number };
 type WindowState = "open" | "minimized" | "closed";
 type AudioTrack = { src: string; title: string; detail: string };
+type QuickLookImage = { src: string; caption: string };
 
 // Add only a local, licensed public asset here. The player remains honest and
 // inactive until a track is deliberately supplied.
 const workspaceTrack: AudioTrack | null = null;
+const pronunciationTrack: string | null = null;
+
+function withViewTransition(update: () => void) {
+  if (typeof document === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    update();
+    return;
+  }
+  const transitionDocument = document as Document & { startViewTransition?: (callback: () => void) => unknown };
+  if (transitionDocument.startViewTransition) transitionDocument.startViewTransition(update);
+  else update();
+}
 
 const prompts = [
   {
@@ -109,6 +121,66 @@ function MusicPlayer() {
   );
 }
 
+function PronunciationButton({ className = "" }: { className?: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  function play() {
+    const audio = audioRef.current;
+    if (!pronunciationTrack || !audio) return;
+    audio.currentTime = 0;
+    void audio.play();
+  }
+
+  return (
+    <button className={className + (playing ? " is-playing" : "")} type="button" onClick={play} disabled={!pronunciationTrack} title={pronunciationTrack ? "Hear name pronunciation" : "Pronunciation audio is not yet available"} aria-label={pronunciationTrack ? "Play Adjie Rizqan name pronunciation" : "Pronunciation audio unavailable"}>
+      {pronunciationTrack && <audio ref={audioRef} src={pronunciationTrack} onPlay={() => setPlaying(true)} onEnded={() => setPlaying(false)} onPause={() => setPlaying(false)} preload="none" />}
+      <Glyph name="speaker" />
+      <span className="aw-audio-response" aria-hidden="true"><i /><i /><i /></span>
+    </button>
+  );
+}
+
+function QuickLook({ images, index, close, navigate }: {
+  images: QuickLookImage[];
+  index: number;
+  close: () => void;
+  navigate: (direction: number) => void;
+}) {
+  const image = images[index];
+  const dialogRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    function onKeyDown(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") close();
+      if (images.length > 1 && event.key === "ArrowLeft") navigate(-1);
+      if (images.length > 1 && event.key === "ArrowRight") navigate(1);
+      if (event.key === "Tab") {
+        const controls = [...(dialogRef.current?.querySelectorAll<HTMLButtonElement>("button:not(:disabled)") ?? [])];
+        if (!controls.length) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [close, images.length, navigate]);
+
+  if (!image) return null;
+
+  return (
+    <div className="aw-quicklook-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
+      <section ref={dialogRef} className="aw-quicklook" role="dialog" aria-modal="true" aria-label="Project image viewer">
+        <header><span>{index + 1} / {images.length}</span><p>{image.caption}</p><button type="button" autoFocus onClick={close} aria-label="Close image viewer"><Glyph name="close" /></button></header>
+        <div className="aw-quicklook-image" key={image.src}><Image src={image.src} alt={image.caption} fill sizes="100vw" quality={95} className="object-contain" priority /></div>
+        {images.length > 1 && <><button type="button" className="aw-quicklook-nav is-previous" onClick={() => navigate(-1)} aria-label="Previous image"><Glyph name="arrow" /></button><button type="button" className="aw-quicklook-nav is-next" onClick={() => navigate(1)} aria-label="Next image"><Glyph name="arrow" /></button></>}
+      </section>
+    </div>
+  );
+}
+
 function Composer({ query, setQuery, submit, placeholder = "Ask anything about my work…" }: {
   query: string;
   setQuery: (value: string) => void;
@@ -171,7 +243,7 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
           <header className="aw-profile">
             <span className="aw-avatar is-light">AR</span>
             <span><strong>Adjie Rizqan</strong><small>Personal AI Workspace</small></span>
-            <button className="aw-pronounce" type="button" disabled title="Pronunciation audio is not yet available" aria-label="Pronunciation audio unavailable"><Glyph name="speaker" /></button>
+            <PronunciationButton className="aw-pronounce" />
             <button className="aw-mobile-close" type="button" onClick={close} aria-label="Close navigation"><Glyph name="close" /></button>
           </header>
 
@@ -242,7 +314,7 @@ function HomeWorkspace({ query, setQuery, submit, setView, selectProject }: {
       <section className="aw-identity">
         <div>
           <span>Good evening,</span>
-          <div className="aw-name"><h1>Adjie Rizqan</h1><button type="button" disabled title="Pronunciation audio is not yet available" aria-label="Pronunciation audio unavailable"><Glyph name="speaker" /></button></div>
+          <div className="aw-name"><h1>Adjie Rizqan</h1><PronunciationButton /></div>
           <p>Turn ideas into useful systems.</p>
         </div>
         <blockquote>“A more capable me,<br />for a more useful tomorrow.”</blockquote>
@@ -333,12 +405,13 @@ function WorkWorkspace({ selectProject }: { selectProject: (project: WorkspacePr
   );
 }
 
-function ProjectWorkspace({ project, query, setQuery, ask, back }: {
+function ProjectWorkspace({ project, query, setQuery, ask, back, openImage }: {
   project: WorkspaceProject;
   query: string;
   setQuery: (value: string) => void;
   ask: (value?: string) => void;
   back: () => void;
+  openImage: (index: number, trigger: HTMLElement) => void;
 }) {
   return (
     <main className="aw-center aw-project-detail aw-enter">
@@ -349,7 +422,7 @@ function ProjectWorkspace({ project, query, setQuery, ask, back }: {
       </header>
 
       {project.image ? (
-        <figure className="aw-project-hero"><Image src={project.image} alt={project.title + " public project view"} fill sizes="(max-width: 760px) 100vw, 820px" className="object-cover object-top" /></figure>
+        <button type="button" className="aw-project-hero" onClick={(event) => openImage(0, event.currentTarget)} aria-label={"Quick Look: " + project.title + " project view"}><Image src={project.image} alt={project.title + " public project view"} fill sizes="(max-width: 760px) 100vw, 820px" className="object-cover object-top" /><span>Quick Look</span></button>
       ) : (
         <section className="aw-project-artifact" aria-label={project.title + " evidence overview"}>
           <span>Public evidence state</span>
@@ -359,7 +432,7 @@ function ProjectWorkspace({ project, query, setQuery, ask, back }: {
         </section>
       )}
 
-      {project.gallery && project.gallery.length > 0 && <section className="aw-project-gallery" aria-label={project.title + " project gallery"}>{project.gallery.map((item) => <figure key={item.src}><div><Image src={item.src} alt={item.caption} fill sizes="(max-width: 760px) 90vw, 260px" className="object-cover object-top" /></div><figcaption>{item.caption}</figcaption></figure>)}</section>}
+      {project.gallery && project.gallery.length > 0 && <section className="aw-project-gallery" aria-label={project.title + " project gallery"}>{project.gallery.map((item, index) => <figure key={item.src}><button type="button" onClick={(event) => openImage(index + 1, event.currentTarget)} aria-label={"Quick Look: " + item.caption}><Image src={item.src} alt={item.caption} fill sizes="(max-width: 760px) 90vw, 260px" className="object-cover object-top" /></button><figcaption>{item.caption}</figcaption></figure>)}</section>}
 
       <section className="aw-project-record">
         <div><h2>System</h2><p>{project.role}</p><ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul></div>
@@ -442,13 +515,14 @@ function AskWorkspace({ query, setQuery, answer, results, submit, choose, select
   );
 }
 
-function ContextRail({ project, open, close, navigate, openProject, askProject }: {
+function ContextRail({ project, open, close, navigate, openProject, askProject, openImage }: {
   project: WorkspaceProject;
   open: boolean;
   close: () => void;
   navigate: (view: WorkspaceView) => void;
   openProject: () => void;
   askProject: () => void;
+  openImage: (index: number, trigger: HTMLElement) => void;
 }) {
   const progress = [
     { project: "SuhuLog", detail: "Published case evidence", state: "done" },
@@ -468,7 +542,7 @@ function ContextRail({ project, open, close, navigate, openProject, askProject }
               <span><strong>{project.title}</strong><small>{project.eyebrow}</small></span>
             </header>
             {project.image ? (
-              <figure><Image src={project.image} alt={project.title + " verified project preview"} fill sizes="320px" className="object-cover object-top" /></figure>
+              <button type="button" className="aw-context-preview" onClick={(event) => openImage(0, event.currentTarget)} aria-label={"Quick Look: " + project.title + " project preview"}><Image src={project.image} alt={project.title + " verified project preview"} fill sizes="320px" className="object-cover object-top" /></button>
             ) : (
               <div className="aw-text-preview">
                 <span>Evidence-led case</span>
@@ -519,16 +593,26 @@ function CommandPalette({ open, close, setView, selectProject }: {
   setView: (view: WorkspaceView) => void;
   selectProject: (project: WorkspaceProject) => void;
 }) {
+  const paletteRef = useRef<HTMLElement>(null);
   const [filter, setFilter] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const selectProjectStable = useCallback((project: WorkspaceProject) => selectProject(project), [selectProject]);
   const commands = useMemo(() => [
     { label: "Go home", run: () => setView("home") },
     { label: "Browse featured work", run: () => setView("work") },
+    { label: "Open projects", run: () => setView("projects") },
     { label: "Open Labs", run: () => setView("labs") },
+    { label: "Open Knowledge", run: () => setView("knowledge") },
     { label: "Ask about Adjie", run: () => setView("ask") },
+    { label: "Open résumé", run: () => window.open(site.cv, "_blank", "noopener,noreferrer") },
+    { label: "Contact Adjie", run: () => window.open("mailto:" + site.email, "_self") },
     ...allWorkspaceProjects.map((project) => ({ label: "Open " + project.title, run: () => selectProjectStable(project) })),
   ].filter((item) => item.label.toLowerCase().includes(filter.toLowerCase())), [filter, selectProjectStable, setView]);
+
+  useEffect(() => {
+    if (!open) return;
+    paletteRef.current?.querySelector("button.is-active")?.scrollIntoView({ block: "nearest" });
+  }, [activeIndex, open]);
 
   if (!open) return null;
 
@@ -539,14 +623,14 @@ function CommandPalette({ open, close, setView, selectProject }: {
 
   return (
     <div className="aw-palette-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-      <section className="aw-palette" role="dialog" aria-modal="true" aria-label="Command palette">
+      <section ref={paletteRef} className="aw-palette" role="dialog" aria-modal="true" aria-label="Command palette">
         <label><Glyph name="search" /><input autoFocus value={filter} onChange={(event) => { setFilter(event.target.value); setActiveIndex(0); }} onKeyDown={(event) => {
           if (event.key === "ArrowDown") { event.preventDefault(); setActiveIndex((value) => Math.min(value + 1, commands.length - 1)); }
           if (event.key === "ArrowUp") { event.preventDefault(); setActiveIndex((value) => Math.max(value - 1, 0)); }
           if (event.key === "Enter") { event.preventDefault(); run(activeIndex); }
           if (event.key === "Escape") close();
         }} placeholder="Search projects and actions…" /></label>
-        <div>{commands.map((command, index) => <button type="button" className={index === activeIndex ? "is-active" : ""} key={command.label} onMouseEnter={() => setActiveIndex(index)} onClick={() => run(index)}>{command.label}<span>↵</span></button>)}</div>
+        <div>{commands.map((command, index) => <button type="button" className={index === activeIndex ? "is-active" : ""} aria-current={index === activeIndex ? "true" : undefined} key={command.label} onMouseEnter={() => setActiveIndex(index)} onClick={() => run(index)}>{command.label}<span>↵</span></button>)}</div>
       </section>
     </div>
   );
@@ -556,6 +640,7 @@ export function WorkspacePrototype() {
   const windowRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; start: Point; origin: Point } | null>(null);
   const restorePositionRef = useRef<Point>({ x: 0, y: 0 });
+  const quickLookReturnFocusRef = useRef<HTMLElement | null>(null);
   const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [view, setView] = useState<WorkspaceView>("home");
@@ -569,9 +654,14 @@ export function WorkspacePrototype() {
   const [strongContrast, setStrongContrast] = useState(false);
   const [windowState, setWindowState] = useState<WindowState>("open");
   const [maximized, setMaximized] = useState(false);
+  const [quickLookIndex, setQuickLookIndex] = useState<number | null>(null);
 
   const selected = allWorkspaceProjects.find((project) => project.slug === selectedSlug) ?? featuredWork[0];
   const results = useMemo(() => resultSlugs.map((slug) => allWorkspaceProjects.find((project) => project.slug === slug)).filter(Boolean) as WorkspaceProject[], [resultSlugs]);
+  const quickLookImages = useMemo<QuickLookImage[]>(() => [
+    ...(selected.image ? [{ src: selected.image, caption: selected.title + " project view" }] : []),
+    ...(selected.gallery ?? []),
+  ], [selected]);
 
   useEffect(() => {
     document.body.classList.add("workspace-active");
@@ -609,10 +699,28 @@ export function WorkspacePrototype() {
   }, []);
 
   const selectProject = useCallback((project: WorkspaceProject) => {
-    setSelectedSlug(project.slug);
-    setView("project");
-    if (window.innerWidth < 1100) setContextOpen(true);
+    withViewTransition(() => {
+      setSelectedSlug(project.slug);
+      setView("project");
+      setQuickLookIndex(null);
+      if (window.innerWidth < 1100) setContextOpen(true);
+    });
   }, []);
+
+  function openQuickLook(index: number, trigger: HTMLElement) {
+    if (!quickLookImages[index]) return;
+    quickLookReturnFocusRef.current = trigger;
+    withViewTransition(() => setQuickLookIndex(index));
+  }
+
+  const closeQuickLook = useCallback(() => {
+    withViewTransition(() => setQuickLookIndex(null));
+    window.requestAnimationFrame(() => quickLookReturnFocusRef.current?.focus());
+  }, []);
+
+  const navigateQuickLook = useCallback((direction: number) => {
+    setQuickLookIndex((current) => current === null ? null : (current + direction + quickLookImages.length) % quickLookImages.length);
+  }, [quickLookImages.length]);
 
   function newSession() {
     setView("home");
@@ -695,7 +803,7 @@ export function WorkspacePrototype() {
       <div className="aw-wallpaper" aria-hidden="true" />
       <div
         ref={windowRef}
-        className={"aw-window " + (dragging ? "is-dragging " : "") + (maximized ? "is-maximized " : "") + (windowState !== "open" ? "is-hidden" : "")}
+        className={"aw-window " + (dragging ? "is-dragging " : "") + (maximized ? "is-maximized " : "") + (windowState === "minimized" ? "is-hidden is-minimized " : windowState === "closed" ? "is-hidden is-closed " : "")}
         style={{ transform: windowTransform }}
         aria-hidden={windowState !== "open"}
       >
@@ -736,11 +844,11 @@ export function WorkspacePrototype() {
                 : view === "projects" ? <ProjectDirectory projects={allWorkspaceProjects} title="Projects" copy="A single workspace index for featured systems and focused experiments." selectProject={selectProject} />
                   : view === "labs" ? <ProjectDirectory projects={labWork} title="Labs" copy="Focused experiments in computer vision, 3D pipelines, and interactive systems." selectProject={selectProject} />
                     : view === "knowledge" ? <KnowledgeWorkspace selectProject={selectProject} />
-                      : view === "project" ? <ProjectWorkspace project={selected} query={query} setQuery={setQuery} ask={runAsk} back={() => setView("work")} />
+                      : view === "project" ? <ProjectWorkspace project={selected} query={query} setQuery={setQuery} ask={runAsk} back={() => setView("work")} openImage={openQuickLook} />
                         : <AskWorkspace query={query} setQuery={setQuery} answer={answer} results={results} submit={() => runAsk()} choose={runAsk} selectProject={selectProject} />}
           </section>
 
-          <ContextRail project={selected} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); runAsk("How was " + selected.title + " built?"); }} />
+          <ContextRail project={selected} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); runAsk("How was " + selected.title + " built?"); }} openImage={openQuickLook} />
         </div>
       </div>
 
@@ -754,11 +862,12 @@ export function WorkspacePrototype() {
         ] as { label: string; icon: "home" | "work" | "projects" | "labs" | "ask"; view?: WorkspaceView }[]).map((item) => {
           const active = windowState === "open" && (item.view ? view === item.view : view === "home");
           const open = item.label === "Workspace" && windowState !== "closed";
-          return <button type="button" className={(active ? "is-active " : "") + (open ? "is-open" : "")} key={item.label} onClick={() => openWorkspace(item.view)} aria-label={item.label} title={item.label}><Glyph name={item.icon} /><i /></button>;
+          return <button type="button" className={(active ? "is-active " : "") + (open ? "is-open " : "") + (item.label === "Workspace" && windowState === "minimized" ? "is-minimized" : "")} key={item.label} onClick={() => openWorkspace(item.view)} aria-label={item.label}><Glyph name={item.icon} /><span className="aw-dock-tooltip" role="tooltip">{item.label}</span><i /></button>;
         })}
       </nav>
 
       <CommandPalette open={paletteOpen} close={() => setPaletteOpen(false)} setView={setView} selectProject={selectProject} />
+      {quickLookIndex !== null && <QuickLook images={quickLookImages} index={quickLookIndex} close={closeQuickLook} navigate={navigateQuickLook} />}
     </div>
   );
 }
