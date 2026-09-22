@@ -29,44 +29,88 @@
       "name": "LabStock",
       "workspaceTarget": "labstock",
       "category": "Operational software",
-      "summary": "A laboratory inventory workspace connecting source-aware workbook import, a canonical stock ledger, monthly and yearly reporting, and Excel export.",
-      "role": "Product engineering, data correctness, and release engineering",
-      "system": [
-        "Import evidence stays traceable to its workbook, sheet, and row.",
-        "Corrections preserve ledger history instead of rewriting it silently.",
-        "Reports and exports are derived from the same effective item identities."
+      "summary": "A laboratory inventory system that turns source workbooks into a traceable stock ledger, monthly and yearly reports, and template-compatible Excel exports.",
+      "problem": "Spreadsheet inventory data had to move through import, stock ledger, website reporting, and export without losing source traceability or turning corrections into silent rewrites.",
+      "solution": "Adjie built a source-aware import and reporting workflow that preserves workbook provenance, supports idempotent re-import, and keeps corrections auditable across the ledger, website reports, and exported workbooks.",
+      "howItWorks": [
+        "Maps imported records to workbook, sheet, and source row evidence.",
+        "Maps source records to the effective item identities used by reports and exports.",
+        "Recognizes a repeated import instead of duplicating its ledger movements.",
+        "Keeps monthly and yearly web reports and exported workbooks on the same ledger data."
       ],
+      "role": "Product engineering · data correctness · release engineering",
+      "stack": [],
       "verifiedEvidence": [
-        "Workflow: import to ledger to report to export",
-        "Idempotent imports and auditable corrections",
-        "Monthly detail and recap workbook output"
+        {
+          "label": "Workflow",
+          "value": "Import → ledger → report → export"
+        },
+        {
+          "label": "Import safety",
+          "value": "Idempotent re-import"
+        },
+        {
+          "label": "Corrections",
+          "value": "Auditable · history-preserving"
+        },
+        {
+          "label": "Monthly output",
+          "value": "Detail + recap workbook"
+        }
       ],
-      "publicSafeStatus": "The workspace contains a verified text evidence state; no hospital production screenshot is published."
+      "whyItMatters": "The system keeps inventory movements and familiar reporting outputs connected to the evidence they came from.",
+      "publicLimitations": "Public material is limited to workflow-level evidence. Production infrastructure, hospital data, URLs, and unsanitized screenshots are withheld.",
+      "askSuggestion": "How does LabStock keep imports and reports traceable?"
     },
     {
       "id": "bdrs",
       "name": "BDRS",
       "workspaceTarget": "bdrs",
       "category": "Operational software",
-      "summary": "A blood-bank operations system. Public detail is intentionally limited while repository evidence is reconciled.",
-      "role": "Product engineering and workflow design",
-      "system": [
-        "Built around operational workflows rather than a generic administration dashboard."
+      "summary": "A blood-bank operations system designed around domain workflows; its public technical and release evidence is still being reconciled.",
+      "problem": "Blood-bank operations require workflow-specific software rather than a generic administration dashboard, but the current public record is not complete enough for detailed operational claims.",
+      "solution": "Adjie designed and implemented a workflow-oriented system while keeping patient data, production details, and unverified release claims outside the public case study.",
+      "howItWorks": [
+        "Organizes the application around operational workflows rather than generic dashboard modules.",
+        "Keeps the public case-study boundary separate from private operational data."
       ],
+      "role": "Product engineering · workflow design",
+      "stack": [],
       "verifiedEvidence": [
-        "Public case-study evidence remains under review.",
-        "No patient or production data is disclosed."
+        {
+          "label": "Implemented",
+          "value": "Workflow-oriented system structure"
+        },
+        {
+          "label": "Under review",
+          "value": "Technical and release evidence"
+        },
+        {
+          "label": "Withheld",
+          "value": "Patient and production data"
+        }
       ],
-      "publicSafeStatus": "Do not claim a production release or deployment."
+      "whyItMatters": "The project demonstrates domain-first product thinking while preserving a strict public evidence boundary.",
+      "publicLimitations": "No production, deployment, user, compliance, or release claim is published until the latest evidence is reconciled; no public-safe screenshot is currently available.",
+      "askSuggestion": "What is currently verified about BDRS?"
     },
     {
       "id": "suhulog",
       "name": "SuhuLog",
       "workspaceTarget": "suhulog",
       "category": "Operational software",
-      "summary": "Hospital laboratory temperature logging with QR entry, explicit out-of-range states, append-only corrections, and official monthly exports.",
-      "role": "Product design, full-stack engineering, and release engineering",
-      "technologies": [
+      "summary": "A hospital laboratory temperature-logging system for QR-based entry, exception monitoring, auditable corrections, and official monthly exports.",
+      "problem": "Manual refrigerator and room-temperature records had to become faster to capture without losing the laboratory's twice-daily slots, correction history, configured limits, or official workbook format.",
+      "solution": "Adjie designed, built, and released a focused web application that opens the correct monitoring point from a QR label and produces charts, Excel, PDF, and ZIP reports from the same effective records.",
+      "howItWorks": [
+        "A QR label opens the entry form for one exact monitoring point.",
+        "Server time assigns the Pagi or Sore slot; each slot has one effective record.",
+        "Configured ranges flag out-of-range readings without blocking or clamping them.",
+        "Corrections append a new record and supersede the prior value instead of overwriting history.",
+        "Monthly views, charts, Excel, PDF, and ZIP exports read the same stored records."
+      ],
+      "role": "Product design · full-stack engineering · release engineering",
+      "stack": [
         "TypeScript",
         "Node.js",
         "Express 5",
@@ -75,118 +119,178 @@
         "Chart.js",
         "Nginx"
       ],
-      "system": [
-        "A QR label opens the entry flow for one exact monitoring point.",
-        "Morning and evening readings share one effective-record rule.",
-        "Corrections append a new record instead of overwriting history.",
-        "The monthly view, chart, Excel, and PDF use the same stored records."
-      ],
       "verifiedEvidence": [
-        "Release v1.2.3",
-        "276 automated tests",
-        "Official Excel, PDF, and ZIP exports"
+        {
+          "label": "Release",
+          "value": "v1.2.3"
+        },
+        {
+          "label": "Quality gate",
+          "value": "276 automated tests"
+        },
+        {
+          "label": "Exports",
+          "value": "Official Excel · PDF · ZIP"
+        },
+        {
+          "label": "Operations",
+          "value": "HTTPS · systemd · verified backups"
+        }
       ],
-      "publicSafeStatus": "Sanitized project screenshots are available in the portfolio."
+      "whyItMatters": "SuhuLog replaces a fragile manual handoff while preserving the reporting format and audit history the laboratory relies on.",
+      "publicLimitations": "Only sanitized portfolio screenshots and public-safe system behavior are shown; operational records and hospital-identifying data are excluded.",
+      "askSuggestion": "How does SuhuLog preserve trustworthy temperature records?"
     },
     {
       "id": "tomato-ripeness",
       "name": "TomatoVision",
       "workspaceTarget": "tomato-ripeness",
-      "category": "Applied AI and computer vision research",
-      "summary": "A greenhouse tomato maturity detector comparing a YOLOv11 baseline, modified single models, and a three-model Weighted Boxes Fusion ensemble.",
-      "role": "Computer vision research and evaluation",
-      "technologies": [
+      "category": "Applied AI",
+      "summary": "A computer-vision study that detects three greenhouse tomato maturity stages and compares a YOLOv11 baseline with modified models and a three-model WBF ensemble.",
+      "problem": "Greenhouse tomatoes overlap, hide behind leaves, and appear at different scales, making maturity detection difficult for a single detector configuration.",
+      "solution": "Adjie evaluated a YOLOv11 baseline, Swin Transformer and multi-scale SPPF variants, then fused their predictions with Weighted Boxes Fusion while reporting single-model and ensemble results separately.",
+      "howItWorks": [
+        "Detects green, orange, and red maturity classes in greenhouse imagery.",
+        "Uses the YOLOv11 result as the evaluation baseline.",
+        "Tests Swin Transformer and multi-scale SPPF architectural variants.",
+        "Combines three model outputs with Weighted Boxes Fusion."
+      ],
+      "role": "Computer vision research · model development · evaluation",
+      "stack": [
         "YOLOv11",
         "Swin Transformer",
         "PyTorch",
         "OpenCV",
         "Weighted Boxes Fusion"
       ],
-      "system": [
-        "Three maturity classes across occlusion and scale changes.",
-        "Swin Transformer and multi-scale SPPF model variants.",
-        "Ensemble results are reported separately from the best single model."
-      ],
       "verifiedEvidence": [
-        "YOLOv11 baseline mAP@0.5: 0.795",
-        "Best single modified model mAP@0.5: 0.807",
-        "Three-model WBF mAP@0.5: 0.824",
-        "Three-model WBF mAP@0.5:0.95: 0.499"
+        {
+          "label": "YOLOv11 baseline",
+          "value": "0.795 mAP@0.5"
+        },
+        {
+          "label": "Best modified model",
+          "value": "0.807 mAP@0.5"
+        },
+        {
+          "label": "Three-model WBF",
+          "value": "0.824 mAP@0.5"
+        },
+        {
+          "label": "WBF stricter metric",
+          "value": "0.499 mAP@0.5:0.95"
+        }
       ],
-      "publicSafeStatus": "A public project image and repository link are available."
+      "whyItMatters": "The study shows which gains come from a single architecture and which require ensemble inference, rather than merging them into one headline result.",
+      "publicLimitations": "The portfolio reports evaluated research results and public project media; it does not claim a deployed agricultural product.",
+      "askSuggestion": "How were the TomatoVision models evaluated?"
     },
     {
       "id": "padel-vision",
       "name": "Padel Vision",
       "workspaceTarget": "padel-vision",
       "category": "Computer vision experiment",
-      "summary": "Monocular player and ball tracking with court projection and match analytics from a single broadcast camera.",
+      "summary": "A monocular match-analysis pipeline that tracks four players and the ball, projects play onto a court minimap, and renders annotated video.",
+      "problem": "Broadcast footage provides one moving camera view, while useful match analysis needs stable player, ball, and court coordinates.",
+      "solution": "Adjie built a video pipeline combining fine-tuned ball detection, player pose tracking, court homography, and match overlays.",
+      "howItWorks": [
+        "Detects and tracks the ball at high resolution.",
+        "Tracks four players with pose estimation.",
+        "Projects detections through court homography.",
+        "Renders trajectories, identities, speed estimates, and match annotations."
+      ],
       "role": "Computer vision research",
-      "technologies": [
+      "stack": [
         "YOLOv11",
         "PyTorch",
         "OpenCV",
         "Pose Estimation",
         "Homography"
       ],
-      "system": [
-        "Ball and player tracking",
-        "Court homography and top-down minimap",
-        "Annotated match output"
-      ],
       "verifiedEvidence": [
-        "The input is a single broadcast camera."
+        {
+          "label": "Input",
+          "value": "Single broadcast camera"
+        },
+        {
+          "label": "Output",
+          "value": "Annotated video · court minimap"
+        }
       ],
-      "publicSafeStatus": "A public project image, video, and repository link are available."
+      "whyItMatters": "The experiment turns ordinary match footage into inspectable spatial and motion data without a multi-camera setup.",
+      "publicLimitations": "The portfolio presents an experiment and public media, not a production analytics service.",
+      "askSuggestion": "How does Padel Vision analyze one broadcast camera?"
     },
     {
       "id": "objecttwin",
       "name": "ObjectTwin",
       "workspaceTarget": "objecttwin",
-      "category": "Image-to-3D pipeline experiment",
-      "summary": "An image-to-3D generation workflow with swappable GPU backends and visible quality scoring.",
+      "category": "3D pipeline experiment",
+      "summary": "An image-to-3D workflow with swappable generation backends, stage-level progress, browser inspection, and visible output-quality scoring.",
+      "problem": "Single-image 3D generation can produce inconsistent results while hiding which pipeline stage or quality dimension failed.",
+      "solution": "Adjie built a Next.js and FastAPI workflow that runs pluggable GPU adapters, cleans and scores generated meshes, and exposes progress and GLB inspection in the browser.",
+      "howItWorks": [
+        "Routes jobs through pluggable Hunyuan3D, InstantMesh, or TRELLIS adapters.",
+        "Reports stage-by-stage progress and logs.",
+        "Scores silhouette, geometry, texture, complexity, and pipeline reliability.",
+        "Loads the resulting GLB in an interactive browser viewer."
+      ],
       "role": "Full-stack and ML systems engineering",
-      "technologies": [
+      "stack": [
         "Next.js",
         "TypeScript",
         "Three.js",
         "Python",
         "FastAPI"
       ],
-      "system": [
-        "Pluggable model adapters",
-        "Stage-by-stage jobs and logs",
-        "Browser GLB inspection",
-        "Quality scoring with visible reasoning"
-      ],
       "verifiedEvidence": [
-        "The documented interface uses Next.js, FastAPI, and Three.js."
+        {
+          "label": "Backends",
+          "value": "Hunyuan3D · InstantMesh · TRELLIS"
+        },
+        {
+          "label": "Inspection",
+          "value": "Visible score · browser GLB viewer"
+        }
       ],
-      "publicSafeStatus": "A public project image, video, and repository link are available."
+      "whyItMatters": "The workflow makes generative 3D output quality and pipeline progress inspectable instead of treating generation as a black box.",
+      "publicLimitations": "The portfolio presents an experimental pipeline and public media, not a hosted generation service.",
+      "askSuggestion": "How does ObjectTwin evaluate generated 3D models?"
     },
     {
       "id": "porsche-3d",
       "name": "Porsche 3D",
       "workspaceTarget": "porsche-3d",
       "category": "Interactive web experiment",
-      "summary": "A fan-made real-time 3D configurator with orbit controls, paint changes, and camera transitions.",
+      "summary": "A fan-made real-time 3D car configurator with orbit interaction, live paint changes, and animated transitions between six models.",
+      "problem": "The project explores how a static vehicle collection can become an interactive, browser-based product experience without an application framework.",
+      "solution": "Adjie built a plain-HTML Three.js experience with live materials, orbit controls, and GSAP-driven camera movement.",
+      "howItWorks": [
+        "Loads six car models in a real-time WebGL scene.",
+        "Provides orbit controls and live material changes.",
+        "Uses GSAP for camera transitions between models.",
+        "Runs as HTML and ES modules without a build step."
+      ],
       "role": "Creative development",
-      "technologies": [
+      "stack": [
         "Three.js",
         "GSAP",
         "JavaScript",
         "WebGL"
       ],
-      "system": [
-        "Six real-time 3D car models",
-        "Orbit interaction and live repainting",
-        "Animated camera transitions",
-        "Plain HTML and ES modules with no build step"
-      ],
       "verifiedEvidence": [
-        "3D models are credited to Ddiaz Design on Sketchfab."
+        {
+          "label": "Models",
+          "value": "Six interactive cars"
+        },
+        {
+          "label": "Runtime",
+          "value": "Three.js · WebGL · no build step"
+        }
       ],
-      "publicSafeStatus": "A public project image, video, and repository link are available."
+      "whyItMatters": "The experiment demonstrates purposeful 3D interaction and material control in a lightweight web runtime.",
+      "publicLimitations": "This is a fan project; 3D models are credited to Ddiaz Design on Sketchfab.",
+      "askSuggestion": "How was the Porsche 3D interaction built?"
     }
   ]
 }

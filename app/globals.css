@@ -669,6 +669,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-project-record { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.6rem; border-block: 1px solid #e3e5e8; padding: 1.2rem 0; }
 .aw-project-record > div + div { border-left: 1px solid #e3e5e8; padding-left: 2rem; }
 .aw-project-record h2 { color: #292c32; font-size: .68rem; font-weight: 720; }
+.aw-project-record h2:not(:first-child) { margin-top: 1rem; }
 .aw-project-record p { margin-top: .45rem; color: #777c85; font-size: .54rem; line-height: 1.5; }
 .aw-project-record ul { margin-top: .65rem; }
 .aw-project-record li { border-top: 1px solid #eceef1; padding: .5rem 0; color: #5f646d; font-size: .54rem; line-height: 1.45; }

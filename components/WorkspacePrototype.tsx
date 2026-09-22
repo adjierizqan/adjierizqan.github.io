@@ -449,12 +449,12 @@ function ProjectWorkspace({ project, query, setQuery, ask, back, openImage }: {
       {project.gallery && project.gallery.length > 0 && <section className="aw-project-gallery" aria-label={project.title + " project gallery"}>{project.gallery.map((item, index) => <figure key={item.src}><button type="button" onClick={(event) => openImage(index + 1, event.currentTarget)} aria-label={"Quick Look: " + item.caption}><Image src={item.src} alt={item.caption} fill sizes="(max-width: 760px) 90vw, 260px" className="object-cover object-top" /></button><figcaption>{item.caption}</figcaption></figure>)}</section>}
 
       <section className="aw-project-record">
-        <div><h2>System</h2><p>{project.role}</p><ul>{project.scope.map((item) => <li key={item}>{item}</li>)}</ul></div>
-        <div><h2>Evidence</h2><dl>{project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></div>
+        <div><h2>Problem</h2><p>{project.problem}</p><h2>Solution</h2><p>{project.solution}</p><h2>How it works</h2><ul>{project.howItWorks.map((item) => <li key={item}>{item}</li>)}</ul></div>
+        <div><h2>Role</h2><p>{project.role}</p>{project.stack.length > 0 && <><h2>Stack</h2><p>{project.stack.join(" · ")}</p></>}<h2>Evidence</h2><dl>{project.evidence.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl><h2>Why it matters</h2><p>{project.whyItMatters}</p><h2>Public limitations</h2><p>{project.publicLimitations}</p></div>
       </section>
 
       <section className="aw-project-ask">
-        <header><span>Ask about this project</span><button type="button" onClick={() => ask("How was " + project.title + " built?")}>Use suggested question</button></header>
+        <header><span>Ask about this project</span><button type="button" onClick={() => ask(project.askSuggestion)}>Use suggested question</button></header>
         <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder={"Ask about " + project.title + "…"} />
       </section>
     </main>
@@ -580,7 +580,7 @@ function ContextRail({ project, revision, open, close, navigate, openProject, as
                 <small>{project.assetNote}</small>
               </div>
             )}
-            <p className="aw-context-framing">{project.summary}</p>
+            <p className="aw-context-framing">{project.whyItMatters}</p>
             <div className="aw-context-evidence-block">
               <header>Verified evidence</header>
               <dl className="aw-context-evidence">
@@ -961,7 +961,7 @@ export function WorkspacePrototype() {
                         : <AskWorkspace query={query} setQuery={setQuery} history={askHistory} currentQuestion={currentQuestion} answer={answer} status={askStatus} error={askError} results={results} submit={() => void runAsk()} stop={stopAsk} choose={(question) => void runAsk(question)} selectProject={selectProject} openProjects={() => setView("projects")} />}
           </section>
 
-          <ContextRail project={selected} revision={projectRevision} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); void runAsk("How was " + selected.title + " built?", selected.slug); }} openImage={openQuickLook} />
+          <ContextRail project={selected} revision={projectRevision} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); void runAsk(selected.askSuggestion, selected.slug); }} openImage={openQuickLook} />
         </div>
       </div>
 

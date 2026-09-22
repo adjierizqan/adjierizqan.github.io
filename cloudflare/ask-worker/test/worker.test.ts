@@ -56,7 +56,18 @@ describe("Adjie Workspace Ask Worker", () => {
   test("prioritizes verified context for a selected project", () => {
     const messages = buildModelMessages({ message: "How does it work?", projectId: "suhulog", history: [] });
     expect(messages[0].content).toContain("explicitly selected SuhuLog");
-    expect(messages[0].content).toContain("append-only corrections");
+    expect(messages[0].content).toContain("Corrections append a new record");
+    expect(messages[0].content).toContain("276 automated tests");
+  });
+
+  test("supplies exact verified LabStock and TomatoVision facts", () => {
+    const labstock = buildModelMessages({ message: "How are imports protected?", projectId: "labstock", history: [] })[0].content;
+    const tomato = buildModelMessages({ message: "What were the results?", projectId: "tomato-ripeness", history: [] })[0].content;
+    expect(labstock).toContain("Idempotent re-import");
+    expect(labstock).toContain("Production infrastructure, hospital data, URLs, and unsanitized screenshots are withheld");
+    expect(tomato).toContain("0.807 mAP@0.5");
+    expect(tomato).toContain("0.824 mAP@0.5");
+    expect(tomato).toContain("0.499 mAP@0.5:0.95");
   });
 
   test("guards unrelated and missing-context answers in the system prompt", () => {

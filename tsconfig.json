@@ -30,5 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "cloudflare/ask-worker/test", "lib/*.test.ts"]
+  "exclude": ["node_modules", "cloudflare/ask-worker/test", "data/*.test.ts", "lib/*.test.ts"]
 }
