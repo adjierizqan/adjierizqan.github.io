@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { createPortal, flushSync } from "react-dom";
 import {
   KeyboardEvent,
   PointerEvent as ReactPointerEvent,
@@ -36,7 +37,7 @@ function withViewTransition(update: () => void) {
     return;
   }
   const transitionDocument = document as Document & { startViewTransition?: (callback: () => void) => unknown };
-  if (transitionDocument.startViewTransition) transitionDocument.startViewTransition(update);
+  if (transitionDocument.startViewTransition) transitionDocument.startViewTransition(() => flushSync(update));
   else update();
 }
 
@@ -151,10 +152,16 @@ function QuickLook({ images, index, close, navigate }: {
   const dialogRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    const desktop = document.querySelector<HTMLElement>(".aw-desktop");
+    const wasInert = desktop?.hasAttribute("inert") ?? false;
+    const previousOverflow = document.body.style.overflow;
+    desktop?.setAttribute("inert", "");
+    document.body.style.overflow = "hidden";
+
     function onKeyDown(event: globalThis.KeyboardEvent) {
       if (event.key === "Escape") close();
-      if (images.length > 1 && event.key === "ArrowLeft") navigate(-1);
-      if (images.length > 1 && event.key === "ArrowRight") navigate(1);
+      if (index > 0 && event.key === "ArrowLeft") navigate(-1);
+      if (index < images.length - 1 && event.key === "ArrowRight") navigate(1);
       if (event.key === "Tab") {
         const controls = [...(dialogRef.current?.querySelectorAll<HTMLButtonElement>("button:not(:disabled)") ?? [])];
         if (!controls.length) return;
@@ -165,19 +172,25 @@ function QuickLook({ images, index, close, navigate }: {
       }
     }
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [close, images.length, navigate]);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      if (!wasInert) desktop?.removeAttribute("inert");
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [close, images.length, index, navigate]);
 
   if (!image) return null;
 
-  return (
+  return createPortal(
     <div className="aw-quicklook-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
       <section ref={dialogRef} className="aw-quicklook" role="dialog" aria-modal="true" aria-label="Project image viewer">
         <header><span>{index + 1} / {images.length}</span><p>{image.caption}</p><button type="button" autoFocus onClick={close} aria-label="Close image viewer"><Glyph name="close" /></button></header>
         <div className="aw-quicklook-image" key={image.src}><Image src={image.src} alt={image.caption} fill sizes="100vw" quality={95} className="object-contain" priority /></div>
-        {images.length > 1 && <><button type="button" className="aw-quicklook-nav is-previous" onClick={() => navigate(-1)} aria-label="Previous image"><Glyph name="arrow" /></button><button type="button" className="aw-quicklook-nav is-next" onClick={() => navigate(1)} aria-label="Next image"><Glyph name="arrow" /></button></>}
+        {index > 0 && <button type="button" className="aw-quicklook-nav is-previous" onClick={() => navigate(-1)} aria-label="Previous image"><Glyph name="arrow" /></button>}
+        {index < images.length - 1 && <button type="button" className="aw-quicklook-nav is-next" onClick={() => navigate(1)} aria-label="Next image"><Glyph name="arrow" /></button>}
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -515,8 +528,9 @@ function AskWorkspace({ query, setQuery, answer, results, submit, choose, select
   );
 }
 
-function ContextRail({ project, open, close, navigate, openProject, askProject, openImage }: {
+function ContextRail({ project, revision, open, close, navigate, openProject, askProject, openImage }: {
   project: WorkspaceProject;
+  revision: number;
   open: boolean;
   close: () => void;
   navigate: (view: WorkspaceView) => void;
@@ -524,6 +538,7 @@ function ContextRail({ project, open, close, navigate, openProject, askProject, 
   askProject: () => void;
   openImage: (index: number, trigger: HTMLElement) => void;
 }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const progress = [
     { project: "SuhuLog", detail: "Published case evidence", state: "done" },
     { project: "TomatoVision", detail: "Evaluation documented", state: "done" },
@@ -531,11 +546,15 @@ function ContextRail({ project, open, close, navigate, openProject, askProject, 
     { project: "LabStock", detail: "Sanitized imagery", state: "next" },
   ] as const;
 
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0 });
+  }, [project.slug, revision]);
+
   return (
     <>
       <aside className={"aw-context " + (open ? "is-open" : "")}>
         <header className="aw-context-title"><span><i /> Current Context</span><button type="button" onClick={close} aria-label="Close context"><Glyph name="close" /></button></header>
-        <div className="aw-context-scroll">
+        <div ref={scrollRef} className="aw-context-scroll">
           <section className="aw-context-project">
             <header className="aw-context-identity">
               <span className="aw-project-symbol" style={{ color: projectTones[project.slug] ?? "#64748b" }}>{project.title.slice(0, 2).toUpperCase()}</span>
@@ -614,6 +633,14 @@ function CommandPalette({ open, close, setView, selectProject }: {
     paletteRef.current?.querySelector("button.is-active")?.scrollIntoView({ block: "nearest" });
   }, [activeIndex, open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const desktop = document.querySelector<HTMLElement>(".aw-desktop");
+    const wasInert = desktop?.hasAttribute("inert") ?? false;
+    desktop?.setAttribute("inert", "");
+    return () => { if (!wasInert) desktop?.removeAttribute("inert"); };
+  }, [open]);
+
   if (!open) return null;
 
   function run(index: number) {
@@ -621,7 +648,7 @@ function CommandPalette({ open, close, setView, selectProject }: {
     close();
   }
 
-  return (
+  return createPortal(
     <div className="aw-palette-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
       <section ref={paletteRef} className="aw-palette" role="dialog" aria-modal="true" aria-label="Command palette">
         <label><Glyph name="search" /><input autoFocus value={filter} onChange={(event) => { setFilter(event.target.value); setActiveIndex(0); }} onKeyDown={(event) => {
@@ -632,7 +659,8 @@ function CommandPalette({ open, close, setView, selectProject }: {
         }} placeholder="Search projects and actions…" /></label>
         <div>{commands.map((command, index) => <button type="button" className={index === activeIndex ? "is-active" : ""} aria-current={index === activeIndex ? "true" : undefined} key={command.label} onMouseEnter={() => setActiveIndex(index)} onClick={() => run(index)}>{command.label}<span>↵</span></button>)}</div>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -641,6 +669,7 @@ export function WorkspacePrototype() {
   const dragRef = useRef<{ pointerId: number; start: Point; origin: Point } | null>(null);
   const restorePositionRef = useRef<Point>({ x: 0, y: 0 });
   const quickLookReturnFocusRef = useRef<HTMLElement | null>(null);
+  const paletteReturnFocusRef = useRef<HTMLElement | null>(null);
   const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [view, setView] = useState<WorkspaceView>("home");
@@ -655,6 +684,7 @@ export function WorkspacePrototype() {
   const [windowState, setWindowState] = useState<WindowState>("open");
   const [maximized, setMaximized] = useState(false);
   const [quickLookIndex, setQuickLookIndex] = useState<number | null>(null);
+  const [projectRevision, setProjectRevision] = useState(0);
 
   const selected = allWorkspaceProjects.find((project) => project.slug === selectedSlug) ?? featuredWork[0];
   const results = useMemo(() => resultSlugs.map((slug) => allWorkspaceProjects.find((project) => project.slug === slug)).filter(Boolean) as WorkspaceProject[], [resultSlugs]);
@@ -662,6 +692,16 @@ export function WorkspacePrototype() {
     ...(selected.image ? [{ src: selected.image, caption: selected.title + " project view" }] : []),
     ...(selected.gallery ?? []),
   ], [selected]);
+
+  const openPalette = useCallback(() => {
+    paletteReturnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setPaletteOpen(true);
+  }, []);
+
+  const closePalette = useCallback(() => {
+    setPaletteOpen(false);
+    window.requestAnimationFrame(() => paletteReturnFocusRef.current?.focus());
+  }, []);
 
   useEffect(() => {
     document.body.classList.add("workspace-active");
@@ -672,7 +712,8 @@ export function WorkspacePrototype() {
     function onKeyDown(event: globalThis.KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setPaletteOpen((value) => !value);
+        if (paletteOpen) closePalette();
+        else openPalette();
       }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "n") {
         event.preventDefault();
@@ -681,14 +722,14 @@ export function WorkspacePrototype() {
         setAnswer(null);
       }
       if (event.key === "Escape") {
-        setPaletteOpen(false);
+        if (paletteOpen) closePalette();
         setSidebarOpen(false);
         setContextOpen(false);
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [closePalette, openPalette, paletteOpen]);
 
   useEffect(() => {
     function resetForViewport() {
@@ -703,6 +744,7 @@ export function WorkspacePrototype() {
       setSelectedSlug(project.slug);
       setView("project");
       setQuickLookIndex(null);
+      setProjectRevision((value) => value + 1);
       if (window.innerWidth < 1100) setContextOpen(true);
     });
   }, []);
@@ -710,16 +752,16 @@ export function WorkspacePrototype() {
   function openQuickLook(index: number, trigger: HTMLElement) {
     if (!quickLookImages[index]) return;
     quickLookReturnFocusRef.current = trigger;
-    withViewTransition(() => setQuickLookIndex(index));
+    setQuickLookIndex(index);
   }
 
   const closeQuickLook = useCallback(() => {
-    withViewTransition(() => setQuickLookIndex(null));
+    setQuickLookIndex(null);
     window.requestAnimationFrame(() => quickLookReturnFocusRef.current?.focus());
   }, []);
 
   const navigateQuickLook = useCallback((direction: number) => {
-    setQuickLookIndex((current) => current === null ? null : (current + direction + quickLookImages.length) % quickLookImages.length);
+    setQuickLookIndex((current) => current === null ? null : Math.min(Math.max(current + direction, 0), quickLookImages.length - 1));
   }, [quickLookImages.length]);
 
   function newSession() {
@@ -824,14 +866,14 @@ export function WorkspacePrototype() {
           <div className="aw-title-actions" data-no-drag>
             <span>Build · Solve · Improve</span>
             <button type="button" onClick={() => setContextOpen(true)} className="aw-context-toggle"><Glyph name="context" /> Context</button>
-            <button type="button" onClick={() => setPaletteOpen(true)}><kbd>⌘ K</kbd></button>
+            <button type="button" onClick={openPalette}><kbd>⌘ K</kbd></button>
             <button type="button" className="aw-appearance" onClick={() => setStrongContrast((value) => !value)} aria-pressed={strongContrast} aria-label="Toggle interface contrast"><Glyph name="sun" /></button>
             <span className="aw-avatar">AR</span>
           </div>
         </header>
 
         <div className="aw-body">
-          <Sidebar view={view} selected={selected} setView={setView} newSession={newSession} selectProject={selectProject} openPalette={() => setPaletteOpen(true)} open={sidebarOpen} close={() => setSidebarOpen(false)} />
+          <Sidebar view={view} selected={selected} setView={setView} newSession={newSession} selectProject={selectProject} openPalette={openPalette} open={sidebarOpen} close={() => setSidebarOpen(false)} />
 
           <section className="aw-stage">
             <header className="aw-mobile-header">
@@ -844,11 +886,11 @@ export function WorkspacePrototype() {
                 : view === "projects" ? <ProjectDirectory projects={allWorkspaceProjects} title="Projects" copy="A single workspace index for featured systems and focused experiments." selectProject={selectProject} />
                   : view === "labs" ? <ProjectDirectory projects={labWork} title="Labs" copy="Focused experiments in computer vision, 3D pipelines, and interactive systems." selectProject={selectProject} />
                     : view === "knowledge" ? <KnowledgeWorkspace selectProject={selectProject} />
-                      : view === "project" ? <ProjectWorkspace project={selected} query={query} setQuery={setQuery} ask={runAsk} back={() => setView("work")} openImage={openQuickLook} />
+                      : view === "project" ? <ProjectWorkspace key={selected.slug + "-" + projectRevision} project={selected} query={query} setQuery={setQuery} ask={runAsk} back={() => setView("work")} openImage={openQuickLook} />
                         : <AskWorkspace query={query} setQuery={setQuery} answer={answer} results={results} submit={() => runAsk()} choose={runAsk} selectProject={selectProject} />}
           </section>
 
-          <ContextRail project={selected} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); runAsk("How was " + selected.title + " built?"); }} openImage={openQuickLook} />
+          <ContextRail project={selected} revision={projectRevision} open={contextOpen} close={() => setContextOpen(false)} navigate={(nextView) => { setView(nextView); setContextOpen(false); }} openProject={() => { setView("project"); setContextOpen(false); }} askProject={() => { setContextOpen(false); runAsk("How was " + selected.title + " built?"); }} openImage={openQuickLook} />
         </div>
       </div>
 
@@ -866,7 +908,7 @@ export function WorkspacePrototype() {
         })}
       </nav>
 
-      <CommandPalette open={paletteOpen} close={() => setPaletteOpen(false)} setView={setView} selectProject={selectProject} />
+      {paletteOpen && <CommandPalette open close={closePalette} setView={setView} selectProject={selectProject} />}
       {quickLookIndex !== null && <QuickLook images={quickLookImages} index={quickLookIndex} close={closeQuickLook} navigate={navigateQuickLook} />}
     </div>
   );

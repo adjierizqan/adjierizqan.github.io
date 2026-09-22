@@ -8,6 +8,18 @@
   --accent-soft: #eff6ff;
   --card: #ffffff;
   --line: #e7e5e4;
+  --aw-text-micro: .71875rem;
+  --aw-text-ui: .8125rem;
+  --aw-text-rail: .8125rem;
+  --aw-text-body: .875rem;
+  --aw-text-section: .9375rem;
+  --aw-z-wallpaper: 0;
+  --aw-z-window: 10;
+  --aw-z-dock: 20;
+  --aw-z-drawer: 30;
+  --aw-z-modal: 40;
+  --aw-z-quicklook: 50;
+  --aw-z-critical: 60;
 }
 
 @theme inline {
@@ -40,7 +52,7 @@ body {
   outline-offset: 3px;
 }
 
-.workspace-active { overflow: hidden; }
+.workspace-active { overflow: hidden; overflow-x: clip; }
 .workspace-active > header,
 .workspace-active > footer { display: none; }
 .workspace-active > main { min-height: 0; height: 100vh; }
@@ -65,11 +77,13 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   background: #20242b;
   color: #1e2024;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 14px;
+  font-size: var(--aw-text-body);
+  line-height: 1.45;
 }
 .aw-desktop.is-strong-contrast { --muted: #5e636d; }
 .aw-wallpaper {
   position: absolute;
+  z-index: var(--aw-z-wallpaper);
   inset: 0;
   background: #26313d url("/wallpaper_mac.jpg") center / cover no-repeat;
 }
@@ -100,7 +114,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 
 .aw-window {
   position: relative;
-  z-index: 2;
+  z-index: var(--aw-z-window);
   display: grid;
   width: min(91vw, 1460px);
   height: min(88vh, 920px);
@@ -204,7 +218,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 }
 
 .aw-sidebar {
-  z-index: 20;
+  z-index: 3;
   display: grid;
   min-height: 0;
   grid-template-rows: minmax(0,1fr) auto;
@@ -721,7 +735,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-conversation .aw-composer { margin-top: 1.5rem; }
 
 .aw-context {
-  z-index: 25;
+  z-index: 3;
   display: grid;
   min-width: 0;
   min-height: 0;
@@ -890,7 +904,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 
 .aw-dock {
   position: absolute;
-  z-index: 10;
+  z-index: var(--aw-z-dock);
   bottom: 1rem;
   left: 50%;
   display: flex;
@@ -918,7 +932,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-dock button:hover .aw-dock-tooltip,
 .aw-dock button:focus-visible .aw-dock-tooltip { opacity: 1; transform: translate(-50%,0); }
 
-.aw-quicklook-layer { position: absolute; z-index: 120; inset: 0; display: grid; place-items: center; background: rgb(14 17 22 / 82%); padding: 2rem; animation: aw-quicklook-backdrop 180ms ease both; }
+.aw-quicklook-layer { position: fixed; z-index: var(--aw-z-quicklook); inset: 0; display: grid; place-items: center; background: rgb(14 17 22 / 82%); padding: 2rem; animation: aw-quicklook-backdrop 180ms ease both; }
 @keyframes aw-quicklook-backdrop { from { background-color: rgb(14 17 22 / 0%); } }
 .aw-quicklook { position: relative; display: grid; width: min(92vw, 82rem); height: min(88vh, 54rem); grid-template-rows: 2.7rem minmax(0,1fr); overflow: hidden; border: 1px solid rgb(255 255 255 / 16%); border-radius: .8rem; background: #111419; box-shadow: 0 28px 90px rgb(0 0 0 / 52%); animation: aw-quicklook-in 240ms cubic-bezier(.2,.75,.25,1) both; }
 @keyframes aw-quicklook-in { from { opacity: 0; transform: scale(.975); } }
@@ -940,7 +954,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 
 .aw-palette-layer {
   position: fixed;
-  z-index: 100;
+  z-index: var(--aw-z-modal);
   inset: 0;
   display: grid;
   place-items: start center;
@@ -969,6 +983,84 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-palette > div button.is-active { transform: translateX(.1rem); }
 .aw-palette > div span { color: #a1a5ad; font-size: .52rem; }
 
+/* Shared readability scale for the frozen V1 interface. */
+.aw-desktop button,
+.aw-desktop a { font-size: var(--aw-text-ui); line-height: 1.25; }
+.aw-desktop textarea,
+.aw-desktop input { font-size: var(--aw-text-body); line-height: 1.5; }
+.aw-center p { font-size: var(--aw-text-body); line-height: 1.6; }
+.aw-sidebar strong,
+.aw-owner strong { font-size: var(--aw-text-body); }
+.aw-sidebar small,
+.aw-owner small,
+.aw-desktop small,
+.aw-desktop dt,
+.aw-desktop dd,
+.aw-desktop figcaption,
+.aw-desktop kbd { font-size: var(--aw-text-micro); line-height: 1.4; }
+.aw-page-header > div > span,
+.aw-ask-empty > span,
+.aw-primary-work > section > span,
+.aw-secondary-work section > span,
+.aw-project-objects section > span,
+.aw-project-detail-header > div > span,
+.aw-project-artifact > span,
+.aw-text-preview > span { font-size: var(--aw-text-micro); }
+.aw-title-actions,
+.aw-project-shortcuts > header,
+.aw-composer-submit > span { font-size: var(--aw-text-micro); }
+.aw-starters h2,
+.aw-recent > header strong,
+.aw-context-section > header,
+.aw-context-evidence-block > header,
+.aw-project-record h2,
+.aw-project-ask > header > span { font-size: var(--aw-text-section); }
+.aw-primary-nav button,
+.aw-project-shortcuts > button,
+.aw-new-session,
+.aw-search-trigger,
+.aw-contact-links a,
+.aw-composer-tools button,
+.aw-recent strong,
+.aw-project-back,
+.aw-project-objects section > strong,
+.aw-result-list strong { font-size: var(--aw-text-ui); }
+.aw-identity > div > span,
+.aw-focus-tags span { font-size: var(--aw-text-ui); }
+.aw-recent small,
+.aw-secondary-work p,
+.aw-project-objects section > p,
+.aw-project-detail-header > small,
+.aw-project-record p,
+.aw-project-record li,
+.aw-project-record dd,
+.aw-project-artifact dd,
+.aw-system-flow strong,
+.aw-evidence-preview dd,
+.aw-object-evidence dd,
+.aw-knowledge-list dd,
+.aw-result-list small { font-size: var(--aw-text-ui); line-height: 1.5; }
+.aw-context { font-size: var(--aw-text-rail); }
+.aw-context-title > span { font-size: var(--aw-text-section); }
+.aw-context-identity strong,
+.aw-context-framing,
+.aw-context-evidence dd,
+.aw-context-actions a,
+.aw-context-actions button,
+.aw-focus-card li strong,
+.aw-quick-links a,
+.aw-quick-links button,
+.aw-music strong { font-size: var(--aw-text-rail); line-height: 1.45; }
+.aw-context-identity small,
+.aw-context-evidence dt,
+.aw-focus-card li small,
+.aw-music small { font-size: var(--aw-text-micro); line-height: 1.35; }
+.aw-palette input { font-size: var(--aw-text-body); }
+.aw-palette > div button { font-size: var(--aw-text-ui); }
+.aw-quicklook > header p { font-size: var(--aw-text-ui); }
+.aw-quicklook > header > span,
+.aw-dock-tooltip { font-size: var(--aw-text-micro); }
+
 @media (max-width: 1250px) {
   .aw-body { grid-template-columns: 13.5rem minmax(28rem,1fr) 18rem; }
   .aw-center { padding-inline: 2rem; }
@@ -981,7 +1073,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-context-toggle { display: flex !important; }
   .aw-context {
     position: absolute;
-    z-index: 40;
+    z-index: var(--aw-z-drawer);
     top: 2.75rem;
     right: 0;
     bottom: 0;
@@ -992,12 +1084,12 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   }
   .aw-context.is-open { transform: translateX(0); }
   .aw-context-title button { display: grid; width: 1.8rem; height: 1.8rem; place-items: center; }
-  .aw-context-scrim { position: absolute; z-index: 39; inset: 2.75rem 0 0; display: block; background: rgb(20 22 27 / 20%); }
+  .aw-context-scrim { position: absolute; z-index: calc(var(--aw-z-drawer) - 1); inset: 2.75rem 0 0; display: block; background: rgb(20 22 27 / 20%); }
 }
 @media (max-width: 760px) {
-  .workspace-active { overflow: auto; }
+  .workspace-active { overflow-x: clip; overflow-y: auto; }
   .workspace-active > main { min-height: 100vh; height: auto; }
-  .aw-desktop { display: block; min-height: 100vh; height: auto; overflow: visible; padding: 0; background: #fff; }
+  .aw-desktop { display: block; min-height: 100vh; height: auto; overflow-x: clip; overflow-y: visible; padding: 0; background: #fff; }
   .aw-wallpaper,
   .aw-titlebar { display: none; }
   .aw-window {
@@ -1070,7 +1162,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-knowledge-list dl { border-top: 1px solid #e3e5e8; border-left: 0; padding-top: .45rem; padding-left: 0; }
   .aw-context {
     position: fixed;
-    z-index: 50;
+    z-index: var(--aw-z-drawer);
     top: 0;
     width: 100%;
     transform: translateX(103%);
@@ -1082,7 +1174,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-context-project > figure,
   .aw-context-preview,
   .aw-text-preview { min-height: 13rem; height: 42vw; }
-  .aw-context-scrim { position: fixed; z-index: 49; inset: 0; }
+  .aw-context-scrim { position: fixed; z-index: calc(var(--aw-z-drawer) - 1); inset: 0; }
   .aw-quicklook-layer { position: fixed; padding: .5rem; }
   .aw-quicklook { width: 100%; height: min(92vh, 48rem); }
   .aw-quicklook-nav.is-previous { left: .6rem; }
