@@ -15,6 +15,7 @@ export type WorkspaceProject = {
   publicLimitations: string;
   askSuggestion: string;
   image?: string;
+  video?: string;
   gallery?: { src: string; caption: string }[];
   href?: string;
   assetNote?: string;
@@ -134,6 +135,7 @@ export const featuredWork: WorkspaceProject[] = [
     publicLimitations: "The portfolio reports evaluated research results and public project media; it does not claim a deployed agricultural product.",
     askSuggestion: "How were the TomatoVision models evaluated?",
     image: "/projects/tomato-ripeness.jpg",
+    video: "/projects/tomato-ripeness.mp4",
     href: "/projects/tomato-ripeness",
   },
 ];
@@ -155,6 +157,7 @@ export const labWork: WorkspaceProject[] = [
     publicLimitations: "The portfolio presents an experiment and public media, not a production analytics service.",
     askSuggestion: "How does Padel Vision analyze one broadcast camera?",
     image: "/projects/padel-vision.jpg",
+    video: "/projects/padel-vision.mp4",
     href: "/projects/padel-vision",
   },
   {
@@ -173,6 +176,7 @@ export const labWork: WorkspaceProject[] = [
     publicLimitations: "The portfolio presents an experimental pipeline and public media, not a hosted generation service.",
     askSuggestion: "How does ObjectTwin evaluate generated 3D models?",
     image: "/projects/objecttwin.jpg",
+    video: "/projects/objecttwin.mp4",
     href: "/projects/objecttwin",
   },
   {
@@ -191,6 +195,7 @@ export const labWork: WorkspaceProject[] = [
     publicLimitations: "This is a fan project; 3D models are credited to Ddiaz Design on Sketchfab.",
     askSuggestion: "How was the Porsche 3D interaction built?",
     image: "/projects/porsche-3d.jpg",
+    video: "/projects/porsche-3d.mp4",
     href: "/projects/porsche-3d",
   },
 ];

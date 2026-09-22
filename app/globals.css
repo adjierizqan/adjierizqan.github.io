@@ -882,6 +882,86 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-suhulog-steps strong { color: #30333a; font-size: var(--aw-text-ui); font-weight: 680; }
 .aw-suhulog-steps p { grid-column: 2; overflow: hidden; color: #737881; font-size: var(--aw-text-micro); line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
 @keyframes aw-suhulog-frame-in { from { opacity: .25; transform: scale(1.008); } }
+.aw-workflow-sequence { border-bottom: 1px solid #dfe2e6; }
+.aw-workflow-track { display: grid; grid-auto-columns: minmax(8rem, 1fr); grid-auto-flow: column; overflow-x: auto; border-bottom: 1px solid #dfe2e6; scrollbar-width: thin; }
+.aw-workflow-track button { position: relative; min-height: 5.5rem; padding: .9rem; text-align: left; }
+.aw-workflow-track button + button { border-left: 1px solid #e3e5e8; }
+.aw-workflow-track button::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: #22252a; content: ""; opacity: 0; transform: scaleX(.25); transition: opacity 160ms ease, transform 200ms cubic-bezier(.2,.75,.25,1); }
+.aw-workflow-track button:hover { background: #f7f8f9; }
+.aw-workflow-track button.is-active { background: #f4f5f6; }
+.aw-workflow-track button.is-active::after { opacity: 1; transform: scaleX(1); }
+.aw-workflow-track small { display: block; color: #a0a4ac; font-family: var(--font-geist-mono), monospace; font-size: var(--aw-text-micro); }
+.aw-workflow-track strong { display: block; margin-top: .75rem; color: #30333a; font-size: var(--aw-text-ui); }
+.aw-workflow-sequence > p { min-height: 3.6rem; padding: .8rem .9rem; color: #626771; font-size: var(--aw-text-body); line-height: 1.55; animation: aw-evidence-swap 180ms ease both; }
+.aw-workflow-sequence > p span { margin-right: .65rem; color: #30333a; font-weight: 680; }
+@keyframes aw-evidence-swap { from { opacity: .2; transform: translateY(2px); } }
+.aw-project-boundary small { color: #8a8f98; font-size: var(--aw-text-micro); }
+
+.aw-status-progression { margin-top: 3.5rem; border-block: 1px solid #dfe2e6; }
+.aw-status-progression > div { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #dfe2e6; }
+.aw-status-progression button { position: relative; display: flex; gap: .65rem; padding: .85rem; color: #737881; text-align: left; }
+.aw-status-progression button + button { border-left: 1px solid #e3e5e8; }
+.aw-status-progression button::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: #22252a; content: ""; opacity: 0; transform: scaleX(.25); transition: opacity 160ms ease, transform 200ms ease; }
+.aw-status-progression button.is-active { background: #f5f6f7; color: #292c32; }
+.aw-status-progression button.is-active::after { opacity: 1; transform: scaleX(1); }
+.aw-status-progression button span { font-family: var(--font-geist-mono), monospace; font-size: var(--aw-text-micro); }
+.aw-status-progression button strong { font-size: var(--aw-text-ui); }
+.aw-status-progression article { min-height: 9rem; padding: 1.2rem; animation: aw-evidence-swap 180ms ease both; }
+.aw-status-progression article span { color: #858a93; font-size: var(--aw-text-micro); font-weight: 680; letter-spacing: .045em; text-transform: uppercase; }
+.aw-status-progression article h2 { margin-top: .65rem; color: #292c32; font-size: 1.2rem; }
+.aw-status-progression article p { max-width: 48rem; margin-top: .5rem; color: #626771; font-size: var(--aw-text-body); line-height: 1.6; }
+
+.aw-project-video { margin-top: 2rem; }
+.aw-project-video video { display: block; width: 100%; max-height: 34rem; background: #111318; object-fit: contain; }
+.aw-project-video figcaption { border-bottom: 1px solid #dfe2e6; padding: .55rem .1rem; color: #737881; font-size: var(--aw-text-micro); }
+.aw-media-pair { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: 2.5rem; }
+.aw-media-pair > button { position: relative; min-height: 24rem; overflow: hidden; background: #e9ecef; cursor: zoom-in; }
+.aw-media-pair > button span { position: absolute; right: .7rem; bottom: .7rem; background: rgb(24 27 32 / 82%); padding: .35rem .5rem; color: #fff; font-size: var(--aw-text-micro); }
+.aw-media-pair figure { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-width: 0; background: #111318; }
+.aw-media-pair video { width: 100%; height: 100%; min-height: 22rem; object-fit: contain; }
+.aw-media-pair figcaption { background: #fff; padding: .5rem .1rem; color: #737881; font-size: var(--aw-text-micro); }
+
+.aw-research-comparison { margin-top: 3.5rem; border-top: 1px solid #dfe2e6; padding-top: 1.2rem; }
+.aw-research-comparison > header span,
+.aw-secondary-signature > header span,
+.aw-cinematic-showcase > header span,
+.aw-research-tradeoff > span { color: #848993; font-size: var(--aw-text-micro); font-weight: 680; letter-spacing: .055em; text-transform: uppercase; }
+.aw-research-comparison > header h2,
+.aw-secondary-signature > header h2,
+.aw-cinematic-showcase > header h2,
+.aw-research-tradeoff h2 { margin-top: .45rem; max-width: 48rem; color: #202228; font-size: clamp(1.35rem, 2.2vw, 1.9rem); line-height: 1.18; letter-spacing: -.035em; }
+.aw-comparison-controls { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 1.15rem; border-block: 1px solid #dfe2e6; }
+.aw-comparison-controls button { position: relative; display: flex; align-items: center; justify-content: space-between; padding: .8rem; color: #777c85; }
+.aw-comparison-controls button + button { border-left: 1px solid #dfe2e6; }
+.aw-comparison-controls button.is-active { background: #f4f5f6; color: #292c32; }
+.aw-comparison-controls button span { font-size: var(--aw-text-ui); }
+.aw-comparison-controls button strong { font-family: var(--font-geist-mono), monospace; font-size: var(--aw-text-ui); }
+.aw-comparison-result { display: grid; grid-template-columns: 1.25fr .75fr; gap: 3rem; min-height: 11rem; padding: 1.2rem .8rem; animation: aw-evidence-swap 180ms ease both; }
+.aw-comparison-result > div:first-child > span { color: #858a93; font-size: var(--aw-text-micro); text-transform: uppercase; }
+.aw-comparison-result h3 { margin-top: .55rem; color: #282b31; font-size: 1.25rem; }
+.aw-comparison-result p { max-width: 38rem; margin-top: .5rem; color: #626771; font-size: var(--aw-text-body); line-height: 1.6; }
+.aw-comparison-result > div:last-child { align-self: center; }
+.aw-comparison-result > div:last-child strong { display: block; color: #23262b; font-family: var(--font-geist-mono), monospace; font-size: 1.4rem; }
+.aw-comparison-result > div:last-child span { color: #858a93; font-size: var(--aw-text-micro); }
+.aw-comparison-result i { display: block; height: 3px; margin-top: .8rem; background: #e0e3e7; }
+.aw-comparison-result b { display: block; height: 100%; background: #33373d; transition: width 220ms ease; }
+.aw-research-tradeoff { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 2.5rem; margin-top: 3.5rem; border-top: 1px solid #dfe2e6; padding-top: 1.2rem; }
+.aw-research-tradeoff p { max-width: 48rem; margin-top: .65rem; color: #626771; font-size: var(--aw-text-body); line-height: 1.65; }
+
+.aw-secondary-signature { margin-top: 3rem; border-top: 1px solid #dfe2e6; padding-top: 1.2rem; }
+.aw-secondary-signature .aw-workflow-sequence { margin-top: 1.1rem; border-top: 1px solid #dfe2e6; }
+.aw-cinematic-showcase { margin-top: 2.5rem; }
+.aw-cinematic-showcase > header { display: flex; align-items: end; justify-content: space-between; gap: 2rem; border-top: 1px solid #dfe2e6; padding-top: 1.2rem; }
+.aw-cinematic-showcase nav { display: flex; gap: .2rem; border: 1px solid #dfe2e6; padding: .2rem; }
+.aw-cinematic-showcase nav button { padding: .38rem .65rem; color: #737881; font-size: var(--aw-text-ui); }
+.aw-cinematic-showcase nav button[aria-pressed="true"] { background: #25282d; color: #fff; }
+.aw-cinematic-viewport { margin-top: 1rem; overflow: hidden; background: #111318; }
+.aw-cinematic-viewport > div { display: flex; width: 200%; transition: transform 300ms cubic-bezier(.2,.75,.25,1); }
+.aw-cinematic-viewport button,
+.aw-cinematic-viewport figure { position: relative; width: 50%; height: clamp(20rem, 55vh, 36rem); flex: 0 0 50%; }
+.aw-cinematic-viewport button { cursor: zoom-in; }
+.aw-cinematic-viewport video { width: 100%; height: 100%; object-fit: contain; }
+
 .aw-workflow-line { margin-top: 1.25rem; border-bottom: 1px solid #dfe2e6; }
 .aw-workflow-line li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); border-top: 1px solid #dfe2e6; padding: .85rem 0; }
 .aw-workflow-line span { color: #999da5; font-family: var(--font-geist-mono), monospace; font-size: var(--aw-text-micro); }
@@ -1217,6 +1297,18 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-suhulog-steps button.is-active { padding-left: .9rem; }
   .aw-suhulog-steps button::before { top: -1px; right: 0; bottom: auto; left: 0; width: auto; height: 2px; transform: scaleX(.35); }
   .aw-suhulog-steps button.is-active::before { transform: scaleX(1); }
+  .aw-media-pair,
+  .aw-comparison-result,
+  .aw-research-tradeoff { grid-template-columns: 1fr; }
+  .aw-media-pair > button { min-height: 15rem; }
+  .aw-media-pair video { min-height: 15rem; }
+  .aw-status-progression > div,
+  .aw-comparison-controls { grid-template-columns: 1fr; }
+  .aw-status-progression button + button,
+  .aw-comparison-controls button + button { border-top: 1px solid #e3e5e8; border-left: 0; }
+  .aw-cinematic-showcase > header { align-items: start; flex-direction: column; }
+  .aw-cinematic-viewport button,
+  .aw-cinematic-viewport figure { height: 58vw; min-height: 14rem; }
   .aw-project-boundary { margin-top: 2.8rem; }
   .aw-dossier-ask > header { align-items: start; gap: .75rem; }
   .aw-identity h1 { font-size: clamp(2.5rem, 14vw, 4rem); }
@@ -1268,6 +1360,13 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-suhulog-steps p { white-space: normal; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .aw-workflow-track button::after,
+  .aw-status-progression button::after,
+  .aw-comparison-result b,
+  .aw-cinematic-viewport > div { transition: none; }
+  .aw-workflow-sequence > p,
+  .aw-status-progression article,
+  .aw-comparison-result { animation: none; }
   .aw-suhulog-frame { animation: none; }
   .aw-suhulog-steps button,
   .aw-suhulog-steps button::before { transition: none; }

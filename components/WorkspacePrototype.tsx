@@ -561,6 +561,73 @@ function ProjectMedia({ project, openImage, lead = false }: Pick<ProjectViewProp
   );
 }
 
+function WorkflowSequence({ steps, visibleCount = steps.length, label }: {
+  steps: { label: string; value: string }[];
+  visibleCount?: number;
+  label: string;
+}) {
+  const visible = steps.slice(0, visibleCount);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const active = visible[Math.min(activeIndex, Math.max(visible.length - 1, 0))];
+  if (!active) return null;
+  return (
+    <div className="aw-workflow-sequence" aria-label={label}>
+      <div className="aw-workflow-track">
+        {visible.map((step, index) => (
+          <button type="button" aria-pressed={activeIndex === index} className={activeIndex === index ? "is-active" : ""} key={step.label} onClick={() => setActiveIndex(index)}>
+            <small>{String(index + 1).padStart(2, "0")}</small><strong>{step.label}</strong>
+          </button>
+        ))}
+      </div>
+      <p key={active.label}><span>{active.label}</span>{active.value}</p>
+    </div>
+  );
+}
+
+function StatusProgression({ project }: { project: WorkspaceProject }) {
+  const states = [
+    { label: "Implemented", title: project.evidence[0]?.value ?? "Workflow structure", body: project.howItWorks[0] },
+    { label: "Current", title: project.evidence[1]?.value ?? "Evidence review", body: "The public technical and release record is still being reconciled." },
+    { label: "Planned / withheld", title: project.evidence[2]?.value ?? "Private evidence", body: "Integration and deployment claims stay outside this case until canonical evidence confirms them." },
+  ];
+  const [active, setActive] = useState(0);
+  return (
+    <section className="aw-status-progression" aria-label="BDRS implementation progression">
+      <div>{states.map((state, index) => <button type="button" aria-pressed={active === index} className={active === index ? "is-active" : ""} key={state.label} onClick={() => setActive(index)}><span>{String(index + 1).padStart(2, "0")}</span><strong>{state.label}</strong></button>)}</div>
+      <article key={states[active].label}><span>{states[active].label}</span><h2>{states[active].title}</h2><p>{states[active].body}</p></article>
+    </section>
+  );
+}
+
+function ResearchComparison({ project }: { project: WorkspaceProject }) {
+  const variants = [
+    { name: "Baseline", model: "YOLOv11", score: 0.795, evidence: project.evidence[0]?.value, note: "Reference detector used for every improvement comparison." },
+    { name: "Best single", model: "Modified model", score: 0.807, evidence: project.evidence[1]?.value, note: "Best result from one modified architecture, kept separate from ensemble inference." },
+    { name: "Ensemble", model: "Three-model WBF", score: 0.824, evidence: project.evidence[2]?.value, note: `Fusion result; the stricter metric is ${project.evidence[3]?.value}.` },
+  ];
+  const [active, setActive] = useState(0);
+  const selected = variants[active];
+  return (
+    <section className="aw-research-comparison" aria-label="TomatoVision model comparison">
+      <header><span>Evaluation comparison</span><h2>Baseline, modified model, and ensemble stay distinct.</h2></header>
+      <div className="aw-comparison-controls">{variants.map((variant, index) => <button type="button" aria-pressed={active === index} className={active === index ? "is-active" : ""} key={variant.name} onClick={() => setActive(index)}><span>{variant.name}</span><strong>{variant.score.toFixed(3)}</strong></button>)}</div>
+      <div className="aw-comparison-result" key={selected.name}>
+        <div><span>{selected.name}</span><h3>{selected.model}</h3><p>{selected.note}</p></div>
+        <div><strong>{selected.evidence}</strong><span>mAP@0.5</span><i><b style={{ width: `${(selected.score / 0.824) * 100}%` }} /></i></div>
+      </div>
+    </section>
+  );
+}
+
+function MediaPair({ project, openImage, imageLabel, videoLabel }: Pick<ProjectViewProps, "project" | "openImage"> & { imageLabel: string; videoLabel: string }) {
+  return (
+    <section className="aw-media-pair" aria-label={project.title + " visual evidence"}>
+      {project.image && <button type="button" onClick={(event) => openImage(0, event.currentTarget)} aria-label={"Quick Look: " + imageLabel}><Image src={project.image} alt={imageLabel} fill sizes="(max-width: 760px) 100vw, 520px" className="object-cover object-top" /><span>{imageLabel}</span></button>}
+      {project.video && <figure><video controls playsInline preload="metadata" poster={project.image} aria-label={videoLabel}><source src={project.video} type="video/mp4" /></video><figcaption>{videoLabel}</figcaption></figure>}
+    </section>
+  );
+}
+
 function LabStockDossier({ project, query, setQuery, ask, back }: ProjectViewProps) {
   const prompt = PROJECT_DEMO_PROMPTS.labstock;
   const { projectViewportRef, typedPrompt, responseVisible, responseProgress, runPresentation } = useProjectPresentation(prompt);
@@ -611,7 +678,7 @@ function LabStockDossier({ project, query, setQuery, ask, back }: ProjectViewPro
 
         {responseProgress >= .36 && <section className="aw-system-story aw-stream-structure" id="labstock-data-flow">
           <header><span>How LabStock works</span><p>Every output stays connected to the stored ledger and its source evidence.</p></header>
-          <div className="aw-data-flow">{architecture.map((step, index) => responseProgress >= .38 + index * .025 ? <div className="aw-stream-structure" key={step.label}><small>{String(index + 1).padStart(2, "0")}</small><strong>{step.label}</strong><span>{step.value}</span></div> : null)}</div>
+          <WorkflowSequence steps={architecture} visibleCount={Math.min(architecture.length, Math.max(1, Math.floor((responseProgress - .36) / .03)))} label="LabStock source-to-export workflow" />
           {responseProgress >= .51 && <div className="aw-flow-notes aw-stream-structure"><p><strong>Same workbook again</strong><span>Recognized source → no duplicate movement</span></p><p><strong>Correction required</strong><span>New auditable correction → prior history retained</span></p></div>}
         </section>}
 
@@ -629,7 +696,7 @@ function LabStockDossier({ project, query, setQuery, ask, back }: ProjectViewPro
           {visibleEvidenceRows > 0 && <EvidenceTable project={project} visibleRows={visibleEvidenceRows} />}
         </section>}
 
-        {responseProgress >= .90 && <footer className="aw-project-boundary aw-stream-structure"><div><span>Current status</span><strong>{project.status}</strong></div><p><StreamingText text={project.publicLimitations} progress={responseProgress} start={.90} end={.96} /></p></footer>}
+        {responseProgress >= .90 && <footer className="aw-project-boundary aw-stream-structure"><div><span>Current status</span><strong>{project.status}</strong><small>Public-safe product capture pending</small></div><p><StreamingText text={project.publicLimitations} progress={responseProgress} start={.90} end={.96} /></p></footer>}
         {responseProgress >= .96 && <div className="aw-stream-structure"><ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} /></div>}
       </article>}
     </main>
@@ -639,23 +706,19 @@ function LabStockDossier({ project, query, setQuery, ask, back }: ProjectViewPro
 function BdrsDossier(props: ProjectViewProps) {
   const { project, query, setQuery, ask, back } = props;
   const prompt = PROJECT_DEMO_PROMPTS.bdrs;
-  const { projectViewportRef, typedPrompt, responseVisible, runPresentation } = useProjectPresentation(prompt);
+  const { projectViewportRef, typedPrompt, responseVisible, responseProgress, runPresentation } = useProjectPresentation(prompt);
   return (
     <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-enter">
       <button type="button" className="aw-project-back" onClick={back}>← Work</button>
       <ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={() => runPresentation(true)} />
-      {responseVisible && <article className="aw-dossier-response">
+      {responseVisible && <article className={"aw-dossier-response aw-streamed-response" + (responseProgress < 1 ? " is-streaming" : "")} aria-busy={responseProgress < 1}>
         <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
         <ProjectOpening project={project} />
-        <section className="aw-editorial-intro"><span>Operational boundary</span><div><h2>Blood-bank work needs domain workflow, traceability, and careful public boundaries.</h2><p>{project.problem}</p><p>{project.solution}</p></div></section>
-        <section className="aw-bdrs-status" aria-label="BDRS implementation status">
-          <article><span>Implemented</span><strong>{project.evidence[0]?.value}</strong><p>{project.howItWorks[0]}</p></article>
-          <article><span>Current work</span><strong>{project.evidence[1]?.value}</strong><p>The public technical and release record is still being reconciled.</p></article>
-          <article><span>Planned or withheld</span><strong>{project.evidence[2]?.value}</strong><p>Integration and deployment claims remain outside the case unless canonical evidence confirms them.</p></article>
-        </section>
-        <section className="aw-proof-story"><header><span>Public record</span><h2>What this case can state today.</h2></header><EvidenceTable project={project} /></section>
-        <footer className="aw-project-boundary"><div><span>Public limitation</span><strong>Conservative by design</strong></div><p>{project.publicLimitations}</p></footer>
-        <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+        {responseProgress >= .22 && <section className="aw-editorial-intro aw-stream-structure"><span>Operational boundary</span><div><h2>Blood-bank work needs domain workflow, traceability, and careful public boundaries.</h2><p>{project.problem}</p><p>{project.solution}</p></div></section>}
+        {responseProgress >= .48 && <div className="aw-stream-structure"><StatusProgression project={project} /></div>}
+        {responseProgress >= .68 && <section className="aw-proof-story aw-stream-structure"><header><span>Public record</span><h2>What this case can state today.</h2></header><EvidenceTable project={project} /></section>}
+        {responseProgress >= .86 && <footer className="aw-project-boundary aw-stream-structure"><div><span>Public limitation</span><strong>Conservative by design</strong><small>Public-safe product capture pending</small></div><p>{project.publicLimitations}</p></footer>}
+        {responseProgress >= .96 && <div className="aw-stream-structure"><ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} /></div>}
       </article>}
     </main>
   );
@@ -720,20 +783,20 @@ function SuhuLogShowcase({ project, openImage }: Pick<ProjectViewProps, "project
 function SuhuLogDossier(props: ProjectViewProps) {
   const { project, query, setQuery, ask, back, openImage } = props;
   const prompt = PROJECT_DEMO_PROMPTS.suhulog;
-  const { projectViewportRef, typedPrompt, responseVisible, runPresentation } = useProjectPresentation(prompt);
+  const { projectViewportRef, typedPrompt, responseVisible, responseProgress, runPresentation } = useProjectPresentation(prompt);
   return (
     <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-enter">
       <button type="button" className="aw-project-back" onClick={back}>← Work</button>
       <ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={() => runPresentation(true)} />
-      {responseVisible && <article className="aw-dossier-response">
+      {responseVisible && <article className={"aw-dossier-response aw-streamed-response" + (responseProgress < 1 ? " is-streaming" : "")} aria-busy={responseProgress < 1}>
         <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
         <ProjectOpening project={project} />
-        <SuhuLogShowcase project={project} openImage={openImage} />
-        <section className="aw-editorial-intro"><span>The workflow</span><div><h2>From QR label to the monthly record.</h2><p>{project.problem}</p></div></section>
-        <ol className="aw-workflow-line">{project.howItWorks.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></li>)}</ol>
-        <section className="aw-proof-story"><header><span>Released evidence</span><h2>The same records drive monitoring and export.</h2></header><EvidenceTable project={project} /></section>
-        <footer className="aw-project-boundary"><div><span>Public boundary</span><strong>Sanitized portfolio evidence</strong></div><p>{project.publicLimitations}</p></footer>
-        <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+        {responseProgress >= .18 && <div className="aw-stream-structure"><SuhuLogShowcase project={project} openImage={openImage} /></div>}
+        {responseProgress >= .46 && <section className="aw-editorial-intro aw-stream-structure"><span>The workflow</span><div><h2>From QR label to the monthly record.</h2><p>{project.problem}</p></div></section>}
+        {responseProgress >= .58 && <ol className="aw-workflow-line aw-stream-structure">{project.howItWorks.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></li>)}</ol>}
+        {responseProgress >= .74 && <section className="aw-proof-story aw-stream-structure"><header><span>Released evidence</span><h2>The same records drive monitoring and export.</h2></header><EvidenceTable project={project} /></section>}
+        {responseProgress >= .88 && <footer className="aw-project-boundary aw-stream-structure"><div><span>Public boundary</span><strong>Sanitized portfolio evidence</strong></div><p>{project.publicLimitations}</p></footer>}
+        {responseProgress >= .96 && <div className="aw-stream-structure"><ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} /></div>}
       </article>}
     </main>
   );
@@ -742,26 +805,79 @@ function SuhuLogDossier(props: ProjectViewProps) {
 function TomatoVisionDossier(props: ProjectViewProps) {
   const { project, query, setQuery, ask, back, openImage } = props;
   const prompt = PROJECT_DEMO_PROMPTS["tomato-ripeness"];
-  const { projectViewportRef, typedPrompt, responseVisible, runPresentation } = useProjectPresentation(prompt);
+  const { projectViewportRef, typedPrompt, responseVisible, responseProgress, runPresentation } = useProjectPresentation(prompt);
   return (
     <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-enter">
       <button type="button" className="aw-project-back" onClick={back}>← Work</button>
       <ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={() => runPresentation(true)} />
-      {responseVisible && <article className="aw-dossier-response">
+      {responseVisible && <article className={"aw-dossier-response aw-streamed-response" + (responseProgress < 1 ? " is-streaming" : "")} aria-busy={responseProgress < 1}>
         <div className="aw-dossier-response-label"><i /><span>Workspace response</span></div>
         <ProjectOpening project={project} />
-        <section className="aw-research-question"><span>Research question</span><h2>Can architectural changes and ensemble inference improve maturity detection under greenhouse occlusion and scale variation?</h2><p>{project.problem}</p></section>
-        <ProjectMedia project={project} openImage={openImage} lead />
-        <section className="aw-experiment-line" aria-label="TomatoVision experiment sequence">
-          <div><span>Baseline</span><strong>YOLOv11</strong><p>{project.evidence[0]?.value}</p></div>
-          <div><span>Architecture study</span><strong>Swin + multi-scale SPPF</strong><p>{project.evidence[1]?.value}</p></div>
-          <div><span>Ensemble</span><strong>Three-model WBF</strong><p>{project.evidence[2]?.value}</p></div>
-          <div><span>Stricter metric</span><strong>mAP@0.5:0.95</strong><p>{project.evidence[3]?.value}</p></div>
-        </section>
-        <section className="aw-research-method"><div><span>Experimental setup</span><p>{project.solution}</p></div><ol>{project.howItWorks.map((item) => <li key={item}>{item}</li>)}</ol></section>
-        <footer className="aw-project-boundary"><div><span>Research boundary</span><strong>Evaluated study · not a deployed product</strong></div><p>{project.publicLimitations}</p></footer>
-        <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+        {responseProgress >= .16 && <section className="aw-research-question aw-stream-structure"><span>Research question</span><h2>Can architecture changes and ensemble inference improve maturity detection under greenhouse occlusion and scale variation?</h2><p>{project.problem}</p></section>}
+        {responseProgress >= .32 && <div className="aw-stream-structure"><MediaPair project={project} openImage={openImage} imageLabel="TomatoVision detection output" videoLabel="Evaluated detection sequence" /></div>}
+        {responseProgress >= .48 && <section className="aw-research-method aw-stream-structure"><div><span>Experimental setup</span><p>{project.solution}</p></div><ol>{project.howItWorks.map((item) => <li key={item}>{item}</li>)}</ol></section>}
+        {responseProgress >= .62 && <div className="aw-stream-structure"><ResearchComparison project={project} /></div>}
+        {responseProgress >= .78 && <section className="aw-research-tradeoff aw-stream-structure"><span>Result boundary</span><div><h2>The strongest score comes from ensemble inference.</h2><p>The best single modified model reaches {project.evidence[1]?.value}; three-model WBF reaches {project.evidence[2]?.value}. The public record does not publish a runtime benchmark, so this case does not claim real-time performance.</p></div></section>}
+        {responseProgress >= .90 && <footer className="aw-project-boundary aw-stream-structure"><div><span>Research context</span><strong>Evaluated study · not a deployed product</strong></div><p>{project.publicLimitations}</p></footer>}
+        {responseProgress >= .96 && <div className="aw-stream-structure"><ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} /></div>}
       </article>}
+    </main>
+  );
+}
+
+function PadelVisionResponse({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
+  const steps = [
+    { label: "Broadcast", value: "Single moving-camera match footage is the source." },
+    { label: "Detection", value: project.howItWorks[0] },
+    { label: "Tracking", value: project.howItWorks[1] },
+    { label: "Court map", value: project.howItWorks[2] },
+    { label: "Output", value: project.howItWorks[3] },
+  ];
+  return (
+    <main className="aw-center aw-project-detail aw-compact-project aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectOpening project={project} />
+      <MediaPair project={project} openImage={openImage} imageLabel="Padel Vision annotated output" videoLabel="Padel Vision pipeline output" />
+      <section className="aw-secondary-signature"><header><span>Seekable pipeline</span><h2>From broadcast frame to court interpretation.</h2></header><WorkflowSequence steps={steps} label="Padel Vision pipeline" /></section>
+      <EvidenceTable project={project} /><footer className="aw-project-boundary"><div><span>Experiment boundary</span><strong>Computer vision prototype</strong></div><p>{project.publicLimitations}</p></footer>
+      <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+    </main>
+  );
+}
+
+function ObjectTwinResponse({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
+  const steps = [
+    { label: "Input", value: "A single source image starts the generation job." },
+    { label: "Generate", value: project.howItWorks[0] },
+    { label: "Track", value: project.howItWorks[1] },
+    { label: "Evaluate", value: project.howItWorks[2] },
+    { label: "Inspect", value: project.howItWorks[3] },
+  ];
+  return (
+    <main className="aw-center aw-project-detail aw-compact-project aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectOpening project={project} />
+      <MediaPair project={project} openImage={openImage} imageLabel="ObjectTwin generation workspace" videoLabel="Generated 3D result and browser inspection" />
+      <section className="aw-secondary-signature"><header><span>Generation path</span><h2>Input, generation, evaluation, and inspectable output.</h2></header><WorkflowSequence steps={steps} label="ObjectTwin generation pipeline" /></section>
+      <EvidenceTable project={project} /><footer className="aw-project-boundary"><div><span>Experiment boundary</span><strong>Inspectable pipeline prototype</strong></div><p>{project.publicLimitations}</p></footer>
+      <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
+    </main>
+  );
+}
+
+function PorscheResponse({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
+  const [active, setActive] = useState(0);
+  return (
+    <main className="aw-center aw-project-detail aw-compact-project aw-enter">
+      <button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectOpening project={project} />
+      <section className="aw-cinematic-showcase" aria-label="Porsche 3D showcase">
+        <header><div><span>Interactive web study</span><h2>Material, camera, and model transitions in one lightweight scene.</h2></div><nav aria-label="Showcase view"><button type="button" aria-pressed={active === 0} onClick={() => setActive(0)}>Still</button><button type="button" aria-pressed={active === 1} onClick={() => setActive(1)}>Interaction</button></nav></header>
+        <div className="aw-cinematic-viewport"><div style={{ transform: `translate3d(-${active * 50}%,0,0)` }}>
+          {project.image && <button type="button" onClick={(event) => openImage(0, event.currentTarget)} aria-label="Quick Look: Porsche 3D configurator"><Image src={project.image} alt="Porsche 3D configurator" fill sizes="(max-width: 760px) 100vw, 1000px" className="object-cover" /></button>}
+          <figure><video controls playsInline preload="metadata" poster={project.image} aria-label="Porsche 3D interaction sequence"><source src={project.video} type="video/mp4" /></video></figure>
+        </div></div>
+      </section>
+      <section className="aw-compact-record"><div><span>What it explores</span><p>{project.problem}</p><p>{project.solution}</p></div><div><span>Technical outline</span><ul>{project.howItWorks.map((item) => <li key={item}>{item}</li>)}</ul></div></section>
+      <EvidenceTable project={project} /><footer className="aw-project-boundary"><div><span>Creative boundary</span><strong>Fan-made interactive experiment</strong></div><p>{project.publicLimitations}</p></footer>
+      <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
     </main>
   );
 }
@@ -785,6 +901,9 @@ function ProjectWorkspace(props: ProjectViewProps) {
   if (props.project.slug === "bdrs") return <BdrsDossier {...props} />;
   if (props.project.slug === "suhulog") return <SuhuLogDossier {...props} />;
   if (props.project.slug === "tomato-ripeness") return <TomatoVisionDossier {...props} />;
+  if (props.project.slug === "padel-vision") return <PadelVisionResponse {...props} />;
+  if (props.project.slug === "objecttwin") return <ObjectTwinResponse {...props} />;
+  if (props.project.slug === "porsche-3d") return <PorscheResponse {...props} />;
   return <CompactProjectResponse {...props} />;
 }
 
