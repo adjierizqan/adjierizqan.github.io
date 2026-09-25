@@ -53,7 +53,6 @@ export const projects: Project[] = [
       "Evaluated on real greenhouse photos with heavy occlusion",
     ],
     links: {
-      github: "https://github.com/adjierizqan/tomato-ripeness-yolov11",
       // paper: add the URL here once the paper is published
     },
   },
@@ -75,9 +74,7 @@ export const projects: Project[] = [
       "Ball speed estimation and shot classification",
       "Annotated output video",
     ],
-    links: {
-      github: "https://github.com/adjierizqan/padel-vision",
-    },
+    links: {},
   },
   {
     slug: "suhulog",
@@ -159,7 +156,6 @@ export const projects: Project[] = [
     longDescription:
       "A fan project about Porsche design. Six models, from the 1991 RWB 964 to the 2022 718 Cayman GT4 RS, are rendered in real time with Three.js. Visitors orbit each car, change its paint, and move between models through GSAP camera transitions. The site is plain HTML with ES modules, so there is no build step. 3D models by Ddiaz Design on Sketchfab.",
     image: "/projects/porsche-3d/cinematic/01-rwb964-hero.webp",
-    video: "/projects/porsche-3d.mp4",
     tech: ["Three.js", "GSAP", "JavaScript", "WebGL"],
     features: [
       "Six real-time 3D Porsche models",
@@ -167,9 +163,7 @@ export const projects: Project[] = [
       "GSAP camera transitions between cars",
       "No build step: plain HTML and ES modules",
     ],
-    links: {
-      github: "https://github.com/adjierizqan/porsche_3d",
-    },
+    links: {},
   },
 ];
 
