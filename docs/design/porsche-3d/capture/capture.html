@@ -1,0 +1,53 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"}}</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>html,body{margin:0;height:100%;background:#eceae6;overflow:hidden}canvas{display:block;width:100vw;height:100vh}</style>
+</head><body><canvas id="c"></canvas>
+<script type="module">
+// Capture harness: the site's own CarStage (same models, lighting, materials), without the site UI.
+import { CarStage } from './src/car3d.js';
+const stage = new CarStage(document.getElementById('c'));
+stage.controls.minDistance = 0.5; stage.controls.maxDistance = 40;
+stage.controls.minPolarAngle = 0; stage.controls.maxPolarAngle = Math.PI / 2;
+window.stage = stage;
+window.frames = (n = 30) => new Promise((r) => { let i = 0; const f = () => (++i >= n ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); });
+window.shot = async (file, { pos, tgt, rot = stage.idleBase, color = null, finish = null } = {}) => {
+  await stage.show('./public/models/' + file);
+  stage.setAutoRotate(false);
+  stage.pivot.rotation.set(0, rot, 0); stage.pivot.position.set(0, 0, 0);
+  if (finish) stage.finish = finish;
+  if (color) stage.applyColor(color); else stage.restoreOriginal();
+  stage.camera.position.set(...pos); stage.controls.target.set(...tgt); stage.controls.update();
+  await window.frames(40);
+};
+// Same OUT/IN motion as main.js switchCar(), dir = +1
+window.switchTo = async (file) => {
+  const p = stage.pivot, dir = 1;
+  stage.beginSwitch();
+  gsap.to(p.rotation, { y: p.rotation.y - dir * 0.7, duration: 0.5, ease: 'power2.in' });
+  gsap.to(p.position, { x: -dir * 3.4, y: -0.15, duration: 0.5, ease: 'power2.in' });
+  gsap.to(p.scale, { x: 0.78, y: 0.78, z: 0.78, duration: 0.5, ease: 'power2.in' });
+  await new Promise((r) => setTimeout(r, 360));
+  await stage.show('./public/models/' + file);
+  gsap.killTweensOf([p.position, p.rotation, p.scale]);
+  p.rotation.set(0, stage.idleBase + dir * 0.7, 0); p.position.set(dir * 3.4, 0.22, 0); p.scale.setScalar(0.82);
+  gsap.to(p.rotation, { y: stage.idleBase, duration: 1.15, ease: 'expo.out' });
+  gsap.to(p.position, { x: 0, y: 0, duration: 1.0, ease: 'expo.out' });
+  gsap.to(p.scale, { x: 1, y: 1, z: 1, duration: 1.15, ease: 'expo.out', onComplete: () => stage.endSwitch() });
+};
+// Lineup: clones of the six loaded models in a row (composition only; models unmodified)
+window.lineup = async (files) => {
+  const scenes = await stage.preload(files.map((f) => './public/models/' + f));
+  if (stage.current) stage.pivot.remove(stage.current);
+  stage.setAutoRotate(false); stage.pivot.rotation.set(0, 0, 0);
+  scenes.forEach((s, i) => {
+    const c = s.clone(true); c.userData.lineup = true;
+    const g = new (s.constructor)(); g.add(c);
+    g.position.set((i - 2.5) * 2.3, 0, 0); g.rotation.y = 0.95;
+    stage.pivot.add(g);
+  });
+  await window.frames(40);
+};
+window.ready = true;
+</script></body></html>

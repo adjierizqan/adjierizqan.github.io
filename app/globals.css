@@ -1391,15 +1391,21 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-twin-record li { border-top:1px solid #dfe2e6; padding:.7rem 0; color:#555c66; font-size:var(--aw-text-body); }
 
 .aw-porsche-project .aw-dossier-response-label { border-color:#d8d4cb; }
-.aw-porsche-sequence { margin-top:1rem; padding-top:0; border:0; }
-.aw-porsche-stage { position:relative; height:clamp(35rem,70vh,48rem); margin-top:0; background:#e8e5dd; }
-.aw-porsche-stage::after { position:absolute; inset:0; background:linear-gradient(90deg,rgb(23 21 18 / 32%),transparent 50%); content:""; pointer-events:none; }
-.aw-porsche-stage > small { position:absolute; z-index:3; top:1.2rem; right:1.3rem; color:#716c65; font-family:var(--font-geist-mono),monospace; font-size:var(--aw-text-micro); }
-.aw-porsche-title { position:absolute; z-index:3; left:1.7rem; top:1.7rem; bottom:auto; width:min(28rem,48%); background:rgb(239 236 228 / 94%); padding:1rem 1.1rem; color:#171717; pointer-events:none; }
-.aw-porsche-title span { font-size:var(--aw-text-micro); font-weight:700; letter-spacing:.07em; text-transform:uppercase; }
-.aw-porsche-title h1 { margin-top:.45rem; font-size:clamp(3.2rem,6vw,5.4rem); line-height:.88; letter-spacing:-.075em; }
-.aw-porsche-title p { margin-top:.8rem; color:rgb(23 23 23 / 72%); font-size:var(--aw-text-body); line-height:1.6; }
-.aw-porsche-controls { grid-template-columns:repeat(5,1fr); }
+.aw-porsche-sequence { margin-top:1.6rem; padding-top:0; border:0; }
+.aw-porsche-sequence > header { align-items:center; }
+.aw-porsche-stage { position:relative; height:auto; aspect-ratio:16 / 9; margin-top:.7rem; background:#eceae6; }
+.aw-porsche-title { margin-top:1.8rem; max-width:44rem; color:#171717; }
+.aw-porsche-title span { color:#848993; font-size:var(--aw-text-micro); font-weight:680; letter-spacing:.055em; text-transform:uppercase; }
+.aw-porsche-title h1 { margin-top:.45rem; font-size:clamp(2.6rem,5vw,4.4rem); line-height:.92; letter-spacing:-.065em; }
+.aw-porsche-title p { margin-top:.8rem; color:#5f646d; font-size:var(--aw-text-body); line-height:1.6; }
+.aw-porsche-caption { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding:.75rem 0; }
+.aw-porsche-caption p { color:#5f646d; font-size:var(--aw-text-body); line-height:1.5; }
+.aw-porsche-caption strong { margin-right:.35rem; color:#202228; font-weight:620; }
+.aw-porsche-caption div { display:flex; flex-wrap:wrap; gap:.35rem; }
+.aw-porsche-caption div button { min-height:2.5rem; border:1px solid #dfe2e6; border-radius:.35rem; padding:0 .7rem; color:#5f646d; font-size:var(--aw-text-ui); }
+.aw-porsche-caption div button[aria-pressed="true"] { border-color:#202228; color:#202228; }
+.aw-porsche-controls { grid-template-columns:repeat(6,1fr); border-top:1px solid #dfe2e6; }
+.aw-porsche-site-video { margin-top:2.4rem; }
 .aw-porsche-controls button { padding-top:1rem; }
 .aw-porsche-record { display:grid; grid-template-columns:.8fr 1.2fr; gap:3rem; margin-top:3rem; }
 .aw-porsche-record > p { color:#5f646d; font-size:var(--aw-text-body); line-height:1.65; }
@@ -1530,11 +1536,8 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-twin-studio > header nav { width: 100%; overflow-x: auto; }
   .aw-twin-studio > header nav button { flex: 1 0 auto; }
   .aw-twin-viewport,
-  .aw-porsche-stage { height: 62vw; min-height: 18rem; }
+  .aw-porsche-stage { height: auto; min-height: 0; }
   .aw-twin-caption { grid-template-columns: 1fr; gap: .3rem; }
-  .aw-porsche-controls { grid-template-columns: 1fr 1fr; }
-  .aw-porsche-controls button:nth-child(3) { border-left: 0; }
-  .aw-porsche-controls button:nth-child(n+3) { border-top: 1px solid #dfe2e6; }
   .aw-media-pair > button { min-height: 15rem; }
   .aw-media-pair video { min-height: 15rem; }
   .aw-status-progression > div { grid-template-columns: 1fr; }
@@ -1667,12 +1670,10 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-padel-player { padding:.8rem; }
   .aw-twin-workbench { grid-template-columns:1fr; }
   .aw-twin-source > span { min-height:52vw; }
-  .aw-porsche-stage { height:72vw; min-height:24rem; }
-  .aw-porsche-title { left:1rem; top:1rem; bottom:auto; width:calc(100% - 2rem); }
-  .aw-porsche-title p { display:none; }
-  .aw-porsche-controls { grid-template-columns:1fr 1fr; }
-  .aw-porsche-controls button:nth-child(3),.aw-porsche-controls button:nth-child(5) { border-left:0; }
-  .aw-porsche-controls button:nth-child(n+3) { border-top:1px solid #dfe2e6; }
+  .aw-porsche-stage { aspect-ratio:4 / 3; min-height:0; }
+  .aw-porsche-controls { grid-template-columns:repeat(3,1fr); }
+  .aw-porsche-controls button:nth-child(4) { border-left:0; padding-left:0; }
+  .aw-porsche-controls button:nth-child(n+4) { border-top:1px solid #dfe2e6; }
   .aw-porsche-record ol { grid-template-columns:1fr; }
   .aw-porsche-record li:nth-child(even) { border-left:0; padding-left:0; }
 }

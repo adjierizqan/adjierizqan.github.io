@@ -613,24 +613,42 @@ function ObjectTwinStudio({ project, openImage }: Pick<ProjectViewProps, "projec
   );
 }
 
-function PorscheSequence({ project, openImage }: Pick<ProjectViewProps, "project" | "openImage">) {
-  const views = [
-    { label: "Model", src: "/projects/porsche-3d/web/01-hero.webp", quickIndex: 1, note: "Six vehicle models share one persistent WebGL scene." },
-    { label: "Camera", src: "/projects/porsche-3d/web/03-camera-state.webp", quickIndex: 3, note: "Camera and target move together to preserve the composition." },
-    { label: "Material", src: "/projects/porsche-3d/web/04-material-state.webp", quickIndex: 4, note: "Paint changes apply directly to the rendered material." },
-    { label: "Detail", src: "/projects/porsche-3d/web/05-detail.webp", quickIndex: 5, note: "A closer state exposes model and lighting detail." },
-    { label: "Sequence", src: null, quickIndex: null, note: "The complete interaction remains visitor-controlled." },
+type PorscheFrame = { src: string; label: string; quickIndex: number };
+const porscheCinematic = "/projects/porsche-3d/cinematic/";
+
+function PorscheSequence({ openImage }: Pick<ProjectViewProps, "openImage">) {
+  const views: { label: string; note: string; frames?: PorscheFrame[]; video?: string }[] = [
+    { label: "Model", note: "The RWB 964 in the site's studio set.", frames: [{ src: porscheCinematic + "01-rwb964-hero.webp", label: "911 RWB (964)", quickIndex: 0 }] },
+    { label: "Profile", note: "918 Spyder Weissach in its Martini livery, side on.", frames: [{ src: porscheCinematic + "02-918-profile.webp", label: "918 Spyder", quickIndex: 1 }] },
+    { label: "Line-up", note: "All six models from the site in one scene.", frames: [{ src: porscheCinematic + "03-lineup.webp", label: "Six models", quickIndex: 2 }] },
+    { label: "Camera", note: "The site's switch transition: one car turns away, the next arrives.", video: porscheCinematic + "04-transition.mp4" },
+    { label: "Material", note: "One car, three finishes from the configurator.", frames: [
+      { src: porscheCinematic + "05-gt3-metallic.webp", label: "GT Silver · metallic", quickIndex: 3 },
+      { src: porscheCinematic + "05-gt3-gloss.webp", label: "Guards Red · gloss", quickIndex: 4 },
+      { src: porscheCinematic + "05-gt3-matte.webp", label: "Jet Black · matte", quickIndex: 5 },
+    ] },
+    { label: "Detail", note: "Close range on the RWB 964.", frames: [
+      { src: porscheCinematic + "06-rwb964-wheel.webp", label: "Wheel and brake", quickIndex: 6 },
+      { src: porscheCinematic + "06-rwb964-wing.webp", label: "Rear wing", quickIndex: 7 },
+      { src: porscheCinematic + "06-rwb964-light.webp", label: "Headlights", quickIndex: 8 },
+    ] },
   ];
   const [active, setActive] = useState(0);
+  const [frameIndex, setFrameIndex] = useState(0);
   const current = views[active];
+  const frame = current.frames?.[Math.min(frameIndex, current.frames.length - 1)];
   return (
-    <section className="aw-porsche-sequence" aria-label="Porsche 3D interaction sequence">
+    <section className="aw-porsche-sequence" aria-label="Porsche 3D renders">
+      <header><span>Rendered from the site&apos;s own Three.js scene</span><small>{String(active + 1).padStart(2, "0")} / {String(views.length).padStart(2, "0")}</small></header>
       <div className="aw-porsche-stage">
-        {current.src ? <button type="button" onClick={(event) => openImage(current.quickIndex ?? 1, event.currentTarget)} aria-label={"Quick Look: " + current.label}><span key={current.src}><Image src={current.src} alt={current.label + " state in Porsche 3D"} fill sizes="(max-width: 760px) 100vw, 1100px" className="object-cover object-center" /></span></button> : <video controls playsInline preload="metadata" poster="/projects/porsche-3d/web/01-hero.webp" aria-label="Porsche 3D interaction recording"><source src={project.video} type="video/mp4" /></video>}
-        <div className="aw-porsche-title"><span>Interactive WebGL experiment</span><h1>{project.title}</h1><p>{project.summary}</p></div>
-        <small>{String(active + 1).padStart(2, "0")} / 05</small>
+        {frame ? <button type="button" onClick={(event) => openImage(frame.quickIndex, event.currentTarget)} aria-label={"Quick Look: " + frame.label}><span key={frame.src}><Image src={frame.src} alt={frame.label + " rendered in Porsche 3D"} fill sizes="(max-width: 760px) 100vw, 1100px" className="object-cover object-center" priority={active === 0} /></span></button>
+          : <video key={current.video} controls playsInline preload="metadata" poster={porscheCinematic + "04-transition-poster.webp"} aria-label="Porsche 3D model switch transition"><source src={current.video} type="video/mp4" /></video>}
       </div>
-      <div className="aw-porsche-controls" role="tablist" aria-label="Porsche 3D interaction states">{views.map((view, index) => <button type="button" role="tab" aria-selected={active === index} className={active === index ? "is-active" : ""} key={view.label} onClick={() => setActive(index)}><small>{String(index + 1).padStart(2, "0")}</small><strong>{view.label}</strong><span>{view.note}</span></button>)}</div>
+      <div className="aw-porsche-caption">
+        <p><strong>{frame?.label ?? current.label}</strong> {current.note}</p>
+        {current.frames && current.frames.length > 1 && <div role="group" aria-label={current.label + " frames"}>{current.frames.map((item, index) => <button type="button" aria-pressed={frameIndex === index} key={item.src} onClick={() => setFrameIndex(index)}>{item.label}</button>)}</div>}
+      </div>
+      <div className="aw-porsche-controls" role="tablist" aria-label="Porsche 3D views">{views.map((view, index) => <button type="button" role="tab" aria-selected={active === index} className={active === index ? "is-active" : ""} key={view.label} onClick={() => { setActive(index); setFrameIndex(0); }}><small>{String(index + 1).padStart(2, "0")}</small><strong>{view.label}</strong></button>)}</div>
     </section>
   );
 }
@@ -733,8 +751,9 @@ function ObjectTwinResponse({project,query,setQuery,ask,back,openImage}:ProjectV
   {responseProgress>=.78&&<section className="aw-twin-record aw-stream-structure"><div><span>Pipeline</span><p>{project.solution}</p></div><ol>{project.howItWorks.map(item=><li key={item}>{item}</li>)}</ol></section>}{responseProgress>=.92&&<footer className="aw-project-boundary aw-stream-structure"><div><span>Experiment boundary</span><strong>Inspectable prototype</strong></div><p>{project.publicLimitations}</p></footer>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
 
 function PorscheResponse({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-porsche-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
-  {responseProgress>=.06&&<div className="aw-stream-structure"><PorscheSequence project={project} openImage={openImage}/></div>}
-  {responseProgress>=.72&&<div className="aw-stream-structure"><ProjectMetaLine project={project}/></div>}{responseProgress>=.78&&<section className="aw-porsche-record aw-stream-structure"><p>{project.solution}</p><ol>{project.howItWorks.map(item=><li key={item}>{item}</li>)}</ol></section>}{responseProgress>=.92&&<footer className="aw-project-boundary aw-stream-structure"><div><span>Creative boundary</span><strong>Fan-made interaction study</strong></div><p>{project.publicLimitations}</p></footer>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
+  <header className="aw-porsche-title"><span>Interactive WebGL experiment</span><h1>{project.title}</h1><p>{project.summary}</p></header>
+  {responseProgress>=.06&&<div className="aw-stream-structure"><PorscheSequence openImage={openImage}/></div>}
+  {responseProgress>=.72&&<div className="aw-stream-structure"><ProjectMetaLine project={project}/></div>}{responseProgress>=.78&&<section className="aw-porsche-record aw-stream-structure"><p>{project.solution}</p><ol>{project.howItWorks.map(item=><li key={item}>{item}</li>)}</ol></section>}{responseProgress>=.86&&project.video&&<figure className="aw-signature-video aw-porsche-site-video aw-stream-structure"><video controls playsInline preload="metadata" poster={porscheCinematic+"03-lineup.webp"} aria-label="Recording of the live Porsche 3D site"><source src={project.video} type="video/mp4"/></video><figcaption>Recording of the live site, interface included · visitor-controlled playback.</figcaption></figure>}{responseProgress>=.92&&<footer className="aw-project-boundary aw-stream-structure"><div><span>Creative boundary</span><strong>Fan-made interaction study</strong></div><p>{project.publicLimitations}</p></footer>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
 
 
 function CompactProjectResponse({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
