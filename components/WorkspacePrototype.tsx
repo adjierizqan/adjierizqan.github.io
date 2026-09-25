@@ -985,6 +985,12 @@ export function WorkspacePrototype() {
     });
   }, []);
 
+  useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get("project");
+    const project = allWorkspaceProjects.find((item) => item.slug === slug);
+    if (project) selectProject(project);
+  }, [selectProject]);
+
   function openQuickLook(index: number, trigger: HTMLElement) {
     if (!quickLookImages[index]) return;
     quickLookReturnFocusRef.current = trigger;

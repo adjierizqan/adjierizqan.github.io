@@ -25,8 +25,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// Projects rebuilt inside the workspace; their old standalone pages forward there.
+const workspaceProjects = new Set(["tomato-ripeness"]);
+
 export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
+  if (workspaceProjects.has(slug)) {
+    // Static export has no server redirects; a meta refresh also works without JavaScript.
+    const target = `/workspace/?project=${slug}`;
+    return (
+      <div className="mx-auto max-w-3xl px-5 py-16 sm:px-6">
+        <meta httpEquiv="refresh" content={`0;url=${target}`} />
+        <p className="text-sm text-muted">This project now lives in the workspace. <Link href={target} className="font-medium text-accent">Open it there</Link>.</p>
+      </div>
+    );
+  }
   const project = getProject(slug);
   if (!project) notFound();
 
