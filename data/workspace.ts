@@ -134,14 +134,7 @@ export const featuredWork: WorkspaceProject[] = [
     whyItMatters: "The study shows which gains come from a single architecture and which require ensemble inference, rather than merging them into one headline result.",
     publicLimitations: "The portfolio reports evaluated research results and public project media; it does not claim a deployed agricultural product.",
     askSuggestion: "How were the TomatoVision models evaluated?",
-    image: "/projects/tomato-ripeness/showcase/hero.webp",
-    video: "/projects/tomato-ripeness.mp4",
-    gallery: [
-      { src: "/projects/tomato-ripeness/source-captures/source-scene.png", caption: "The greenhouse source scene before inference overlays." },
-      { src: "/projects/tomato-ripeness/source-captures/baseline-output.png", caption: "YOLOv11 baseline output on the comparison scene." },
-      { src: "/projects/tomato-ripeness/source-captures/ensemble-output.png", caption: "Three-model Weighted Boxes Fusion output on the same scene." },
-      { src: "/projects/tomato-ripeness/source-captures/result-summary.png", caption: "Inspectable class counts and returned-box record from the project demo." },
-    ],
+    image: "/projects/tomato-ripeness/research/demo1-combine4.webp",
     href: "/projects/tomato-ripeness",
   },
 ];

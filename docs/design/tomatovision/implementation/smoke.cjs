@@ -1,3 +1,5 @@
+/* Node QA script (CommonJS), run outside the app. */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { chromium } = require('/Users/adjie/Projects/labstock-pk/node_modules/@playwright/test');
 const BASE = process.argv[2] || 'http://localhost:4173';
 const results = [];
@@ -28,7 +30,7 @@ const ok = (name, pass, detail = '') => results.push({ name, pass: !!pass, detai
   ok('03 YOLOv11 tab hides divider', (await page.locator('.tv-scene-stage input').count()) === 0);
   await tabs.nth(4).click();
   const src = await page.locator('.tv-scene-stage > img').getAttribute('src');
-  ok('03 Combine 2 tab swaps image', src.includes('combine_2'), src);
+  ok('03 Combine 2 tab swaps image', src.includes('demo2-combine2'), src);
   await page.locator('.tv-scene-stage input').fill('20');
   const clip = await page.locator('.tv-scene-baseline').getAttribute('style');
   ok('03 divider moves', /inset\(0(px)? 80% 0(px)? 0(px)?\)/.test(clip), clip);
@@ -64,7 +66,7 @@ const ok = (name, pass, detail = '') => results.push({ name, pass: !!pass, detai
   const seg = page.locator('.ps-segmented button');
   ok('mobile hero defaults to WBF', (await seg.nth(2).getAttribute('aria-selected')) === 'true');
   await seg.nth(0).tap();
-  ok('mobile hero switches to baseline', await page.locator('.ps-detection-grid figure.is-active img').getAttribute('src').then((s) => s.includes('scene1-baseline')));
+  ok('mobile hero switches to baseline', await page.locator('.ps-detection-grid figure.is-active img').getAttribute('src').then((s) => s.includes('demo1-yolov11.webp')));
   ok('mobile P/R hidden by default', !(await page.locator('.ps-table thead th', { hasText: 'Precision' }).isVisible()));
   await page.locator('.ps-table-toggle').tap();
   ok('mobile P/R toggle reveals columns', await page.locator('.ps-table thead th', { hasText: 'Precision' }).isVisible());
@@ -77,8 +79,19 @@ const ok = (name, pass, detail = '') => results.push({ name, pass: !!pass, detai
   // Legacy route
   ctx = await browser.newContext();
   page = await ctx.newPage();
-  const resp = await page.goto(BASE + '/projects/tomato-ripeness/', { waitUntil: 'domcontentloaded' });
-  ok('legacy /projects/tomato-ripeness/ still serves', resp.status() === 200, String(resp.status()));
+  await page.goto(BASE + '/projects/tomato-ripeness/');
+  await page.waitForURL(/\/workspace\/\?project=tomato-ripeness/, { timeout: 10000 });
+  await page.waitForSelector('.tv-ask', { timeout: 10000 });
+  ok('legacy /projects/tomato-ripeness/ forwards to the workspace TomatoVision page', true, page.url());
+  for (const slug of ['padel-vision', 'suhulog']) {
+    const other = await page.goto(BASE + '/projects/' + slug + '/');
+    ok('other legacy page unchanged: ' + slug, other.status() === 200 && !page.url().includes('workspace'));
+  }
+  // Every image the TomatoVision page requests is a demo output
+  await page.goto(BASE + '/workspace/?project=tomato-ripeness');
+  await page.waitForSelector('.tv-ask');
+  const imgs = await page.$$eval('main img', (els) => els.map((e) => e.getAttribute('src')));
+  ok('TomatoVision images are demo outputs only', imgs.length > 0 && imgs.every((src) => /research\/demo\d/.test(decodeURIComponent(src))), imgs.join(' '));
   await ctx.close();
 
   await browser.close();

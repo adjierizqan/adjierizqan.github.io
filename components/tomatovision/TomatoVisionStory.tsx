@@ -7,6 +7,7 @@ import {
   formatMetric,
   tomatoConfigurations,
   tomatoDataset,
+  tomatoDemo,
   tomatoMatchedScene,
   tomatoMatchedSceneCount,
   tomatoStatus,
@@ -36,6 +37,7 @@ const evidence = {
   results: "tv-evidence-results",
   training: "tv-evidence-training",
   outputs: "tv-evidence-outputs",
+  demo: "tv-evidence-demo",
   annotations: "tv-evidence-annotations",
 };
 const byId = Object.fromEntries(tomatoConfigurations.map((configuration) => [configuration.id, configuration]));
@@ -70,7 +72,7 @@ function DenseSceneViewer() {
         {tomatoConfigurations.map((configuration) => <button type="button" role="tab" aria-selected={activeId === configuration.id} key={configuration.id} onClick={() => setActiveId(configuration.id)}>{configuration.shortLabel}</button>)}
       </div>
       <div className={"tv-scene-stage" + (split ? " is-split" : "")}>
-        <Image src={active.denseSceneImage} alt={`${active.label} detections on a dense greenhouse scene`} fill sizes="(max-width: 760px) 100vw, 920px" className="object-cover" />
+        <Image src={active.denseSceneImage} alt={`${active.label} detections on a dense public-domain greenhouse photo`} fill sizes="(max-width: 760px) 100vw, 920px" className="object-cover" />
         {split && <>
           <div className="tv-scene-baseline" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}><Image src={baseline.denseSceneImage} alt="" fill sizes="(max-width: 760px) 100vw, 920px" className="object-cover" /></div>
           <i className="tv-scene-handle" aria-hidden="true" style={{ left: position + "%" }}><b /></i>
@@ -149,7 +151,7 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
         items={tomatoMatchedScene}
         defaultId="wbf"
         legend={legend}
-        caption={<>The same greenhouse scene. Each image uses its own visualisation threshold; the numbers come from validation. <EvidenceChip label="Raw model outputs" target={evidence.outputs} /></>}
+        caption={<>Portfolio demo: one public-domain photo, outside the thesis dataset, through the three trained models. Every number on this page comes from thesis validation, not from these images. <EvidenceChip label="Demo inference" target={evidence.demo} /></>}
       /></div>}
 
       {reveal(.16) && <div className="aw-stream-structure"><MetricProgression
@@ -165,8 +167,8 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
         <p className="ps-lede">Fruit grow in dense clusters, hide behind leaves and stems, and are lit unevenly. The change from green to orange to red is gradual, so the orange stage is the hardest to call.</p>
         <div className="tv-problem-figures">
           <AnnotationMapFigure map={dense} caption={`${count(dense.boxes.length)} annotated fruit in one image · annotation boxes`} />
-          <Figure className="tv-problem-secondary" caption="10 annotated fruit, all orange · Combine 4 output">
-            <div className="ps-frame is-landscape"><Image src="/projects/tomato-ripeness/research/scene3-combine_4.webp" alt="Combine 4 detections on a cluster of orange-stage tomatoes" fill sizes="(max-width: 760px) 100vw, 450px" className="object-cover" /></div>
+          <Figure className="tv-problem-secondary" caption="Orange-stage fruit · Combine 4 on a public-domain demo photo">
+            <div className="ps-frame is-landscape"><Image src="/projects/tomato-ripeness/research/demo3-combine4.webp" alt="Combine 4 detections on orange-stage tomatoes in a public-domain photo" fill sizes="(max-width: 760px) 100vw, 450px" className="object-cover" /></div>
           </Figure>
         </div>
       </EditorialSection>}
@@ -186,7 +188,7 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
 
       {reveal(.46) && <EditorialSection index="03" title="Same scene, different models" className="aw-stream-structure">
         <DenseSceneViewer />
-        <p className="ps-caption">A dense scene through all seven configurations. <EvidenceChip label="Raw model outputs" target={evidence.outputs} /></p>
+        <p className="ps-caption">A dense public-domain greenhouse photo through all seven configurations; a qualitative demo, not part of the evaluation. <EvidenceChip label="Demo inference" target={evidence.demo} /></p>
       </EditorialSection>}
 
       {reveal(.56) && <EditorialSection index="04" title="Experiments" className="aw-stream-structure">
@@ -264,7 +266,8 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
           { id: "tv-evidence-code", label: "Code", detail: "private research repository" },
           { id: evidence.results, label: "Results tables", detail: "from the validation runs (thesis Tables II–IV)" },
           { id: evidence.training, label: "Training configs", detail: `imgsz ${tomatoTraining.imgsz}, batch ${tomatoTraining.batch}, ${tomatoTraining.epochs} epochs, patience ${tomatoTraining.patience} (args.yaml ×3)` },
-          { id: evidence.outputs, label: "Model outputs", detail: `${tomatoMatchedSceneCount} matched scenes × ${tomatoConfigurations.length} configurations` },
+          { id: evidence.outputs, label: "Thesis model outputs", detail: `${tomatoMatchedSceneCount} matched scenes × ${tomatoConfigurations.length} configurations; not published (field photos without reuse permission)` },
+          { id: evidence.demo, label: "Demo inference", detail: `${tomatoDemo.photos} through the thesis weights; ${tomatoDemo.settings}` },
           { id: evidence.annotations, label: "Annotation files", detail: `${count(tomatoDataset.sourceImages)} Pascal VOC files; the box counts on this page are counted from them` },
         ]} />
       </EditorialSection>}

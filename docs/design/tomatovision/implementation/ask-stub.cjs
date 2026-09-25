@@ -1,3 +1,5 @@
+/* Node QA script (CommonJS), run outside the app. */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { chromium } = require('/Users/adjie/Projects/labstock-pk/node_modules/@playwright/test');
 (async () => {
   const browser = await chromium.launch();

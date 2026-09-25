@@ -43,8 +43,7 @@ export const projects: Project[] = [
       "Detects three ripeness stages of greenhouse tomatoes. A YOLOv11 baseline is compared against Swin Transformer and multi-scale SPPF variants, then ensembled with Weighted Boxes Fusion, which raises mAP@0.5 from 0.795 to 0.824.",
     longDescription:
       "Greenhouse tomato detection is hard because fruit overlap, hide behind leaves, and sit at very different distances from the camera. This project starts from a YOLOv11 baseline and tests two architectural changes: a Swin Transformer backbone for wider context, and a multi-scale SPPF block for small fruit. Predictions from the three models are then combined with Weighted Boxes Fusion. The best ensemble reaches 0.824 mAP@0.5 on a three-class ripeness dataset (green, orange, red), up from 0.795 for the baseline.",
-    image: "/projects/tomato-ripeness.jpg",
-    video: "/projects/tomato-ripeness.mp4",
+    image: "/projects/tomato-ripeness/research/demo1-combine4.webp",
     tech: ["YOLOv11", "Swin Transformer", "PyTorch", "OpenCV", "Weighted Boxes Fusion"],
     features: [
       "Three ripeness classes: green, orange, red",

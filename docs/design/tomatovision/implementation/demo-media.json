@@ -1,0 +1,107 @@
+{
+ "purpose": "Portfolio qualitative demo. These photos are NOT part of the thesis dataset or evaluation; every metric on the page comes from thesis validation.",
+ "pipeline": "demo_inference.py: research repo web_demo/backend (ModelRegistry, infer_single, infer_wbf) with yolo_Training/{yolo11__train45,yolov11_swin_t__train53,yolov11_swin_t_mssppf__train67}/weights/best.pt on MPS; input = centre square crop resized to 1280; boxes drawn with the web demo's class colours, thinner lines and smaller labels",
+ "settings": {
+  "imgsz": 960,
+  "single_conf": 0.25,
+  "nms_iou": 0.6,
+  "wbf_member_conf": 0.001,
+  "wbf_iou": 0.6,
+  "wbf_skip": 0.001,
+  "wbf_final_conf": 0.25
+ },
+ "photos": {
+  "demo1": {
+   "title": "File:Tomatoes on the Vine (Unsplash).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Tomatoes_on_the_Vine_(Unsplash).jpg",
+   "license": "CC0",
+   "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "author": "Dan Gold danielcgold",
+   "source": "https://unsplash.com/photos/4LiUI-Y2mI8 archive copy at the Wayback Machine Image at the Wayback Machine"
+  },
+  "demo2": {
+   "title": "File:Cluster of Tomatoes on Vine.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Cluster_of_Tomatoes_on_Vine.jpg",
+   "license": "CC0",
+   "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "author": "Alabama Extension",
+   "source": "https://www.flickr.com/photos/184594136@N08/51859296005/"
+  },
+  "demo3": {
+   "title": "File:Tomatoes in a screen house 01.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Tomatoes_in_a_screen_house_01.jpg",
+   "license": "CC0",
+   "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "author": "Pascal Kings",
+   "source": "Own work"
+  }
+ },
+ "detections": {
+  "demo1-yolov11": {
+   "green": 3,
+   "orange": 7,
+   "red": 3,
+   "total": 13
+  },
+  "demo1-yolov11_swint_mssppf": {
+   "green": 3,
+   "orange": 8,
+   "red": 0,
+   "total": 11
+  },
+  "demo1-combine4": {
+   "green": 3,
+   "orange": 8,
+   "red": 1,
+   "total": 12
+  },
+  "demo2-yolov11": {
+   "green": 15,
+   "orange": 28,
+   "red": 5,
+   "total": 48
+  },
+  "demo2-yolov11_swint": {
+   "green": 25,
+   "orange": 35,
+   "red": 7,
+   "total": 67
+  },
+  "demo2-yolov11_swint_mssppf": {
+   "green": 19,
+   "orange": 28,
+   "red": 11,
+   "total": 58
+  },
+  "demo2-combine1": {
+   "green": 19,
+   "orange": 33,
+   "red": 6,
+   "total": 58
+  },
+  "demo2-combine2": {
+   "green": 16,
+   "orange": 27,
+   "red": 8,
+   "total": 51
+  },
+  "demo2-combine3": {
+   "green": 24,
+   "orange": 30,
+   "red": 9,
+   "total": 63
+  },
+  "demo2-combine4": {
+   "green": 18,
+   "orange": 30,
+   "red": 8,
+   "total": 56
+  },
+  "demo3-combine4": {
+   "green": 0,
+   "orange": 4,
+   "red": 0,
+   "total": 4
+  }
+ }
+}

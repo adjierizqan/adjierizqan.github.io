@@ -19,21 +19,42 @@ the Ask backend and the other project pages are unchanged. There is one shell fi
 
 ## Deviations from the approved screenshots, and why
 
-1. **No Known-You Seed Co. field photographs.** No reuse permission was found (the research repo has only an
-   AGPL-3.0 code licence; the dataset archive has no licence file). 01 and 06 show annotation-box maps drawn from the
-   source label files instead, with the same composition and captions (625 / 12 green / 12 red / 10 orange). The second
-   figure in 01 is the raw Combine 4 output for the 10-orange scene (`0005_110sp_1004_L3`).
-   The detection outputs themselves still show Known-You scenes underneath; the brief lists them as preferred assets.
+1. **No Known-You Seed Co. imagery at all** (closure pass). No reuse permission was found (the research repo has only an
+   AGPL-3.0 code licence; the dataset archive has no licence file). This covers the thesis detection outputs too, since
+   they are drawn over those field photos.
+   - Page images are a **portfolio demo**: three CC0 photos from Wikimedia Commons, run through the three thesis
+     weights with the research repo's own web-demo pipeline (`demo_inference.py`). Licence, author, source page and
+     per-run detection counts are in `demo-media.json`. Captions and the `[Demo inference]` evidence row say the photos
+     are outside the thesis dataset and that every number comes from thesis validation.
+   - 01 and 06 show annotation-box maps drawn from the source label files: geometry only, no photographs.
+   - Removed from `public/`: `tomato-ripeness.jpg` / `.mp4` (the old video showed a macOS file picker with personal
+     file names, then Known-You scenes), `showcase/`, `source-captures/`, `web/`, and the earlier `scene*` outputs.
+     They remain in git history.
 2. **Status** reads "Master’s thesis research · 2026" (owner decision), not "manuscript in preparation".
 3. **No "Code ↗" link.** `github.com/adjierizqan/tomato-ripeness-yolov11` is private (`gh repo view`: PRIVATE; public
    request: 404). The evidence row says "Code — private research repository".
 4. **Evidence rows have no arrows.** Only the private repo had a destination. The source chips scroll to the matching
-   evidence row, and a sixth row ("Annotation files") gives `[Annotation files]` a target.
+   evidence row; "Annotation files" and "Demo inference" rows give their chips a target. The thesis model-output row
+   stays as a record ("not published").
 5. **FPS shows three decimals** (18.089 / 18.951 / 11.245), the source values. Two-decimal rounding of 11.245 is
    ambiguous in floating point.
 6. **The scatter** puts its labels beside the points and adds a small single/ensemble key. On the narrow layout the axis
    titles become "ms per image" plus "y: mAP@0.5" in the key.
 7. **The Ask block** has a visible send button at every width, needed for touch and keyboard users.
+
+## Legacy route
+
+`/projects/tomato-ripeness/` no longer renders the old page. Static export has no server redirects, so the page emits a
+`<meta http-equiv="refresh">` to `/workspace/?project=tomato-ripeness` (works without JavaScript) plus a fallback link.
+The workspace opens the project named in `?project=` on load. Other legacy project pages are unchanged.
+
+## Dead CSS
+
+Removed from `app/globals.css` only the selectors whose classes the TomatoVision rebuild orphaned: `aw-tomato-lead`,
+`-question`, `-method`, `-result`, `aw-image-compare(-overlay|-stage)`, `aw-research-comparison`,
+`aw-comparison-controls`, `aw-comparison-result`, `aw-research-tradeoff`. The whole selector was removed; in grouped
+selectors only that selector was removed, and the rule bodies are untouched. About 30 other `aw-` classes were already
+unused before this work; they are not proven TomatoVision styles and were left alone.
 
 ## Shell fix (separate commit)
 
@@ -43,12 +64,19 @@ left edge while the drawer was closed; it now shows only when the drawer is open
 
 ## Verification (static export `out/`, served locally)
 
-- `bun test` 23/23; `tsc --noEmit` clean; eslint: 0 errors (2 pre-existing warnings in a generated `.wrangler` file);
-  `next build` OK.
-- `smoke.cjs`: all 7 project pages open; 03 tabs, image swap and divider; chip → evidence row; mobile drawer →
-  TomatoVision; mobile hero segmented control; P/R toggle; no horizontal overflow; tap targets ≥40 px; legacy
-  `/projects/tomato-ripeness/` returns 200; no page errors.
+- `bun test` 25/25, including checks that page images are demo outputs that exist on disk and that nothing else is
+  left under `public/projects/tomato-ripeness`. `tsc --noEmit` is clean. eslint (`eslint .`): 0 errors, 2
+  pre-existing warnings in a generated `.wrangler` file. `next build` OK.
+- `smoke.cjs` (28 checks):
+  - all 7 project pages open;
+  - 03: tabs, image swap and divider; chip → evidence row;
+  - mobile: drawer → TomatoVision, hero segmented control, P/R toggle, no horizontal overflow, tap targets ≥40 px;
+  - `/projects/tomato-ripeness/` forwards to the workspace page; `/projects/padel-vision/` and `/projects/suhulog/`
+    are unchanged;
+  - every image on the TomatoVision page is a demo output; no page errors.
 - `ask-stub.cjs`: the Ask input sends `{message, projectId: "tomato-ripeness"}` and the streamed answer renders.
-  The local `.env.local` endpoint (localhost:8787) was not running, so a live model answer was not verified.
+  A real Worker smoke was not run. `cloudflare/ask-worker` has no local wrangler install, and its Workers AI binding
+  needs the owner's Cloudflare login. Its `ALLOWED_ORIGINS` also does not include `localhost:4173`. Run a live Ask
+  question as the **deployment smoke check**.
 - `capture.cjs` → `qa/`: 1440, 820 and 390 px, zero horizontal overflow, no broken images.
   The full-page desktop/tablet captures enlarge the window height only for the screenshot.

@@ -1,3 +1,5 @@
+/* Node QA script (CommonJS), run outside the app. */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { chromium } = require('/Users/adjie/Projects/labstock-pk/node_modules/@playwright/test');
 const OUT = process.argv[2];
 const BASE = process.argv[3] || 'http://localhost:4173';

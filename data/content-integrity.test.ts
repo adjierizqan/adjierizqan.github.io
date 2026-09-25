@@ -1,8 +1,9 @@
 import { describe, expect, test } from "bun:test";
+import { existsSync, readdirSync } from "node:fs";
 import aiContext from "./portfolio-ai-context.json";
 import { allWorkspaceProjects, featuredWork } from "./workspace";
 import annotationMaps from "./tomatovision-annotation-maps.json";
-import { tomatoConfigurations, tomatoDataset, tomatoStatus } from "./tomatovision";
+import { tomatoConfigurations, tomatoDataset, tomatoMatchedScene, tomatoStatus } from "./tomatovision";
 
 const primarySlugs = ["labstock", "bdrs", "suhulog", "tomato-ripeness"];
 const forbiddenMarketing = /\b(innovative|cutting-edge|seamless|revolutionary|game-changing|world-class)\b/i;
@@ -110,5 +111,26 @@ describe("TomatoVision case study record", () => {
       ["0005_110sp_1004_L3", 10, { green: 0, orange: 10, red: 0 }],
       ["IMG_4246", 625, { green: 244, orange: 78, red: 303 }],
     ]);
+  });
+});
+
+describe("TomatoVision public media", () => {
+  const research = "public/projects/tomato-ripeness/research";
+
+  test("page images are the CC0 demo outputs and exist on disk", () => {
+    const paths = [
+      ...tomatoConfigurations.map((item) => item.denseSceneImage),
+      ...tomatoMatchedScene.map((item) => item.src),
+      featuredWork.find((project) => project.slug === "tomato-ripeness")?.image ?? "",
+    ];
+    for (const path of paths) {
+      expect(path).toMatch(/^\/projects\/tomato-ripeness\/research\/demo\d-[\w]+\.webp$/);
+      expect(existsSync("public" + path)).toBe(true);
+    }
+  });
+
+  test("no thesis-dataset imagery is published", () => {
+    expect(readdirSync(research).every((file) => file.startsWith("demo"))).toBe(true);
+    expect(readdirSync("public/projects/tomato-ripeness")).toEqual(["research"]);
   });
 });
