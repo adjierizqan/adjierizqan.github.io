@@ -229,42 +229,6 @@
       "askSuggestion": "How does Padel Vision analyze one broadcast camera?"
     },
     {
-      "id": "objecttwin",
-      "name": "ObjectTwin",
-      "workspaceTarget": "objecttwin",
-      "category": "3D pipeline experiment",
-      "summary": "An image-to-3D workflow with swappable generation backends, stage-level progress, browser inspection, and visible output-quality scoring.",
-      "problem": "Single-image 3D generation can produce inconsistent results while hiding which pipeline stage or quality dimension failed.",
-      "solution": "Adjie built a Next.js and FastAPI workflow that runs pluggable GPU adapters, cleans and scores generated meshes, and exposes progress and GLB inspection in the browser.",
-      "howItWorks": [
-        "Routes jobs through pluggable Hunyuan3D, InstantMesh, or TRELLIS adapters.",
-        "Reports stage-by-stage progress and logs.",
-        "Scores silhouette, geometry, texture, complexity, and pipeline reliability.",
-        "Loads the resulting GLB in an interactive browser viewer."
-      ],
-      "role": "Full-stack and ML systems engineering",
-      "stack": [
-        "Next.js",
-        "TypeScript",
-        "Three.js",
-        "Python",
-        "FastAPI"
-      ],
-      "verifiedEvidence": [
-        {
-          "label": "Backends",
-          "value": "Hunyuan3D · InstantMesh · TRELLIS"
-        },
-        {
-          "label": "Inspection",
-          "value": "Visible score · browser GLB viewer"
-        }
-      ],
-      "whyItMatters": "The workflow makes generative 3D output quality and pipeline progress inspectable instead of treating generation as a black box.",
-      "publicLimitations": "The portfolio presents an experimental pipeline and public media, not a hosted generation service.",
-      "askSuggestion": "How does ObjectTwin evaluate generated 3D models?"
-    },
-    {
       "id": "porsche-3d",
       "name": "Porsche 3D",
       "workspaceTarget": "porsche-3d",

@@ -50,7 +50,7 @@ const prompts = [
   {
     label: "Applied AI",
     query: "Show me Adjie’s applied AI work.",
-    projects: ["tomato-ripeness", "padel-vision", "objecttwin"],
+    projects: ["tomato-ripeness", "padel-vision"],
   },
   {
     label: "Reliability",
@@ -65,7 +65,6 @@ const projectTones: Record<string, string> = {
   suhulog: "#38bdf8",
   "tomato-ripeness": "#f43f5e",
   "padel-vision": "#8b5cf6",
-  objecttwin: "#475569",
   "porsche-3d": "#d97706",
 };
 
@@ -411,7 +410,6 @@ const PROJECT_DEMO_PROMPTS: Record<string, string> = {
   suhulog: "Bagaimana SuhuLog mengubah pencatatan suhu menjadi workflow yang cepat dan tetap dapat diaudit?",
   "tomato-ripeness": "What did TomatoVision test, and what do the evaluation results actually show?",
   "padel-vision": "How does Padel Vision turn one broadcast camera into an inspectable match-analysis pipeline?",
-  objecttwin: "How does ObjectTwin turn one image into a generated 3D result that can be evaluated and inspected?",
   "porsche-3d": "How was Porsche 3D built as a real-time WebGL interaction study?",
 };
 
@@ -566,29 +564,6 @@ function ProjectMedia({ project, openImage, lead = false }: Pick<ProjectViewProp
   );
 }
 
-function ObjectTwinStudio({ project, openImage }: Pick<ProjectViewProps, "project" | "openImage">) {
-  const views = [
-    { label: "Generation", src: "/projects/objecttwin/web/02-generation.webp", note: "Pipeline progress, cleanup and quality evaluation stay inspectable." },
-    { label: "3D inspection", src: "/projects/objecttwin/web/03-inspection.webp", note: "The generated GLB opens in the browser viewer for visual inspection." },
-  ];
-  const [active, setActive] = useState(1);
-  const current = views[active];
-  return (
-    <section className="aw-twin-studio" aria-label="ObjectTwin source to 3D inspection">
-      <header><div><span>Image → generated object</span><h2>The result gets the largest surface.</h2></div><nav aria-label="ObjectTwin result views">{views.map((view, index) => <button type="button" aria-pressed={active === index} key={view.label} onClick={() => setActive(index)}>{view.label}</button>)}</nav></header>
-      <div className="aw-twin-workbench">
-        <button type="button" className="aw-twin-source" onClick={(event) => openImage(1, event.currentTarget)} aria-label="Quick Look: ObjectTwin source image"><span><Image src="/projects/objecttwin/web/01-source-workspace.webp" alt="ObjectTwin source-image workspace" fill sizes="320px" className="object-cover object-bottom" /></span><small>01 · Source image</small><strong>One image starts the job.</strong></button>
-        <button type="button" className="aw-twin-viewport" onClick={(event) => openImage(active + 2, event.currentTarget)} aria-label={"Quick Look: " + current.label}>
-          <span key={current.src}><Image src={current.src} alt={current.label + " from the ObjectTwin workflow"} fill sizes="(max-width: 760px) 100vw, 820px" className="object-cover object-center" /></span>
-          <b>Inspect result</b>
-        </button>
-      </div>
-      <div className="aw-twin-caption"><strong>{current.label}</strong><p>{current.note}</p></div>
-      {project.video && <figure className="aw-signature-video"><video controls playsInline preload="metadata" poster={views[1].src} aria-label="ObjectTwin browser inspection sequence"><source src={project.video} type="video/mp4" /></video><figcaption>Real browser-viewer sequence · visitor-controlled playback.</figcaption></figure>}
-    </section>
-  );
-}
-
 type PorscheFrame = { src: string; label: string; quickIndex: number };
 const porscheCinematic = "/projects/porsche-3d/cinematic/";
 
@@ -721,11 +696,6 @@ function PadelVisionResponse({project,query,setQuery,ask,back}:ProjectViewProps)
   {responseProgress>=.24&&<div className="aw-stream-structure"><PadelAnalytics/></div>}
   {responseProgress>=.78&&<section className="aw-padel-notes aw-stream-structure"><div><span>Constraint</span><p>{project.problem}</p></div><div><span>Build</span><p>{project.solution}</p></div><div><span>Boundary</span><p>{project.publicLimitations}</p></div></section>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
 
-function ObjectTwinResponse({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-twin-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
-  <header className="aw-twin-lead"><span>3D creation experiment</span><h1>{project.title}</h1><p>{project.summary}</p></header>
-  {responseProgress>=.18&&<div className="aw-stream-structure"><ProjectMetaLine project={project}/></div>}{responseProgress>=.25&&<div className="aw-stream-structure"><ObjectTwinStudio project={project} openImage={openImage}/></div>}
-  {responseProgress>=.78&&<section className="aw-twin-record aw-stream-structure"><div><span>Pipeline</span><p>{project.solution}</p></div><ol>{project.howItWorks.map(item=><li key={item}>{item}</li>)}</ol></section>}{responseProgress>=.92&&<footer className="aw-project-boundary aw-stream-structure"><div><span>Experiment boundary</span><strong>Inspectable prototype</strong></div><p>{project.publicLimitations}</p></footer>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
-
 function PorscheResponse({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-porsche-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
   <header className="aw-porsche-title"><span>Interactive WebGL experiment</span><h1>{project.title}</h1><p>{project.summary}</p></header>
   {responseProgress>=.06&&<div className="aw-stream-structure"><PorscheSequence openImage={openImage}/></div>}
@@ -752,7 +722,6 @@ function ProjectWorkspace(props: ProjectViewProps) {
   if (props.project.slug === "suhulog") return <SuhuLogDossier {...props} />;
   if (props.project.slug === "tomato-ripeness") return <TomatoVisionDossier {...props} />;
   if (props.project.slug === "padel-vision") return <PadelVisionResponse {...props} />;
-  if (props.project.slug === "objecttwin") return <ObjectTwinResponse {...props} />;
   if (props.project.slug === "porsche-3d") return <PorscheResponse {...props} />;
   return <CompactProjectResponse {...props} />;
 }

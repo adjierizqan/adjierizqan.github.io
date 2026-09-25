@@ -150,28 +150,6 @@ export const projects: Project[] = [
     links: {},
   },
   {
-    slug: "objecttwin",
-    title: "ObjectTwin: Image-to-3D Reconstruction Pipeline",
-    category: "Web App",
-    year: "2026",
-    description:
-      "Turns one product photo into a 3D model you can inspect in the browser. Every generation gets a quality score, and the GPU model backends are swappable.",
-    longDescription:
-      "ObjectTwin generates 3D models from single photos and is honest about how good each result is. The backend runs generation through pluggable GPU adapters (Hunyuan3D, InstantMesh, TRELLIS), cleans the mesh, and scores every output on silhouette match, geometry health, textures, complexity, and pipeline reliability. The Next.js frontend covers the whole workflow: upload, stage-by-stage progress, the quality report, and an interactive GLB viewer.",
-    image: "/projects/objecttwin.jpg",
-    video: "/projects/objecttwin.mp4",
-    tech: ["Next.js", "TypeScript", "Three.js", "Python", "FastAPI"],
-    features: [
-      "Pluggable image-to-3D adapters (Hunyuan3D, InstantMesh, TRELLIS)",
-      "Weighted quality score with the reasoning visible",
-      "Job pipeline with per-stage progress and logs",
-      "In-browser GLB inspector with orbit controls",
-    ],
-    links: {
-      github: "https://github.com/adjierizqan/objecttwin",
-    },
-  },
-  {
     slug: "porsche-3d",
     title: "Porsche Collector: Interactive 3D Configurator",
     category: "Website",

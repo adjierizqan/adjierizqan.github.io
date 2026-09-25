@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { existsSync, readdirSync } from "node:fs";
 import aiContext from "./portfolio-ai-context.json";
 import { allWorkspaceProjects, featuredWork } from "./workspace";
+import { projects as legacyProjects } from "./projects";
 import annotationMaps from "./tomatovision-annotation-maps.json";
 import { tomatoConfigurations, tomatoDataset, tomatoMatchedScene, tomatoStatus } from "./tomatovision";
 
@@ -132,5 +133,15 @@ describe("TomatoVision public media", () => {
   test("no thesis-dataset imagery is published", () => {
     expect(readdirSync(research).every((file) => file.startsWith("demo"))).toBe(true);
     expect(readdirSync("public/projects/tomato-ripeness")).toEqual(["research"]);
+  });
+});
+
+describe("Portfolio V1 scope", () => {
+  test("parked projects are absent from the workspace, legacy pages and AI context", () => {
+    for (const slug of ["objecttwin", "think-it"]) {
+      expect(allWorkspaceProjects.some((project) => project.slug === slug)).toBe(false);
+      expect(aiContext.projects.some((project) => project.id === slug)).toBe(false);
+      expect(legacyProjects.some((project) => project.slug === slug)).toBe(false);
+    }
   });
 });
