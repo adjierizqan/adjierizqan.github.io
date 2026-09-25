@@ -155,15 +155,7 @@ export const labWork: WorkspaceProject[] = [
     whyItMatters: "The experiment turns ordinary match footage into inspectable spatial and motion data without a multi-camera setup.",
     publicLimitations: "The portfolio presents an experiment and public media, not a production analytics service.",
     askSuggestion: "How does Padel Vision analyze one broadcast camera?",
-    image: "/projects/padel-vision/showcase/hero.webp",
-    video: "/projects/padel-vision.mp4",
-    gallery: [
-      { src: "/projects/padel-vision/source-captures/01-source.png", caption: "Source broadcast frame before analysis overlays." },
-      { src: "/projects/padel-vision/source-captures/02-detection.png", caption: "Player detection and pose stage." },
-      { src: "/projects/padel-vision/source-captures/03-tracking.png", caption: "Tracked ball trajectory over the broadcast frame." },
-      { src: "/projects/padel-vision/source-captures/04-projection.png", caption: "Broadcast view paired with court projection." },
-      { src: "/projects/padel-vision/source-captures/05-output.png", caption: "Final annotated output used by the portfolio demo." },
-    ],
+    image: "/projects/padel-vision/analytics/court-control.webp",
     href: "/projects/padel-vision",
   },
   {

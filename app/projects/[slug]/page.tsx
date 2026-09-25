@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // Projects rebuilt inside the workspace; their old standalone pages forward there.
-const workspaceProjects = new Set(["tomato-ripeness"]);
+const workspaceProjects = new Set(["tomato-ripeness", "padel-vision", "porsche-3d"]);
 
 export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;

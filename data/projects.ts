@@ -66,8 +66,7 @@ export const projects: Project[] = [
       "Reads a professional padel match from one broadcast camera: it tracks all four players and the ball, estimates shot speed, and draws a live top-down minimap.",
     longDescription:
       "Padel Vision takes a single broadcast clip and turns it into match data. A fine-tuned YOLOv11 model finds the ball at high resolution, pose models follow the four players, and a court homography projects everything onto a top-down minimap. On top of the tracking it estimates ball speed, classifies shot types, and renders an annotated video with trajectories, player identities, and match statistics.",
-    image: "/projects/padel-vision.jpg",
-    video: "/projects/padel-vision.mp4",
+    image: "/projects/padel-vision/analytics/court-control.webp",
     tech: ["YOLOv11", "PyTorch", "OpenCV", "Pose Estimation", "Homography"],
     features: [
       "Ball detection and trajectory tracking from broadcast video",
@@ -181,7 +180,7 @@ export const projects: Project[] = [
       "A fan-made Porsche site. Six cars rendered in real time with Three.js; you can orbit each one, repaint it, and switch between models with animated camera moves.",
     longDescription:
       "A fan project about Porsche design. Six models, from the 1991 RWB 964 to the 2022 718 Cayman GT4 RS, are rendered in real time with Three.js. Visitors orbit each car, change its paint, and move between models through GSAP camera transitions. The site is plain HTML with ES modules, so there is no build step. 3D models by Ddiaz Design on Sketchfab.",
-    image: "/projects/porsche-3d.jpg",
+    image: "/projects/porsche-3d/cinematic/01-rwb964-hero.webp",
     video: "/projects/porsche-3d.mp4",
     tech: ["Three.js", "GSAP", "JavaScript", "WebGL"],
     features: [

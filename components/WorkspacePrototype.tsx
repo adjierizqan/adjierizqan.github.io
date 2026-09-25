@@ -13,6 +13,7 @@ import {
 } from "react";
 import { FileIcon, MailIcon } from "@/components/Icons";
 import { TomatoVisionStory } from "@/components/tomatovision/TomatoVisionStory";
+import { PadelAnalytics } from "@/components/padel/PadelAnalytics";
 import { site } from "@/data/site";
 import { streamPortfolioAnswer, type PortfolioChatMessage } from "@/lib/portfolio-ai";
 import {
@@ -565,31 +566,6 @@ function ProjectMedia({ project, openImage, lead = false }: Pick<ProjectViewProp
   );
 }
 
-function PadelStagePlayer({ project, openImage }: Pick<ProjectViewProps, "project" | "openImage">) {
-  const stages = [
-    { label: "Source broadcast", note: "One moving-camera match view.", src: "/projects/padel-vision/web/01-source.webp" },
-    { label: "Player detection", note: "Players are located and pose landmarks remain visible.", src: "/projects/padel-vision/web/02-detection.webp" },
-    { label: "Ball tracking", note: "The ball path is followed over successive frames.", src: "/projects/padel-vision/web/03-tracking.webp" },
-    { label: "Court projection", note: "Image coordinates are projected onto the court view.", src: "/projects/padel-vision/web/04-projection.webp" },
-    { label: "Annotated output", note: "Identity, trajectory and speed estimates return to the final video.", src: "/projects/padel-vision/web/05-output.webp" },
-  ];
-  const [active, setActive] = useState(0);
-  const stage = stages[active];
-  return (
-    <section className="aw-padel-player" aria-label="Padel Vision five-stage pipeline">
-      <header><div><span>Seekable vision pipeline</span><h2>Follow one broadcast through five stages.</h2></div><small>{String(active + 1).padStart(2, "0")} / 05</small></header>
-      <div className="aw-padel-stage-grid">
-        <button type="button" className="aw-padel-visual" onClick={(event) => openImage(active + 1, event.currentTarget)} aria-label={"Quick Look: " + stage.label}>
-          <span key={stage.src}><Image src={stage.src} alt={stage.label + " evidence"} fill sizes="(max-width: 760px) 100vw, 820px" className="object-cover object-center" /></span>
-          <b>Open real frame</b>
-        </button>
-        <div role="tablist" aria-label="Pipeline stages">{stages.map((item, index) => <button type="button" role="tab" aria-selected={active === index} className={active === index ? "is-active" : ""} key={item.label} onClick={() => setActive(index)}><small>{String(index + 1).padStart(2, "0")}</small><strong>{item.label}</strong><p>{item.note}</p></button>)}</div>
-      </div>
-      {project.video && <figure className="aw-signature-video"><video controls playsInline preload="metadata" poster={stages[4].src} aria-label="Padel Vision annotated output video"><source src={project.video} type="video/mp4" /></video><figcaption>Real annotated output · playback remains visitor-controlled.</figcaption></figure>}
-    </section>
-  );
-}
-
 function ObjectTwinStudio({ project, openImage }: Pick<ProjectViewProps, "project" | "openImage">) {
   const views = [
     { label: "Generation", src: "/projects/objecttwin/web/02-generation.webp", note: "Pipeline progress, cleanup and quality evaluation stay inspectable." },
@@ -740,9 +716,9 @@ function SuhuLogDossier({project,query,setQuery,ask,back,openImage}:ProjectViewP
 function TomatoVisionDossier({project,query,setQuery,ask,back}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS["tomato-ripeness"];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-tomato-story aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Work</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
   <TomatoVisionStory progress={responseProgress} query={query} setQuery={setQuery} ask={ask}/></article>}</main>}
 
-function PadelVisionResponse({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-padel-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
+function PadelVisionResponse({project,query,setQuery,ask,back}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-padel-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
   <header className="aw-padel-lead"><div><span>Sports computer vision</span><h1>{project.title}</h1><p>{project.summary}</p></div><dl>{project.evidence.map(item=><div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></header>
-  {responseProgress>=.24&&<div className="aw-stream-structure"><PadelStagePlayer project={project} openImage={openImage}/></div>}
+  {responseProgress>=.24&&<div className="aw-stream-structure"><PadelAnalytics/></div>}
   {responseProgress>=.78&&<section className="aw-padel-notes aw-stream-structure"><div><span>Constraint</span><p>{project.problem}</p></div><div><span>Build</span><p>{project.solution}</p></div><div><span>Boundary</span><p>{project.publicLimitations}</p></div></section>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
 
 function ObjectTwinResponse({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-twin-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
