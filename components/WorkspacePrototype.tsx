@@ -12,6 +12,7 @@ import {
   useState,
 } from "react";
 import { FileIcon, MailIcon } from "@/components/Icons";
+import { TomatoVisionStory } from "@/components/tomatovision/TomatoVisionStory";
 import { site } from "@/data/site";
 import { streamPortfolioAnswer, type PortfolioChatMessage } from "@/lib/portfolio-ai";
 import {
@@ -564,47 +565,6 @@ function ProjectMedia({ project, openImage, lead = false }: Pick<ProjectViewProp
   );
 }
 
-function ResearchComparison({ project }: { project: WorkspaceProject }) {
-  const variants = [
-    { name: "Baseline", model: "YOLOv11", score: 0.795, evidence: project.evidence[0]?.value, note: "Reference detector used for every improvement comparison." },
-    { name: "Best single", model: "Modified model", score: 0.807, evidence: project.evidence[1]?.value, note: "Best result from one modified architecture, kept separate from ensemble inference." },
-    { name: "Ensemble", model: "Three-model WBF", score: 0.824, evidence: project.evidence[2]?.value, note: `Fusion result; the stricter metric is ${project.evidence[3]?.value}.` },
-  ];
-  const [active, setActive] = useState(0);
-  const selected = variants[active];
-  return (
-    <section className="aw-research-comparison" aria-label="TomatoVision model comparison">
-      <header><span>Evaluation comparison</span><h2>Baseline, modified model, and ensemble stay distinct.</h2></header>
-      <div className="aw-comparison-controls">{variants.map((variant, index) => <button type="button" aria-pressed={active === index} className={active === index ? "is-active" : ""} key={variant.name} onClick={() => setActive(index)}><span>{variant.name}</span><strong>{variant.score.toFixed(3)}</strong></button>)}</div>
-      <div className="aw-comparison-result" key={selected.name}>
-        <div><span>{selected.name}</span><h3>{selected.model}</h3><p>{selected.note}</p></div>
-        <div><strong>{selected.evidence}</strong><span>mAP@0.5</span><i><b style={{ width: `${(selected.score / 0.824) * 100}%` }} /></i></div>
-      </div>
-    </section>
-  );
-}
-
-function ImageComparisonReveal({ openImage }: Pick<ProjectViewProps, "openImage">) {
-  const [position, setPosition] = useState(50);
-  const baseline = "/projects/tomato-ripeness/web/baseline-output.webp";
-  const ensemble = "/projects/tomato-ripeness/web/ensemble-output.webp";
-  return (
-    <section className="aw-image-compare" aria-label="Compare TomatoVision baseline and ensemble output">
-      <header><div><span>Qualitative comparison</span><h2>The same scene, two inference paths.</h2></div><button type="button" onClick={(event) => openImage(2, event.currentTarget)}>Inspect source evidence</button></header>
-      <div className="aw-image-compare-stage">
-        <Image src={baseline} alt="YOLOv11 baseline detection output" fill sizes="(max-width: 760px) 100vw, 1000px" className="object-cover object-center" />
-        <div className="aw-image-compare-overlay" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}>
-          <Image src={ensemble} alt="Three-model Weighted Boxes Fusion detection output" fill sizes="(max-width: 760px) 100vw, 1000px" className="object-cover object-center" />
-        </div>
-        <i aria-hidden="true" style={{ left: `${position}%` }}><b>↔</b></i>
-        <span className="is-left">WBF ensemble</span><span className="is-right">YOLOv11 baseline</span>
-        <input aria-label="Reveal ensemble output over baseline" type="range" min="12" max="88" value={position} onChange={(event) => setPosition(Number(event.target.value))} />
-      </div>
-      <p>Drag the divider to compare the matching source scene. The interaction exposes output differences; the evaluated metrics remain the quantitative record.</p>
-    </section>
-  );
-}
-
 function PadelStagePlayer({ project, openImage }: Pick<ProjectViewProps, "project" | "openImage">) {
   const stages = [
     { label: "Source broadcast", note: "One moving-camera match view.", src: "/projects/padel-vision/web/01-source.webp" },
@@ -727,10 +687,6 @@ function SuhuLogShowcase({ project, openImage }: Pick<ProjectViewProps, "project
   );
 }
 
-function TomatoResearchLead({ project, openImage }: Pick<ProjectViewProps, "project" | "openImage">) {
-  return <section className="aw-tomato-lead"><div className="aw-tomato-question"><span>{project.title} · applied research</span><h1>Can architecture changes and ensemble inference improve maturity detection in a crowded greenhouse?</h1><p>{project.problem}</p></div><button type="button" onClick={(event)=>openImage(3,event.currentTarget)} aria-label="Quick Look: TomatoVision ensemble output"><Image src="/projects/tomato-ripeness/web/ensemble-output.webp" alt="Three-model Weighted Boxes Fusion output on greenhouse tomatoes" fill sizes="(max-width: 760px) 100vw, 780px" className="object-cover object-center" /><span>Real WBF output · inspect ↗</span></button></section>;
-}
-
 function LabStockDossier({ project, query, setQuery, ask, back }: ProjectViewProps) {
   const prompt = PROJECT_DEMO_PROMPTS.labstock;
   const { projectViewportRef, typedPrompt, responseVisible, responseProgress, runPresentation } = useProjectPresentation(prompt);
@@ -763,13 +719,8 @@ function SuhuLogDossier({project,query,setQuery,ask,back,openImage}:ProjectViewP
   {responseProgress>=.82&&<section className="aw-suhulog-release aw-stream-structure"><div><span>Released record</span><h2>{project.evidence[0]?.value}</h2><p>{project.whyItMatters}</p></div><dl>{project.evidence.slice(1).map(item=><div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></section>}
   {responseProgress>=.94&&<footer className="aw-project-boundary aw-stream-structure"><div><span>Public boundary</span><strong>Sanitized evidence only</strong></div><p>{project.publicLimitations}</p></footer>}{responseProgress>=.97&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
 
-function TomatoVisionDossier({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS["tomato-ripeness"];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-tomato-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Work</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
-  {responseProgress>=.04&&<div className="aw-stream-structure"><TomatoResearchLead project={project} openImage={openImage}/></div>}
-  {responseProgress>=.28&&<section className="aw-tomato-method aw-stream-structure"><span>Study design</span><ol>{["Dataset",...project.howItWorks.slice(1)].map((item,index)=><li key={item}><small>{String(index+1).padStart(2,"0")}</small><strong>{item}</strong></li>)}</ol><p>{project.solution}</p></section>}
-  {responseProgress>=.48&&<div className="aw-stream-structure"><ImageComparisonReveal openImage={openImage}/></div>}
-  {responseProgress>=.68&&<div className="aw-stream-structure"><ResearchComparison project={project}/></div>}
-  {responseProgress>=.82&&<button type="button" className="aw-tomato-result aw-stream-structure" onClick={(event)=>openImage(4,event.currentTarget)} aria-label="Quick Look: TomatoVision result summary"><Image src="/projects/tomato-ripeness/web/result-summary.webp" alt="TomatoVision result summary with class counts" fill sizes="(max-width:760px) 100vw,1000px" className="object-cover object-center"/><span>Inspect the returned-box record ↗</span></button>}
-  {responseProgress>=.91&&<section className="aw-research-tradeoff aw-stream-structure"><span>Result boundary</span><div><h2>The best score belongs to ensemble inference.</h2><p>The best single modified model reaches {project.evidence[1]?.value}; three-model WBF reaches {project.evidence[2]?.value}. No public runtime benchmark means no real-time claim.</p></div></section>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
+function TomatoVisionDossier({project,query,setQuery,ask,back}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS["tomato-ripeness"];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-tomato-story aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Work</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
+  <TomatoVisionStory progress={responseProgress} query={query} setQuery={setQuery} ask={ask}/></article>}</main>}
 
 function PadelVisionResponse({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-padel-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
   <header className="aw-padel-lead"><div><span>Sports computer vision</span><h1>{project.title}</h1><p>{project.summary}</p></div><dl>{project.evidence.map(item=><div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></header>
