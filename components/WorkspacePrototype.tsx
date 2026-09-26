@@ -10,6 +10,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { FileIcon, MailIcon } from "@/components/Icons";
 import { TomatoVisionStory } from "@/components/tomatovision/TomatoVisionStory";
@@ -859,6 +860,27 @@ function CommandPalette({ open, close, setView, selectProject }: {
   );
 }
 
+// Project deep links: ?project=<slug> in the URL is the source of truth for which dossier is open.
+const URL_CHANGE_EVENT = "aw:urlchange";
+function subscribeToUrl(onChange: () => void) {
+  window.addEventListener("popstate", onChange);
+  window.addEventListener(URL_CHANGE_EVENT, onChange);
+  return () => {
+    window.removeEventListener("popstate", onChange);
+    window.removeEventListener(URL_CHANGE_EVENT, onChange);
+  };
+}
+const readProjectParam = () => new URLSearchParams(window.location.search).get("project");
+const readProjectParamOnServer = () => null;
+function writeProjectParam(slug: string | null) {
+  const url = new URL(window.location.href);
+  if (slug) url.searchParams.set("project", slug);
+  else url.searchParams.delete("project");
+  if (url.href === window.location.href) return;
+  window.history.pushState(null, "", url);
+  window.dispatchEvent(new Event(URL_CHANGE_EVENT));
+}
+
 export function WorkspacePrototype() {
   const windowRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; start: Point; origin: Point } | null>(null);
@@ -868,8 +890,16 @@ export function WorkspacePrototype() {
   const askAbortRef = useRef<AbortController | null>(null);
   const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
-  const [view, setView] = useState<WorkspaceView>("home");
-  const [selectedSlug, setSelectedSlug] = useState("labstock");
+  const [baseView, setBaseView] = useState<Exclude<WorkspaceView, "project">>("home");
+  const urlProject = useSyncExternalStore(subscribeToUrl, readProjectParam, readProjectParamOnServer);
+  const urlProjectValid = allWorkspaceProjects.some((project) => project.slug === urlProject);
+  const view: WorkspaceView = urlProjectValid ? "project" : baseView;
+  const selectedSlug = urlProjectValid && urlProject ? urlProject : "labstock";
+  const setView = useCallback((next: WorkspaceView) => {
+    if (next === "project") return;
+    writeProjectParam(null);
+    setBaseView(next);
+  }, []);
   const [query, setQuery] = useState("");
   const [askHistory, setAskHistory] = useState<PortfolioChatMessage[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<string | null>(null);
@@ -930,7 +960,7 @@ export function WorkspacePrototype() {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [closePalette, openPalette, paletteOpen]);
+  }, [closePalette, openPalette, paletteOpen, setView]);
 
   useEffect(() => {
     function resetForViewport() {
@@ -942,18 +972,11 @@ export function WorkspacePrototype() {
 
   const selectProject = useCallback((project: WorkspaceProject) => {
     withViewTransition(() => {
-      setSelectedSlug(project.slug);
-      setView("project");
+      writeProjectParam(project.slug);
       setQuickLookIndex(null);
       setProjectRevision((value) => value + 1);
     });
   }, []);
-
-  useEffect(() => {
-    const slug = new URLSearchParams(window.location.search).get("project");
-    const project = allWorkspaceProjects.find((item) => item.slug === slug);
-    if (project) selectProject(project);
-  }, [selectProject]);
 
   function openQuickLook(index: number, trigger: HTMLElement) {
     if (!quickLookImages[index]) return;
