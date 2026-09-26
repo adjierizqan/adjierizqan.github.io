@@ -15,15 +15,22 @@ import {
 import { FileIcon, MailIcon } from "@/components/Icons";
 import { TomatoVisionStory } from "@/components/tomatovision/TomatoVisionStory";
 import { PadelAnalytics } from "@/components/padel/PadelAnalytics";
+import { L, t, tk, setActiveLocale, setLocale, subscribeToLocale, readLocale, readLocaleOnServer, type Locale } from "@/lib/i18n";
+import { localizeProject } from "@/lib/localize-project";
 import { ProductEvidence, type EvidenceFrame } from "@/components/evidence/ProductEvidence";
 import { site } from "@/data/site";
 import { streamPortfolioAnswer, type PortfolioChatMessage } from "@/lib/portfolio-ai";
 import {
-  allWorkspaceProjects,
-  featuredWork,
-  labWork,
+  allWorkspaceProjects as rawAll,
+  featuredWork as rawFeatured,
+  labWork as rawLabs,
   type WorkspaceProject,
 } from "@/data/workspace";
+
+// Project copy in the active language (see lib/i18n.ts). Slugs, media and numbers are unchanged.
+const allProjects = () => rawAll.map(localizeProject);
+const featuredProjects = () => rawFeatured.map(localizeProject);
+const labProjects = () => rawLabs.map(localizeProject);
 
 type WorkspaceView = "home" | "work" | "projects" | "labs" | "knowledge" | "ask" | "project";
 type Point = { x: number; y: number };
@@ -45,18 +52,18 @@ function withViewTransition(update: () => void) {
 
 const prompts = [
   {
-    label: "Operational systems",
-    query: "Tell me about Adjie’s operational software projects.",
+    label: tk("Operational systems"),
+    query: tk("Tell me about Adjie’s operational software projects."),
     projects: ["labstock", "suhulog", "bdrs"],
   },
   {
-    label: "Applied AI",
-    query: "Show me Adjie’s applied AI work.",
+    label: tk("Applied AI"),
+    query: tk("Show me Adjie’s applied AI work."),
     projects: ["tomato-ripeness", "padel-vision"],
   },
   {
-    label: "Reliability",
-    query: "How does Adjie approach reliability?",
+    label: tk("Reliability"),
+    query: tk("How does Adjie approach reliability?"),
     projects: ["suhulog", "labstock"],
   },
 ];
@@ -70,7 +77,7 @@ const projectTones: Record<string, string> = {
   "porsche-3d": "#d97706",
 };
 
-function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" | "ask" | "more" | "plus" | "search" | "send" | "menu" | "close" | "arrow" | "spark" | "context" | "speaker" | "sun" | "moon" | "link" | "play" | "pause" }) {
+function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" | "ask" | "more" | "plus" | "search" | "send" | "menu" | "close" | "arrow" | "spark" | "context" | "speaker" | "sun" | "moon" | "music" | "link" | "play" | "pause" }) {
   const paths = {
     home: <><path d="m3 10 7-6 7 6" /><path d="M5.5 9v7h9V9" /></>,
     work: <><rect x="3" y="5" width="14" height="11" rx="1.5" /><path d="M7 5V3h6v2M3 9h14" /></>,
@@ -88,6 +95,7 @@ function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" 
     spark: <path d="M10 2.5c.45 4.4 2.1 6.05 6.5 6.5-4.4.45-6.05 2.1-6.5 6.5C9.55 11.1 7.9 9.45 3.5 9 7.9 8.55 9.55 6.9 10 2.5Z" />,
     context: <><rect x="3" y="3" width="14" height="14" rx="2" /><path d="M12 3v14" /></>,
     speaker: <><path d="M4 8h3l4-3v10l-4-3H4Z" /><path d="M14 7.5a4 4 0 0 1 0 5M16 5a7 7 0 0 1 0 10" /></>,
+    music: <><path d="M8 15.5V4.5l8-1.5v10.5" /><circle cx="6" cy="15.5" r="2" /><circle cx="14" cy="13" r="2" /></>,
     moon: <path d="M15.5 12.6A6.5 6.5 0 0 1 7.4 4.5a6.5 6.5 0 1 0 8.1 8.1Z" />,
     sun: <><circle cx="10" cy="10" r="3" /><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M15.7 4.3l-1.4 1.4M5.7 14.3l-1.4 1.4" /></>,
     link: <><path d="M8.5 11.5 11.5 8.5" /><path d="M6.5 13.5H5a3 3 0 0 1 0-6h3M11.5 6.5H13a3 3 0 0 1 0 6h-3" /></>,
@@ -109,7 +117,7 @@ function PronunciationButton({ className = "" }: { className?: string }) {
   }
 
   return (
-    <button className={className + (playing ? " is-playing" : "")} type="button" onClick={play} disabled={!pronunciationTrack} title={pronunciationTrack ? "Hear name pronunciation" : "Pronunciation audio is not yet available"} aria-label={pronunciationTrack ? "Play Adjie Rizqan name pronunciation" : "Pronunciation audio unavailable"}>
+    <button className={className + (playing ? " is-playing" : "")} type="button" onClick={play} disabled={!pronunciationTrack} title={pronunciationTrack ? t("Hear name pronunciation") : t("Pronunciation audio is not yet available")} aria-label={pronunciationTrack ? t("Play Adjie Rizqan name pronunciation") : t("Pronunciation audio unavailable")}>
       {pronunciationTrack && <audio ref={audioRef} src={pronunciationTrack} onPlay={() => setPlaying(true)} onEnded={() => setPlaying(false)} onPause={() => setPlaying(false)} preload="none" />}
       <Glyph name="speaker" />
       <span className="aw-audio-response" aria-hidden="true"><i /><i /><i /></span>
@@ -158,18 +166,18 @@ function QuickLook({ images, index, close, navigate }: {
 
   return createPortal(
     <div className="aw-quicklook-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-      <section ref={dialogRef} className="aw-quicklook" role="dialog" aria-modal="true" aria-label="Project image viewer">
-        <header><span>{index + 1} / {images.length}</span><p>{image.caption}</p><button type="button" autoFocus onClick={close} aria-label="Close image viewer"><Glyph name="close" /></button></header>
+      <section ref={dialogRef} className="aw-quicklook" role="dialog" aria-modal="true" aria-label={t("Project image viewer")}>
+        <header><span>{index + 1} / {images.length}</span><p>{image.caption}</p><button type="button" autoFocus onClick={close} aria-label={t("Close image viewer")}><Glyph name="close" /></button></header>
         <div className="aw-quicklook-image" key={image.src}><Image src={image.src} alt={image.caption} fill sizes="100vw" quality={95} className="object-contain" priority /></div>
-        {index > 0 && <button type="button" className="aw-quicklook-nav is-previous" onClick={() => navigate(-1)} aria-label="Previous image"><Glyph name="arrow" /></button>}
-        {index < images.length - 1 && <button type="button" className="aw-quicklook-nav is-next" onClick={() => navigate(1)} aria-label="Next image"><Glyph name="arrow" /></button>}
+        {index > 0 && <button type="button" className="aw-quicklook-nav is-previous" onClick={() => navigate(-1)} aria-label={t("Previous image")}><Glyph name="arrow" /></button>}
+        {index < images.length - 1 && <button type="button" className="aw-quicklook-nav is-next" onClick={() => navigate(1)} aria-label={t("Next image")}><Glyph name="arrow" /></button>}
       </section>
     </div>,
     document.body,
   );
 }
 
-function Composer({ query, setQuery, submit, stop, busy = false, placeholder = "Ask anything about my work…" }: {
+function Composer({ query, setQuery, submit, stop, busy = false, placeholder }: {
   query: string;
   setQuery: (value: string) => void;
   submit: () => void;
@@ -191,19 +199,19 @@ function Composer({ query, setQuery, submit, stop, busy = false, placeholder = "
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         onKeyDown={onKeyDown}
-        placeholder={placeholder}
-        aria-label="Ask anything about Adjie’s work"
+        placeholder={placeholder ?? t("Ask anything about my work…")}
+        aria-label={t("Ask anything about Adjie’s work")}
         maxLength={800}
         disabled={busy}
       />
       <div className="aw-composer-tools">
         <div>
-          <button type="button" aria-label="Add project context"><Glyph name="plus" /></button>
-          <button type="button" onClick={() => setQuery("Show me Adjie’s operational systems.")}><Glyph name="search" /> Projects</button>
-          <button type="button" onClick={() => setQuery("What evidence is available for Adjie’s work?")}><Glyph name="book" /> Evidence</button>
-          <button type="button" onClick={() => setQuery("How does Adjie approach reliability?")}><Glyph name="spark" /> Build notes</button>
+          <button type="button" aria-label={t("Add project context")}><Glyph name="plus" /></button>
+          <button type="button" onClick={() => setQuery(t("Show me Adjie’s operational systems."))}><Glyph name="search" /> {t("Projects")}</button>
+          <button type="button" onClick={() => setQuery(t("What evidence is available for Adjie’s work?"))}><Glyph name="book" /> {t("Evidence")}</button>
+          <button type="button" onClick={() => setQuery(t("How does Adjie approach reliability?"))}><Glyph name="spark" /> {t("Build notes")}</button>
         </div>
-        <div className="aw-composer-submit"><span>Adjie AI · Preview</span><button className="aw-send" type="button" onClick={busy ? stop : submit} disabled={busy ? !stop : !query.trim()} aria-label={busy ? "Stop response" : "Send query"}><Glyph name={busy ? "close" : "send"} /></button></div>
+        <div className="aw-composer-submit"><span>{t("Adjie AI · Preview")}</span><button className="aw-send" type="button" onClick={busy ? stop : submit} disabled={busy ? !stop : !query.trim()} aria-label={busy ? t("Stop response") : t("Send query")}><Glyph name={busy ? "close" : "send"} /></button></div>
       </div>
     </div>
   );
@@ -220,12 +228,12 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
   close: () => void;
 }) {
   const nav: { label: string; view: WorkspaceView; icon: "home" | "work" | "projects" | "labs" | "book" | "ask" }[] = [
-    { label: "Home", view: "home", icon: "home" },
-    { label: "Work", view: "work", icon: "work" },
-    { label: "Projects", view: "projects", icon: "projects" },
-    { label: "Labs", view: "labs", icon: "labs" },
-    { label: "Knowledge", view: "knowledge", icon: "book" },
-    { label: "Ask", view: "ask", icon: "ask" },
+    { label: tk("Home"), view: "home", icon: "home" },
+    { label: tk("Work"), view: "work", icon: "work" },
+    { label: tk("Projects"), view: "projects", icon: "projects" },
+    { label: tk("Labs"), view: "labs", icon: "labs" },
+    { label: tk("Knowledge"), view: "knowledge", icon: "book" },
+    { label: tk("Ask"), view: "ask", icon: "ask" },
   ];
 
   return (
@@ -234,16 +242,16 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
         <div className="aw-sidebar-scroll">
           <header className="aw-profile">
             <span className="aw-avatar is-light">AR</span>
-            <span><strong>Adjie Rizqan</strong><small>Personal AI Workspace</small></span>
+            <span><strong>{t("Adjie Rizqan")}</strong><small>{t("Personal AI Workspace")}</small></span>
             <PronunciationButton className="aw-pronounce" />
-            <button className="aw-mobile-close" type="button" onClick={close} aria-label="Close navigation"><Glyph name="close" /></button>
+            <button className="aw-mobile-close" type="button" onClick={close} aria-label={t("Close navigation")}><Glyph name="close" /></button>
           </header>
 
           <button className="aw-new-session" type="button" onClick={() => { newSession(); close(); }}>
-            <span><Glyph name="plus" /> New Session</span><kbd>⌘ N</kbd>
+            <span><Glyph name="plus" /> {t("New Session")}</span><kbd>⌘ N</kbd>
           </button>
 
-          <nav className="aw-primary-nav" aria-label="Workspace">
+          <nav className="aw-primary-nav" aria-label={t("Workspace")}>
             {nav.map((item) => (
               <button
                 type="button"
@@ -251,15 +259,15 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
                 className={view === item.view ? "is-active" : ""}
                 onClick={() => { setView(item.view); close(); }}
               >
-                <Glyph name={item.icon} /><span>{item.label}</span>
+                <Glyph name={item.icon} /><span>{t(item.label)}</span>
               </button>
             ))}
-            <button type="button" onClick={openPalette}><Glyph name="more" /><span>More</span></button>
+            <button type="button" onClick={openPalette}><Glyph name="more" /><span>{t("More")}</span></button>
           </nav>
 
           <section className="aw-project-shortcuts">
-            <header><span>Projects</span></header>
-            {allWorkspaceProjects.map((project) => (
+            <header><span>{t("Projects")}</span></header>
+            {allProjects().map((project) => (
               <button
                 type="button"
                 key={project.slug}
@@ -274,15 +282,15 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
         </div>
 
         <footer className="aw-sidebar-footer">
-          <button type="button" className="aw-search-trigger" onClick={openPalette}><span><Glyph name="search" /> Search</span><kbd>⌘ K</kbd></button>
+          <button type="button" className="aw-search-trigger" onClick={openPalette}><span><Glyph name="search" /> {t("Search")}</span><kbd>⌘ K</kbd></button>
           <div className="aw-contact-links">
-            <a href={"mailto:" + site.email}><MailIcon /> Contact</a>
-            <a href={site.cv} target="_blank" rel="noopener noreferrer"><FileIcon /> Résumé</a>
+            <a href={"mailto:" + site.email}><MailIcon /> {t("Contact")}</a>
+            <a href={site.cv} target="_blank" rel="noopener noreferrer"><FileIcon /> {t("Résumé")}</a>
           </div>
-          <div className="aw-owner"><span className="aw-avatar">AR</span><span><strong>Adjie Rizqan</strong><small>Build · Solve · Improve</small></span></div>
+          <div className="aw-owner"><span className="aw-avatar">AR</span><span><strong>{t("Adjie Rizqan")}</strong><small>{t("Build · Solve · Improve")}</small></span></div>
         </footer>
       </aside>
-      {open && <button className="aw-drawer-scrim" type="button" onClick={close} aria-label="Close navigation" />}
+      {open && <button className="aw-drawer-scrim" type="button" onClick={close} aria-label={t("Close navigation")} />}
     </>
   );
 }
@@ -296,44 +304,44 @@ function HomeWorkspace({ query, setQuery, submit, ask, setView, selectProject }:
   selectProject: (project: WorkspaceProject) => void;
 }) {
   const suggestions = [
-    { label: "Explore my projects", prompt: "What are Adjie’s main projects?", icon: "work" as const },
-    { label: "How does SuhuLog work?", prompt: "How does SuhuLog work?", icon: "ask" as const },
-    { label: "Show applied AI work", prompt: "What applied AI and computer vision work has Adjie done?", icon: "spark" as const },
-    { label: "Show verified evidence", prompt: "What evidence is available for Adjie’s work?", icon: "book" as const },
+    { label: tk("Explore my projects"), prompt: tk("What are Adjie’s main projects?"), icon: "work" as const },
+    { label: tk("How does SuhuLog work?"), prompt: tk("How does SuhuLog work?"), icon: "ask" as const },
+    { label: tk("Show applied AI work"), prompt: tk("What applied AI and computer vision work has Adjie done?"), icon: "spark" as const },
+    { label: tk("Show verified evidence"), prompt: tk("What evidence is available for Adjie’s work?"), icon: "book" as const },
   ];
 
   return (
     <main className="aw-center aw-home aw-enter">
       <section className="aw-identity">
         <div>
-          <span>Good evening,</span>
-          <div className="aw-name"><h1>Adjie Rizqan</h1><PronunciationButton /></div>
-          <p>Turn ideas into useful systems.</p>
+          <span>{t("Good evening,")}</span>
+          <div className="aw-name"><h1>{t("Adjie Rizqan")}</h1><PronunciationButton /></div>
+          <p>{t("Turn ideas into useful systems.")}</p>
         </div>
-        <blockquote>“A more capable me,<br />for a more useful tomorrow.”</blockquote>
+        <blockquote>{t("“A more capable me,")}<br />{t("for a more useful tomorrow.”")}</blockquote>
       </section>
 
       <div className="aw-focus-tags">
-        {["Software Engineering", "Applied AI", "Healthcare Systems", "Computer Vision", "Automation"].map((tag) => <span key={tag}>{tag}</span>)}
+        {["Software Engineering", "Applied AI", tk("Healthcare Systems"), "Computer Vision", tk("Automation")].map((tag) => <span key={tag}>{t(tag)}</span>)}
       </div>
 
       <Composer query={query} setQuery={setQuery} submit={submit} />
 
-      <section className="aw-suggestions" aria-label="Suggested questions">
-        <h2>Try asking</h2>
+      <section className="aw-suggestions" aria-label={t("Suggested questions")}>
+        <h2>{t("Try asking")}</h2>
         <div>{suggestions.map((item) => (
-          <button type="button" key={item.label} onClick={() => ask(item.prompt)}>
+          <button type="button" key={item.label} onClick={() => ask(t(item.prompt))}>
             <span><Glyph name={item.icon} /></span>
-            <strong>{item.label}</strong>
+            <strong>{t(item.label)}</strong>
             <Glyph name="arrow" />
           </button>
         ))}</div>
       </section>
 
       <section className="aw-recent">
-        <header><div><strong>Recent work</strong><span><button className="is-active" type="button">Featured</button><button type="button" onClick={() => setView("work")}>Systems</button><button type="button" onClick={() => setView("labs")}>Labs</button></span></div><button type="button" onClick={() => setView("work")}>View all <Glyph name="arrow" /></button></header>
+        <header><div><strong>{t("Recent work")}</strong><span><button className="is-active" type="button">{t("Featured")}</button><button type="button" onClick={() => setView("work")}>{t("Systems")}</button><button type="button" onClick={() => setView("labs")}>{t("Labs")}</button></span></div><button type="button" onClick={() => setView("work")}>{t("View all")} <Glyph name="arrow" /></button></header>
         <div>
-          {featuredWork.map((project) => (
+          {featuredProjects().map((project) => (
             <button type="button" key={project.slug} onClick={() => selectProject(project)}>
               <span className="aw-recent-identity"><strong>{project.title}</strong><small>{project.eyebrow}{project.status ? " · " + project.status : ""}</small></span>
               <p>{project.summary}</p>
@@ -347,6 +355,7 @@ function HomeWorkspace({ query, setQuery, submit, ask, setView, selectProject }:
 }
 
 function WorkspaceHeader({ eyebrow, title, copy, meta }: { eyebrow: string; title: string; copy: string; meta?: string }) {
+  eyebrow = t(eyebrow); title = t(title); copy = t(copy);
   return (
     <header className="aw-page-header">
       <div><span>{eyebrow}</span><h1>{title}</h1><p>{copy}</p></div>
@@ -356,41 +365,41 @@ function WorkspaceHeader({ eyebrow, title, copy, meta }: { eyebrow: string; titl
 }
 
 function WorkWorkspace({ selectProject }: { selectProject: (project: WorkspaceProject) => void }) {
-  const primary = featuredWork[0];
-  const secondary = featuredWork.slice(1);
+  const primary = featuredProjects()[0];
+  const secondary = featuredProjects().slice(1);
 
   return (
     <main className="aw-center aw-work aw-enter">
-      <WorkspaceHeader eyebrow="Selected systems" title="Work" copy="Operational software and applied AI, organized around inspectable project evidence." meta="4 featured cases" />
+      <WorkspaceHeader eyebrow={tk("Selected systems")} title={tk("Work")} copy={tk("Operational software and applied AI, organized around inspectable project evidence.")} meta={L("4 featured cases", "4 kasus unggulan")} />
 
       <button type="button" className="aw-primary-work" onClick={() => selectProject(primary)}>
         <section>
           <span>Primary workspace artifact · {primary.year}</span>
           <h2>{primary.title}</h2>
           <p>{primary.summary}</p>
-          <strong>Open context <Glyph name="arrow" /></strong>
+          <strong>{t("Open context")} <Glyph name="arrow" /></strong>
         </section>
         <div className="aw-system-artifact">
-          <header><span>Verified system boundary</span><small>Evidence-led</small></header>
+          <header><span>{t("Verified system boundary")}</span><small>{t("Evidence-led")}</small></header>
           <div className="aw-system-flow">
             {primary.evidence.map((item, index) => <div key={item.label}><small>0{index + 1}</small><span>{item.label}</span><strong>{item.value}</strong></div>)}
           </div>
-          <footer>No production screenshot is published without a verified sanitized asset.</footer>
+          <footer>{t("No production screenshot is published without a verified sanitized asset.")}</footer>
         </div>
       </button>
 
-      <section className="aw-secondary-work" aria-label="More featured work">
+      <section className="aw-secondary-work" aria-label={t("More featured work")}>
         {secondary.map((project) => (
           <button type="button" key={project.slug} onClick={() => selectProject(project)}>
             {project.thumb ?? project.image ? (
-              <figure><Image src={project.thumb ?? project.image ?? ""} alt={project.title + " project preview"} fill sizes="(max-width: 760px) 100vw, 480px" className="object-cover object-center" /></figure>
+              <figure><Image src={project.thumb ?? project.image ?? ""} alt={project.title} fill sizes="(max-width: 760px) 100vw, 480px" className="object-cover object-center" /></figure>
             ) : (
               <div className="aw-evidence-preview">
-                <span>Evidence state</span>
+                <span>{t("Evidence state")}</span>
                 {project.evidence.map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}
               </div>
             )}
-            <section><span>{project.eyebrow}</span><h3>{project.title}</h3><p>{project.summary}</p><strong>Inspect project <Glyph name="arrow" /></strong></section>
+            <section><span>{project.eyebrow}</span><h3>{project.title}</h3><p>{project.summary}</p><strong>{t("Inspect project")} <Glyph name="arrow" /></strong></section>
           </button>
         ))}
       </section>
@@ -408,12 +417,12 @@ type ProjectViewProps = {
 };
 
 const PROJECT_DEMO_PROMPTS: Record<string, string> = {
-  labstock: "Give me a short overview of LabStock: the problem, the solution, the main features, and where it stands now.",
-  bdrs: "What has been built in BDRS, and what is still in development or planning?",
-  suhulog: "How does SuhuLog turn temperature logging into a fast workflow that stays auditable?",
-  "tomato-ripeness": "What did TomatoVision test, and what do the evaluation results actually show?",
-  "padel-vision": "How does Padel Vision turn one broadcast camera into an inspectable match-analysis pipeline?",
-  "porsche-3d": "How was Porsche 3D built as a real-time WebGL interaction study?",
+  labstock: tk("Give me a short overview of LabStock: the problem, the solution, the main features, and where it stands now."),
+  bdrs: tk("What has been built in BDRS, and what is still in development or planning?"),
+  suhulog: tk("How does SuhuLog turn temperature logging into a fast workflow that stays auditable?"),
+  "tomato-ripeness": tk("What did TomatoVision test, and what do the evaluation results actually show?"),
+  "padel-vision": tk("How does Padel Vision turn one broadcast camera into an inspectable match-analysis pipeline?"),
+  "porsche-3d": tk("How was Porsche 3D built as a real-time WebGL interaction study?"),
 };
 
 function useProjectPresentation(prompt: string) {
@@ -498,15 +507,15 @@ function ProjectSession({ prompt, typedPrompt, replay, title }: {
   title: string;
 }) {
   return (
-    <section className="aw-project-session" aria-label={title + " scripted project prompt"}>
+    <section className="aw-project-session" aria-label={L(`${title} scripted project prompt`, `Prompt proyek ${title}`)}>
       <header>
-        <div><i /><span>You · prompt</span><small>Project opener</small></div>
-        <button type="button" onClick={replay} aria-label={"Replay " + title + " project presentation"}>↻ Replay Demo</button>
+        <div><i /><span>{t("You · prompt")}</span><small>{t("Project opener")}</small></div>
+        <button type="button" onClick={replay} aria-label={L(`Replay ${title} project presentation`, `Putar ulang presentasi ${title}`)}>{t("↻ Replay Demo")}</button>
       </header>
       <div className="aw-session-query">
         <span aria-hidden="true">Q</span>
         <div>
-          <small>Project query</small>
+          <small>{t("Project query")}</small>
           <p aria-label={prompt}>{typedPrompt}{typedPrompt.length < prompt.length && <span className="aw-typing-caret" aria-hidden="true" />}</p>
         </div>
       </div>
@@ -526,9 +535,9 @@ function ProjectOpening({ project, action }: { project: WorkspaceProject; action
         {action && <div className="aw-dossier-actions"><button type="button" onClick={action.run}>{action.label}</button></div>}
       </header>
       <dl className="aw-dossier-metadata" aria-label={project.title + " project metadata"}>
-        <div><dt>Role</dt><dd>{project.role}</dd></div>
-        {project.stack.length > 0 && <div><dt>Stack</dt><dd>{project.stack.join(" · ")}</dd></div>}
-        <div><dt>Project record</dt><dd>{project.year}{project.status ? " · " + project.status : ""}</dd></div>
+        <div><dt>{t("Role")}</dt><dd>{project.role}</dd></div>
+        {project.stack.length > 0 && <div><dt>{t("Stack")}</dt><dd>{project.stack.join(" · ")}</dd></div>}
+        <div><dt>{t("Project record")}</dt><dd>{project.year}{project.status ? " · " + project.status : ""}</dd></div>
       </dl>
     </>
   );
@@ -538,7 +547,7 @@ function EvidenceTable({ project, visibleRows = project.evidence.length }: { pro
   return (
     <div className="aw-evidence-table-wrap">
       <table className="aw-evidence-table">
-        <thead><tr><th scope="col">Behavior</th><th scope="col">Public evidence</th></tr></thead>
+        <thead><tr><th scope="col">{t("Behavior")}</th><th scope="col">{t("Public evidence")}</th></tr></thead>
         <tbody>{project.evidence.slice(0, visibleRows).map((item) => <tr className="aw-stream-structure" key={item.label}><th scope="row">{item.label}</th><td>{item.value}</td></tr>)}</tbody>
       </table>
     </div>
@@ -548,8 +557,8 @@ function EvidenceTable({ project, visibleRows = project.evidence.length }: { pro
 function ProjectAsk({ project, query, setQuery, ask }: Pick<ProjectViewProps, "project" | "query" | "setQuery" | "ask">) {
   return (
     <section className="aw-project-ask aw-editorial-ask">
-      <header><span>Ask about {project.title}</span><button type="button" onClick={() => ask(project.askSuggestion)}>Use suggested question</button></header>
-      <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder={"Ask anything about " + project.title + "…"} />
+      <header><span>{L(`Ask about ${project.title}`, `Tanya tentang ${project.title}`)}</span><button type="button" onClick={() => ask(project.askSuggestion)}>{t("Use suggested question")}</button></header>
+      <Composer query={query} setQuery={setQuery} submit={() => ask()} placeholder={L(`Ask anything about ${project.title}…`, `Tanya apa saja tentang ${project.title}…`)} />
     </section>
   );
 }
@@ -560,7 +569,7 @@ function ProjectMedia({ project, openImage, lead = false }: Pick<ProjectViewProp
     <section className={lead ? "aw-editorial-media is-lead" : "aw-editorial-media"} aria-label={project.title + " public project media"}>
       <button type="button" className="aw-editorial-media-lead" onClick={(event) => openImage(0, event.currentTarget)} aria-label={"Quick Look: " + project.title + " project view"}>
         <Image src={project.image} alt={project.title + " public project view"} fill sizes="(max-width: 760px) 100vw, 1000px" className="object-cover object-top" />
-        <span>Open in Quick Look</span>
+        <span>{t("Open in Quick Look")}</span>
       </button>
       {project.gallery && project.gallery.length > 0 && <div className="aw-editorial-gallery">{project.gallery.map((item, index) => <figure key={item.src}><button type="button" onClick={(event) => openImage(index + 1, event.currentTarget)} aria-label={"Quick Look: " + item.caption}><Image src={item.src} alt={item.caption} fill sizes="(max-width: 760px) 90vw, 300px" className="object-cover object-top" /></button><figcaption>{item.caption}</figcaption></figure>)}</div>}
     </section>
@@ -572,19 +581,19 @@ const porscheCinematic = "/projects/porsche-3d/cinematic/";
 
 function PorscheSequence({ openImage }: Pick<ProjectViewProps, "openImage">) {
   const views: { label: string; note: string; frames?: PorscheFrame[]; video?: string }[] = [
-    { label: "Model", note: "The RWB 964 in the site's studio set.", frames: [{ src: porscheCinematic + "01-rwb964-hero.webp", label: "911 RWB (964)", quickIndex: 0 }] },
-    { label: "Profile", note: "918 Spyder Weissach in its Martini livery, side on.", frames: [{ src: porscheCinematic + "02-918-profile.webp", label: "918 Spyder", quickIndex: 1 }] },
-    { label: "Line-up", note: "All six models from the site in one scene.", frames: [{ src: porscheCinematic + "03-lineup.webp", label: "Six models", quickIndex: 2 }] },
-    { label: "Camera", note: "The site's switch transition: one car turns away, the next arrives.", video: porscheCinematic + "04-transition.mp4" },
-    { label: "Material", note: "One car, three finishes from the configurator.", frames: [
-      { src: porscheCinematic + "05-gt3-metallic.webp", label: "GT Silver · metallic", quickIndex: 3 },
-      { src: porscheCinematic + "05-gt3-gloss.webp", label: "Guards Red · gloss", quickIndex: 4 },
-      { src: porscheCinematic + "05-gt3-matte.webp", label: "Jet Black · matte", quickIndex: 5 },
+    { label: tk("Model"), note: tk("The RWB 964 in the site's studio set."), frames: [{ src: porscheCinematic + "01-rwb964-hero.webp", label: tk("911 RWB (964)"), quickIndex: 0 }] },
+    { label: tk("Profile"), note: tk("918 Spyder Weissach in its Martini livery, side on."), frames: [{ src: porscheCinematic + "02-918-profile.webp", label: tk("918 Spyder"), quickIndex: 1 }] },
+    { label: tk("Line-up"), note: tk("All six models from the site in one scene."), frames: [{ src: porscheCinematic + "03-lineup.webp", label: tk("Six models"), quickIndex: 2 }] },
+    { label: tk("Camera"), note: tk("The site's switch transition: one car turns away, the next arrives."), video: porscheCinematic + "04-transition.mp4" },
+    { label: tk("Material"), note: tk("One car, three finishes from the configurator."), frames: [
+      { src: porscheCinematic + "05-gt3-metallic.webp", label: tk("GT Silver · metallic"), quickIndex: 3 },
+      { src: porscheCinematic + "05-gt3-gloss.webp", label: tk("Guards Red · gloss"), quickIndex: 4 },
+      { src: porscheCinematic + "05-gt3-matte.webp", label: tk("Jet Black · matte"), quickIndex: 5 },
     ] },
-    { label: "Detail", note: "Close range on the RWB 964.", frames: [
-      { src: porscheCinematic + "06-rwb964-wheel.webp", label: "Wheel and brake", quickIndex: 6 },
-      { src: porscheCinematic + "06-rwb964-wing.webp", label: "Rear wing", quickIndex: 7 },
-      { src: porscheCinematic + "06-rwb964-light.webp", label: "Headlights", quickIndex: 8 },
+    { label: tk("Detail"), note: tk("Close range on the RWB 964."), frames: [
+      { src: porscheCinematic + "06-rwb964-wheel.webp", label: tk("Wheel and brake"), quickIndex: 6 },
+      { src: porscheCinematic + "06-rwb964-wing.webp", label: tk("Rear wing"), quickIndex: 7 },
+      { src: porscheCinematic + "06-rwb964-light.webp", label: tk("Headlights"), quickIndex: 8 },
     ] },
   ];
   const [active, setActive] = useState(0);
@@ -592,89 +601,89 @@ function PorscheSequence({ openImage }: Pick<ProjectViewProps, "openImage">) {
   const current = views[active];
   const frame = current.frames?.[Math.min(frameIndex, current.frames.length - 1)];
   return (
-    <section className="aw-porsche-sequence" aria-label="Porsche 3D renders">
-      <header><span>Rendered from the site&apos;s own Three.js scene</span><small>{String(active + 1).padStart(2, "0")} / {String(views.length).padStart(2, "0")}</small></header>
+    <section className="aw-porsche-sequence" aria-label={t("Porsche 3D renders")}>
+      <header><span>{t("Rendered from the site's own Three.js scene")}</span><small>{String(active + 1).padStart(2, "0")} / {String(views.length).padStart(2, "0")}</small></header>
       <div className="aw-porsche-stage">
-        {frame ? <button type="button" onClick={(event) => openImage(frame.quickIndex, event.currentTarget)} aria-label={"Quick Look: " + frame.label}><span key={frame.src}><Image src={frame.src} alt={frame.label + " rendered in Porsche 3D"} fill sizes="(max-width: 760px) 100vw, 1100px" className="object-cover object-center" priority={active === 0} /></span></button>
-          : <video key={current.video} controls playsInline preload="metadata" poster={porscheCinematic + "04-transition-poster.webp"} aria-label="Porsche 3D model switch transition"><source src={current.video} type="video/mp4" /></video>}
+        {frame ? <button type="button" onClick={(event) => openImage(frame.quickIndex, event.currentTarget)} aria-label={"Quick Look: " + t(frame.label)}><span key={frame.src}><Image src={frame.src} alt={t(frame.label)} fill sizes="(max-width: 760px) 100vw, 1100px" className="object-cover object-center" priority={active === 0} /></span></button>
+          : <video key={current.video} controls playsInline preload="metadata" poster={porscheCinematic + "04-transition-poster.webp"} aria-label={t("Porsche 3D model switch transition")}><source src={current.video} type="video/mp4" /></video>}
       </div>
       <div className="aw-porsche-caption">
-        <p><strong>{frame?.label ?? current.label}</strong> {current.note}</p>
-        {current.frames && current.frames.length > 1 && <div role="group" aria-label={current.label + " frames"}>{current.frames.map((item, index) => <button type="button" aria-pressed={frameIndex === index} key={item.src} onClick={() => setFrameIndex(index)}>{item.label}</button>)}</div>}
+        <p><strong>{t(frame?.label ?? current.label)}</strong> {t(current.note)}</p>
+        {current.frames && current.frames.length > 1 && <div role="group" aria-label={t(current.label)}>{current.frames.map((item, index) => <button type="button" aria-pressed={frameIndex === index} key={item.src} onClick={() => setFrameIndex(index)}>{t(item.label)}</button>)}</div>}
       </div>
-      <div className="aw-porsche-controls" role="tablist" aria-label="Porsche 3D views">{views.map((view, index) => <button type="button" role="tab" aria-selected={active === index} className={active === index ? "is-active" : ""} key={view.label} onClick={() => { setActive(index); setFrameIndex(0); }}><small>{String(index + 1).padStart(2, "0")}</small><strong>{view.label}</strong></button>)}</div>
+      <div className="aw-porsche-controls" role="tablist" aria-label={t("Porsche 3D views")}>{views.map((view, index) => <button type="button" role="tab" aria-selected={active === index} className={active === index ? "is-active" : ""} key={view.label} onClick={() => { setActive(index); setFrameIndex(0); }}><small>{String(index + 1).padStart(2, "0")}</small><strong>{t(view.label)}</strong></button>)}</div>
     </section>
   );
 }
 
 function ProjectMetaLine({ project }: { project: WorkspaceProject }) {
-  return <dl className="aw-project-meta-line" aria-label={project.title + " project metadata"}><div><dt>Role</dt><dd>{project.role}</dd></div>{project.stack.length > 0 && <div><dt>Built with</dt><dd>{project.stack.join(" · ")}</dd></div>}<div><dt>Record</dt><dd>{project.year}{project.status ? " · " + project.status : ""}</dd></div></dl>;
+  return <dl className="aw-project-meta-line" aria-label={project.title + " project metadata"}><div><dt>{t("Role")}</dt><dd>{project.role}</dd></div>{project.stack.length > 0 && <div><dt>{t("Built with")}</dt><dd>{project.stack.join(" · ")}</dd></div>}<div><dt>{t("Record")}</dt><dd>{project.year}{project.status ? " · " + project.status : ""}</dd></div></dl>;
 }
 
 function LabStockSystemCanvas() {
   return (
-    <section className="aw-labstock-canvas" id="labstock-data-flow" aria-label="LabStock source to export system map">
-      <header><span>One traceable path</span><h2>Workbook evidence enters once. Every report leaves from the same ledger.</h2></header>
+    <section className="aw-labstock-canvas" id="labstock-data-flow" aria-label={t("LabStock source to export system map")}>
+      <header><span>{t("One traceable path")}</span><h2>{t("Workbook evidence enters once. Every report leaves from the same ledger.")}</h2></header>
       <div className="aw-ledger-map">
-        <div className="aw-ledger-source"><small>Source</small><strong>Monthly workbook</strong><span>file · sheet · row · period</span></div>
-        <div className="aw-ledger-gate"><small>Validate</small><strong>Identity + unit + overlap</strong><span>conflicts stop before posting</span></div>
-        <div className="aw-ledger-core"><i /><small>Canonical record</small><strong>Stock ledger</strong><span>one effective item identity</span></div>
-        <div className="aw-ledger-output"><small>Read</small><strong>Monthly / yearly report</strong><span>same stored movements</span></div>
-        <div className="aw-ledger-export"><small>Deliver</small><strong>Detail + recap Excel</strong><span>template-compatible output</span></div>
+        <div className="aw-ledger-source"><small>{t("Source")}</small><strong>{t("Monthly workbook")}</strong><span>{t("file · sheet · row · period")}</span></div>
+        <div className="aw-ledger-gate"><small>{t("Validate")}</small><strong>{t("Identity + unit + overlap")}</strong><span>{t("conflicts stop before posting")}</span></div>
+        <div className="aw-ledger-core"><i /><small>{t("Canonical record")}</small><strong>{t("Stock ledger")}</strong><span>{t("one effective item identity")}</span></div>
+        <div className="aw-ledger-output"><small>{t("Read")}</small><strong>{t("Monthly / yearly report")}</strong><span>{t("same stored movements")}</span></div>
+        <div className="aw-ledger-export"><small>{t("Deliver")}</small><strong>{t("Detail + recap Excel")}</strong><span>{t("template-compatible output")}</span></div>
       </div>
-      <div className="aw-ledger-rules"><p><b>Same source returns</b><span>Recognized before posting</span><strong>No duplicate movement</strong></p><p><b>A correction is needed</b><span>Prior record stays traceable</span><strong>Auditable supersession</strong></p><p><b>A report is exported</b><span>Website and workbook read one ledger</span><strong>Consistent balance</strong></p></div>
+      <div className="aw-ledger-rules"><p><b>{t("Same source returns")}</b><span>{t("Recognized before posting")}</span><strong>{t("No duplicate movement")}</strong></p><p><b>{t("A correction is needed")}</b><span>{t("Prior record stays traceable")}</span><strong>{t("Auditable supersession")}</strong></p><p><b>{t("A report is exported")}</b><span>{t("Website and workbook read one ledger")}</span><strong>{t("Consistent balance")}</strong></p></div>
     </section>
   );
 }
 
 function BdrsOperationalMap({ project }: { project: WorkspaceProject }) {
   const lanes = [
-    { state: "Implemented", title: project.evidence[0]?.value ?? "Workflow structure", detail: "Operational work is organized around the domain flow." },
-    { state: "Current", title: project.evidence[1]?.value ?? "Evidence review", detail: "Technical and release evidence remains under review." },
-    { state: "Planned / withheld", title: project.evidence[2]?.value ?? "Private evidence", detail: "Integration, production, and patient claims stay outside the public case." },
+    { state: tk("Implemented"), title: project.evidence[0]?.value ?? "Workflow structure", detail: tk("Operational work is organized around the domain flow.") },
+    { state: tk("Current"), title: project.evidence[1]?.value ?? "Evidence review", detail: tk("Technical and release evidence remains under review.") },
+    { state: tk("Planned / withheld"), title: project.evidence[2]?.value ?? "Private evidence", detail: tk("Integration, production, and patient claims stay outside the public case.") },
   ];
-  return <section className="aw-bdrs-map" aria-label="BDRS implementation boundary"><header><span>Public implementation boundary</span><h2>What exists, what is being checked, and what is not claimed.</h2></header><div>{lanes.map((lane,index)=><article key={lane.state} className={index===0?"is-done":index===1?"is-current":"is-next"}><small>{String(index+1).padStart(2,"0")}</small><span>{lane.state}</span><strong>{lane.title}</strong><p>{lane.detail}</p></article>)}</div><footer><span>Workflow intent</span><p>Blood request → domain workflow → traceable record → operational reporting</p></footer></section>;
+  return <section className="aw-bdrs-map" aria-label={t("BDRS implementation boundary")}><header><span>{t("Public implementation boundary")}</span><h2>{t("What exists, what is being checked, and what is not claimed.")}</h2></header><div>{lanes.map((lane,index)=><article key={lane.state} className={index===0?"is-done":index===1?"is-current":"is-next"}><small>{String(index+1).padStart(2,"0")}</small><span>{t(lane.state)}</span><strong>{t(lane.title)}</strong><p>{t(lane.detail)}</p></article>)}</div><footer><span>{t("Workflow intent")}</span><p>{t("Blood request → domain workflow → traceable record → operational reporting")}</p></footer></section>;
 }
 
 function SuhuLogShowcase({ project, openImage }: Pick<ProjectViewProps, "project" | "openImage">) {
   const frames = [
-    ...(project.image ? [{ src: project.image, caption: "Staff record Pagi and Sore readings on a phone; the laptop shows the month, limits and reports." }] : []),
+    ...(project.image ? [{ src: project.image, caption: t("Staff record Pagi and Sore readings on a phone; the laptop shows the month, limits and reports.") }] : []),
     ...(project.gallery ?? []),
   ];
-  const labels = ["Phone to desktop", "Phone entry", "Monitoring", "Report", "QR entry"];
+  const labels = [tk("Phone to desktop"), tk("Phone entry"), tk("Monitoring"), tk("Report"), tk("QR entry")];
   const [activeFrame, setActiveFrame] = useState(0);
   const active = frames[activeFrame];
   if (!active) return null;
   return (
-    <section className="aw-suhulog-showcase" aria-label="SuhuLog product walkthrough">
+    <section className="aw-suhulog-showcase" aria-label={t("SuhuLog product walkthrough")}>
       <div className="aw-suhulog-showcase-grid">
         <button type="button" className="aw-suhulog-stage" onClick={(event) => openImage(activeFrame, event.currentTarget)} aria-label={"Quick Look: " + active.caption}>
           <span className={"aw-suhulog-frame" + (active.src.includes("phone") || active.src.includes("device-story") ? " is-contained" : "")} key={active.src}><Image src={active.src} alt={active.caption} fill sizes="(max-width: 760px) 100vw, 860px" className={active.src.includes("phone") || active.src.includes("device-story") ? "object-contain" : "object-cover object-top"} /></span>
-          <span className="aw-suhulog-stage-copy"><small>Real product evidence · {String(activeFrame + 1).padStart(2,"0")}</small><strong>{labels[activeFrame]}</strong><p>{active.caption}</p></span>
-          <span className="aw-suhulog-quicklook">Quick Look ↗</span>
+          <span className="aw-suhulog-stage-copy"><small>{t("Real product evidence")} · {String(activeFrame + 1).padStart(2,"0")}</small><strong>{t(labels[activeFrame])}</strong><p>{active.caption}</p></span>
+          <span className="aw-suhulog-quicklook">{t("Quick Look ↗")}</span>
         </button>
-        <div className="aw-suhulog-steps" role="tablist" aria-label="SuhuLog workflow views">{frames.map((frame,index)=><button type="button" role="tab" aria-selected={activeFrame===index} className={activeFrame===index?"is-active":""} key={frame.src} onClick={()=>setActiveFrame(index)}><span>{String(index+1).padStart(2,"0")}</span><strong>{labels[index]??"Evidence"}</strong><p>{frame.caption}</p></button>)}</div>
+        <div className="aw-suhulog-steps" role="tablist" aria-label={t("SuhuLog workflow views")}>{frames.map((frame,index)=><button type="button" role="tab" aria-selected={activeFrame===index} className={activeFrame===index?"is-active":""} key={frame.src} onClick={()=>setActiveFrame(index)}><span>{String(index+1).padStart(2,"0")}</span><strong>{t(labels[index]??"Evidence")}</strong><p>{frame.caption}</p></button>)}</div>
       </div>
     </section>
   );
 }
 
 const EVIDENCE_LABELS: Record<string, string[]> = {
-  labstock: ["Stock", "Today", "Requisitions", "Requisitions on a phone", "Monthly report"],
-  bdrs: ["Service workstation", "Dashboard", "Issue register", "Inventory", "Transfusion episodes", "Reports"],
+  labstock: [tk("Stock"), tk("Today"), tk("Requisitions"), tk("Requisitions on a phone"), tk("Monthly report")],
+  bdrs: [tk("Service workstation"), tk("Dashboard"), tk("Issue register"), tk("Inventory"), tk("Transfusion episodes"), tk("Reports")],
 };
 
 function evidenceFrames(project: WorkspaceProject): EvidenceFrame[] {
   const labels = EVIDENCE_LABELS[project.slug] ?? [];
   const items = [...(project.image ? [{ src: project.image, caption: labels[0] ?? project.title }] : []), ...(project.gallery ?? [])];
   const first: Record<string, string> = {
-    labstock: "The Stok screen: usable stock per item with expiry and condition, derived from the ledger.",
-    bdrs: "Service workstation: one patient's request, crossmatch, bags and finalisation checklist.",
+    labstock: tk("The Stok screen: usable stock per item with expiry and condition, derived from the ledger."),
+    bdrs: tk("Service workstation: one patient's request, crossmatch, bags and finalisation checklist."),
   };
   return items.map((item, index) => ({
     src: item.src,
-    label: labels[index] ?? "Screen",
-    caption: (index === 0 ? first[project.slug] ?? item.caption : item.caption).replace(/^[^:]{2,30}:\s*/, (prefix) => (labels[index] && prefix.toLowerCase().startsWith(labels[index].toLowerCase()) ? "" : prefix)).replace(/^./, (c) => c.toUpperCase()),
+    label: t(labels[index] ?? "Screen"),
+    caption: (index === 0 ? t(first[project.slug] ?? item.caption) : item.caption).replace(/^[^:]{2,30}:\s*/, (prefix) => (labels[index] && prefix.toLowerCase().startsWith(labels[index].toLowerCase()) ? "" : prefix)).replace(/^./, (c) => c.toUpperCase()),
     quickIndex: index,
     portrait: item.src.includes("mobile"),
   }));
@@ -683,38 +692,38 @@ function evidenceFrames(project: WorkspaceProject): EvidenceFrame[] {
 function LabStockDossier({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
   const prompt = PROJECT_DEMO_PROMPTS.labstock;
   const { projectViewportRef, typedPrompt, responseVisible, responseProgress, runPresentation } = useProjectPresentation(prompt);
-  return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-labstock-dossier aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Work</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)} />{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
-    <header className="aw-labstock-lead"><div><span>{project.eyebrow}</span><h1><StreamingText text={project.title} progress={responseProgress} start={0} end={.05}/></h1><p><StreamingText text={project.summary} progress={responseProgress} start={.05} end={.16}/></p></div><aside><small>Current record</small><strong>{project.status}</strong><p>Screens from a demo database</p></aside></header>
+  return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-labstock-dossier aw-enter"><button type="button" className="aw-project-back" onClick={back}>{t("← Work")}</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)} />{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>{t("Workspace response")}</span></div>
+    <header className="aw-labstock-lead"><div><span>{project.eyebrow}</span><h1><StreamingText text={project.title} progress={responseProgress} start={0} end={.05}/></h1><p><StreamingText text={project.summary} progress={responseProgress} start={.05} end={.16}/></p></div><aside><small>{t("Current record")}</small><strong>{project.status}</strong><p>{t("Screens from a demo database")}</p></aside></header>
     {responseProgress>=.14&&<div className="aw-stream-structure"><ProjectMetaLine project={project}/></div>}
     {responseProgress>=.22&&<div className="aw-stream-structure"><LabStockSystemCanvas/></div>}
-    {responseProgress>=.4&&<div className="aw-stream-structure"><ProductEvidence title="The final product" heading="Stock, requests and reports on one ledger." source="Captured from the final release running against a demo database: synthetic items, rooms, requesters and users." frames={evidenceFrames(project)} openImage={openImage}/></div>}
-    {responseProgress>=.55&&<section className="aw-labstock-decisions aw-stream-structure"><header><span>Three constraints shaped the build</span><h2>The source stays identifiable, re-import stays safe, and corrections do not erase history.</h2></header><ol><li><b>Source-aware import</b><p>Workbook, sheet, row, item identity, unit, and period travel together.</p></li><li><b>Idempotent posting</b><p>A repeated source is recognized before it can create another stock movement.</p></li><li><b>History-preserving correction</b><p>Supersession records the change while retaining the earlier ledger evidence.</p></li></ol></section>}
-    {responseProgress>=.78&&<section className="aw-labstock-proof aw-stream-structure"><div><span>What can be checked</span><h2>Behavior over screenshots.</h2><p>{project.whyItMatters}</p></div><EvidenceTable project={project}/></section>}
-    {responseProgress>=.92&&<footer className="aw-project-boundary aw-stream-structure"><div><span>Public boundary</span><strong>{project.status}</strong></div><p>{project.publicLimitations}</p></footer>}
+    {responseProgress>=.4&&<div className="aw-stream-structure"><ProductEvidence title={t("The final product")} heading="Stock, requests and reports on one ledger." source="Captured from the final release running against a demo database: synthetic items, rooms, requesters and users." frames={evidenceFrames(project)} openImage={openImage}/></div>}
+    {responseProgress>=.55&&<section className="aw-labstock-decisions aw-stream-structure"><header><span>{t("Three constraints shaped the build")}</span><h2>{t("The source stays identifiable, re-import stays safe, and corrections do not erase history.")}</h2></header><ol><li><b>{t("Source-aware import")}</b><p>{t("Workbook, sheet, row, item identity, unit, and period travel together.")}</p></li><li><b>{t("Idempotent posting")}</b><p>{t("A repeated source is recognized before it can create another stock movement.")}</p></li><li><b>{t("History-preserving correction")}</b><p>{t("Supersession records the change while retaining the earlier ledger evidence.")}</p></li></ol></section>}
+    {responseProgress>=.78&&<section className="aw-labstock-proof aw-stream-structure"><div><span>{t("What can be checked")}</span><h2>{t("Behavior over screenshots.")}</h2><p>{project.whyItMatters}</p></div><EvidenceTable project={project}/></section>}
+    {responseProgress>=.92&&<footer className="aw-project-boundary aw-stream-structure"><div><span>{t("Public boundary")}</span><strong>{project.status}</strong></div><p>{project.publicLimitations}</p></footer>}
     {responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>;
 }
 
 function BdrsDossier({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
   const prompt=PROJECT_DEMO_PROMPTS.bdrs; const {projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);
-  return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-bdrs-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Work</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
-    <header className="aw-bdrs-lead"><div><span>Blood-bank workflow system</span><h1><StreamingText text={project.title} progress={responseProgress} start={0} end={.05}/></h1></div><p><StreamingText text={project.summary} progress={responseProgress} start={.05} end={.18}/></p></header>
+  return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-bdrs-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>{t("← Work")}</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>{t("Workspace response")}</span></div>
+    <header className="aw-bdrs-lead"><div><span>{t("Blood-bank workflow system")}</span><h1><StreamingText text={project.title} progress={responseProgress} start={0} end={.05}/></h1></div><p><StreamingText text={project.summary} progress={responseProgress} start={.05} end={.18}/></p></header>
     {responseProgress>=.18&&<div className="aw-stream-structure"><ProjectMetaLine project={project}/></div>}
     {responseProgress>=.30&&<div className="aw-stream-structure"><BdrsOperationalMap project={project}/></div>}
-    {responseProgress>=.5&&<div className="aw-stream-structure"><ProductEvidence title="The system" heading="From request to bag to transfusion, each step on record." source="Seeded demo environment: synthetic patients (KLINIS DEMO), bags (DEMO-BAG) and staff (E2E). No production data was used; the sidebar naming the hospital is cropped out." frames={evidenceFrames(project)} openImage={openImage}/></div>}
-    {responseProgress>=.68&&<section className="aw-bdrs-note aw-stream-structure"><span>Why the boundary matters</span><div><h2>Serious workflow software should state less when the public record is incomplete.</h2><p>{project.problem}</p><p>{project.solution}</p></div></section>}
-    {responseProgress>=.90&&<footer className="aw-project-boundary aw-stream-structure"><div><span>Not claimed</span><strong>Production · compliance · completed integration</strong></div><p>{project.publicLimitations}</p></footer>}
+    {responseProgress>=.5&&<div className="aw-stream-structure"><ProductEvidence title={t("The system")} heading="From request to bag to transfusion, each step on record." source="Seeded demo environment: synthetic patients (KLINIS DEMO), bags (DEMO-BAG) and staff (E2E). No production data was used; the sidebar naming the hospital is cropped out." frames={evidenceFrames(project)} openImage={openImage}/></div>}
+    {responseProgress>=.68&&<section className="aw-bdrs-note aw-stream-structure"><span>{t("Why the boundary matters")}</span><div><h2>{t("Serious workflow software should state less when the public record is incomplete.")}</h2><p>{project.problem}</p><p>{project.solution}</p></div></section>}
+    {responseProgress>=.90&&<footer className="aw-project-boundary aw-stream-structure"><div><span>{t("Not claimed")}</span><strong>{t("Production · compliance · completed integration")}</strong></div><p>{project.publicLimitations}</p></footer>}
     {responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>;
 }
 
-function SuhuLogDossier({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS.suhulog;const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-suhulog-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Work</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
-  <header className="aw-suhulog-lead"><div><span>Released operational software</span><h1><StreamingText text={project.title} progress={responseProgress} start={0} end={.05}/></h1></div><p><StreamingText text={project.summary} progress={responseProgress} start={.05} end={.16}/></p></header>
+function SuhuLogDossier({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS.suhulog;const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-suhulog-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>{t("← Work")}</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>{t("Workspace response")}</span></div>
+  <header className="aw-suhulog-lead"><div><span>{t("Released operational software")}</span><h1><StreamingText text={project.title} progress={responseProgress} start={0} end={.05}/></h1></div><p><StreamingText text={project.summary} progress={responseProgress} start={.05} end={.16}/></p></header>
   {responseProgress>=.14&&<div className="aw-stream-structure"><ProjectMetaLine project={project}/></div>}
   {responseProgress>=.20&&<div className="aw-stream-structure"><SuhuLogShowcase project={project} openImage={openImage}/></div>}
-  {responseProgress>=.58&&<section className="aw-suhulog-workflow aw-stream-structure"><div><span>One operational loop</span><h2>Scan. Record. Review. Correct. Export.</h2><p>{project.problem}</p></div><ol>{project.howItWorks.map((item,index)=><li key={item}><span>{String(index+1).padStart(2,"0")}</span><p>{item}</p></li>)}</ol></section>}
-  {responseProgress>=.82&&<section className="aw-suhulog-release aw-stream-structure"><div><span>Released record</span><h2>{project.evidence[0]?.value}</h2><p>{project.whyItMatters}</p></div><dl>{project.evidence.slice(1).map(item=><div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></section>}
-  {responseProgress>=.94&&<footer className="aw-project-boundary aw-stream-structure"><div><span>Public boundary</span><strong>Sanitized evidence only</strong></div><p>{project.publicLimitations}</p></footer>}{responseProgress>=.97&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
+  {responseProgress>=.58&&<section className="aw-suhulog-workflow aw-stream-structure"><div><span>{t("One operational loop")}</span><h2>{t("Scan. Record. Review. Correct. Export.")}</h2><p>{project.problem}</p></div><ol>{project.howItWorks.map((item,index)=><li key={item}><span>{String(index+1).padStart(2,"0")}</span><p>{item}</p></li>)}</ol></section>}
+  {responseProgress>=.82&&<section className="aw-suhulog-release aw-stream-structure"><div><span>{t("Released record")}</span><h2>{project.evidence[0]?.value}</h2><p>{project.whyItMatters}</p></div><dl>{project.evidence.slice(1).map(item=><div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></section>}
+  {responseProgress>=.94&&<footer className="aw-project-boundary aw-stream-structure"><div><span>{t("Public boundary")}</span><strong>{t("Sanitized evidence only")}</strong></div><p>{project.publicLimitations}</p></footer>}{responseProgress>=.97&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
 
-function TomatoVisionDossier({project,query,setQuery,ask,back}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS["tomato-ripeness"];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-tomato-story aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Work</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
+function TomatoVisionDossier({project,query,setQuery,ask,back}:ProjectViewProps){const prompt=t(PROJECT_DEMO_PROMPTS["tomato-ripeness"]);const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-tomato-story aw-enter"><button type="button" className="aw-project-back" onClick={back}>{t("← Work")}</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>{t("Workspace response")}</span></div>
   <TomatoVisionStory progress={responseProgress} query={query} setQuery={setQuery} ask={ask}/></article>}</main>}
 
 function PadelReplay({ src }: { src: string }) {
@@ -752,40 +761,65 @@ function PadelReplay({ src }: { src: string }) {
           onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
           onTimeUpdate={(event) => setTime(event.currentTarget.currentTime)} onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
           onClick={toggle}
-          aria-label="Padel Vision tracking replay: players, hits, ball arcs and court control over the 55-second clip at five times speed" />
-        {!playing && <button type="button" className="aw-padel-replay-start" onClick={toggle}><Glyph name="play" /> Play replay</button>}
+          aria-label={t("Padel Vision tracking replay: players, hits, ball arcs and court control over the 55-second clip at five times speed")} />
+        {!playing && <button type="button" className="aw-padel-replay-start" onClick={toggle}><Glyph name="play" /> {t("Play replay")}</button>}
       </div>
       <div className="aw-padel-replay-bar">
-        <button type="button" onClick={toggle} aria-label={playing ? "Pause replay" : "Play replay"} aria-pressed={playing}><Glyph name={playing ? "pause" : "play"} /><span>{playing ? "Pause" : "Play"}</span></button>
+        <button type="button" onClick={toggle} aria-label={playing ? t("Pause replay") : t("Play replay")} aria-pressed={playing}><Glyph name={playing ? "pause" : "play"} /><span>{playing ? t("Pause") : t("Play")}</span></button>
         <span className="aw-padel-replay-track" aria-hidden="true"><span ref={barRef} /></span>
         <span className="aw-padel-replay-time">{clock(time)} / {clock(duration || 11)}</span>
-        <span className="aw-padel-replay-tag">Replay · 5× speed</span>
+        <span className="aw-padel-replay-tag">{t("Replay · 5× speed")}</span>
       </div>
-      <figcaption>Tracking replay drawn from the pipeline&apos;s own positions, hits and ball arcs. No broadcast footage.</figcaption>
+      <figcaption>{t("Tracking replay drawn from the pipeline's own positions, hits and ball arcs. No broadcast footage.")}</figcaption>
     </figure>
   );
 }
 
-function PadelVisionResponse({project,query,setQuery,ask,back}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-padel-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
-  <header className="aw-padel-lead"><div><span>Sports computer vision</span><h1>{project.title}</h1><p>{project.summary}</p></div><dl>{project.evidence.map(item=><div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></header>
-  {responseProgress>=.24&&<div className="aw-stream-structure"><PadelAnalytics replay={project.video?<PadelReplay src={project.video}/>:null}/></div>}
-  {responseProgress>=.78&&<section className="aw-padel-notes aw-stream-structure"><div><span>Constraint</span><p>{project.problem}</p></div><div><span>Build</span><p>{project.solution}</p></div><div><span>Boundary</span><p>{project.publicLimitations}</p></div></section>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
+// Real play, for people: a licensed news clip (RN7, CC BY 3.0; docs/design/padel-vision/real-footage-provenance.md).
+// The pipeline's own analysis follows it in the dark panel.
+function PadelRealClip() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    video.setAttribute("muted", "");
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) void video.play().catch(() => undefined);
+  }, []);
+  const toggle = () => { const video = videoRef.current; if (!video) return; if (video.paused) void video.play().catch(() => undefined); else video.pause(); };
+  return (
+    <figure className="aw-padel-real">
+      <div className="aw-padel-real-stage">
+        <video ref={videoRef} src="/projects/padel-vision/real/rn7-play.mp4" poster="/projects/padel-vision/real/rn7-play-poster.webp" muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onClick={toggle} aria-label={t("Real padel rally from an RN7 news report, CC BY 3.0")} />
+        <button type="button" onClick={toggle} aria-pressed={playing} aria-label={playing ? t("Pause") : t("Play")}><Glyph name={playing ? "pause" : "play"} /></button>
+      </div>
+      <figcaption><strong>{t("Real padel play")}</strong> {t("Real match footage: RN7, CC BY 3.0 (Padel Nations Cup, Nijmegen, 2018). Not the clip the pipeline analysed.")} <a href="https://commons.wikimedia.org/wiki/File:Padel_Nations_Cup_moet_harten_veroveren_op_Plein_%2744.webm" target="_blank" rel="noopener noreferrer">{t("Source")}</a> · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a></figcaption>
+    </figure>
+  );
+}
 
-function PorscheResponse({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-porsche-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
-  <header className="aw-porsche-title"><span>Interactive WebGL experiment</span><h1>{project.title}</h1><p>{project.summary}</p></header>
+function PadelVisionResponse({project,query,setQuery,ask,back}:ProjectViewProps){const prompt=t(PROJECT_DEMO_PROMPTS[project.slug]);const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-padel-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>{t("← Labs")}</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>{t("Workspace response")}</span></div>
+  <header className="aw-padel-lead"><div><span>{t("Sports computer vision")}</span><h1>{project.title}</h1><p>{project.summary}</p></div><dl>{project.evidence.map(item=><div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></header>
+  {responseProgress>=.14&&<div className="aw-stream-structure"><PadelRealClip/></div>}
+  {responseProgress>=.24&&<div className="aw-stream-structure"><PadelAnalytics replay={project.video?<PadelReplay src={project.video}/>:null}/></div>}
+  {responseProgress>=.78&&<section className="aw-padel-notes aw-stream-structure"><div><span>{t("Constraint")}</span><p>{project.problem}</p></div><div><span>{t("Build")}</span><p>{project.solution}</p></div><div><span>{t("Boundary")}</span><p>{project.publicLimitations}</p></div></section>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
+
+function PorscheResponse({project,query,setQuery,ask,back,openImage}:ProjectViewProps){const prompt=t(PROJECT_DEMO_PROMPTS[project.slug]);const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-porsche-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>{t("← Labs")}</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>{t("Workspace response")}</span></div>
+  <header className="aw-porsche-title"><span>{t("Interactive WebGL experiment")}</span><h1>{project.title}</h1><p>{project.summary}</p></header>
   {responseProgress>=.06&&<div className="aw-stream-structure"><PorscheSequence openImage={openImage}/></div>}
-  {responseProgress>=.72&&<div className="aw-stream-structure"><ProjectMetaLine project={project}/></div>}{responseProgress>=.78&&<section className="aw-porsche-record aw-stream-structure"><p>{project.solution}</p><ol>{project.howItWorks.map(item=><li key={item}>{item}</li>)}</ol></section>}{responseProgress>=.86&&project.video&&<figure className="aw-signature-video aw-porsche-site-video aw-stream-structure"><video controls playsInline preload="metadata" poster={porscheCinematic+"03-lineup.webp"} aria-label="Recording of the live Porsche 3D site"><source src={project.video} type="video/mp4"/></video><figcaption>Recording of the live site, interface included · visitor-controlled playback.</figcaption></figure>}{responseProgress>=.92&&<footer className="aw-project-boundary aw-stream-structure"><div><span>Creative boundary</span><strong>Fan-made interaction study</strong></div><p>{project.publicLimitations}</p></footer>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
+  {responseProgress>=.72&&<div className="aw-stream-structure"><ProjectMetaLine project={project}/></div>}{responseProgress>=.78&&<section className="aw-porsche-record aw-stream-structure"><p>{project.solution}</p><ol>{project.howItWorks.map(item=><li key={item}>{item}</li>)}</ol></section>}{responseProgress>=.86&&project.video&&<figure className="aw-signature-video aw-porsche-site-video aw-stream-structure"><video controls playsInline preload="metadata" poster={porscheCinematic+"03-lineup.webp"} aria-label={t("Recording of the live Porsche 3D site")}><source src={project.video} type="video/mp4"/></video><figcaption>{t("Recording of the live site, interface included · visitor-controlled playback.")}</figcaption></figure>}{responseProgress>=.92&&<footer className="aw-project-boundary aw-stream-structure"><div><span>{t("Creative boundary")}</span><strong>{t("Fan-made interaction study")}</strong></div><p>{project.publicLimitations}</p></footer>}{responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>}
 
 
 function CompactProjectResponse({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
   return (
     <main className="aw-center aw-project-detail aw-compact-project aw-enter">
-      <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+      <button type="button" className="aw-project-back" onClick={back}>{t("← Work")}</button>
       <ProjectOpening project={project} />
       <ProjectMedia project={project} openImage={openImage} lead />
-      <section className="aw-compact-record"><div><span>What it explores</span><p>{project.problem}</p><p>{project.solution}</p></div><div><span>Technical outline</span><ul>{project.howItWorks.map((item) => <li key={item}>{item}</li>)}</ul></div></section>
+      <section className="aw-compact-record"><div><span>{t("What it explores")}</span><p>{project.problem}</p><p>{project.solution}</p></div><div><span>{t("Technical outline")}</span><ul>{project.howItWorks.map((item) => <li key={item}>{item}</li>)}</ul></div></section>
       <EvidenceTable project={project} />
-      <footer className="aw-project-boundary"><div><span>Status</span><strong>{project.eyebrow}</strong></div><p>{project.publicLimitations}</p></footer>
+      <footer className="aw-project-boundary"><div><span>{t("Status")}</span><strong>{project.eyebrow}</strong></div><p>{project.publicLimitations}</p></footer>
       <ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask} />
     </main>
   );
@@ -809,12 +843,12 @@ function ProjectDirectory({ projects, title, copy, selectProject }: {
 }) {
   return (
     <main className="aw-center aw-directory aw-enter">
-      <WorkspaceHeader eyebrow="Adjie Workspace" title={title} copy={copy} meta={projects.length + " projects"} />
+      <WorkspaceHeader eyebrow="Adjie Workspace" title={title} copy={copy} meta={L(`${projects.length} projects`, `${projects.length} proyek`)} />
       <div className="aw-project-objects">
         {projects.map((project) => (
           <button type="button" key={project.slug} onClick={() => selectProject(project)}>
-            {project.thumb ?? project.image ? <figure><Image src={project.thumb ?? project.image ?? ""} alt={project.title + " project preview"} fill sizes="(max-width: 760px) 100vw, 480px" className="object-cover object-center" /></figure> : <div className="aw-object-evidence">{project.evidence.slice(0, 2).map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}</div>}
-            <section><span>{project.eyebrow}</span><strong>{project.title}</strong><p>{project.summary}</p><small>Open context <Glyph name="arrow" /></small></section>
+            {project.thumb ?? project.image ? <figure><Image src={project.thumb ?? project.image ?? ""} alt={project.title} fill sizes="(max-width: 760px) 100vw, 480px" className="object-cover object-center" /></figure> : <div className="aw-object-evidence">{project.evidence.slice(0, 2).map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}</div>}
+            <section><span>{project.eyebrow}</span><strong>{project.title}</strong><p>{project.summary}</p><small>{t("Open context")} <Glyph name="arrow" /></small></section>
           </button>
         ))}
       </div>
@@ -825,10 +859,10 @@ function ProjectDirectory({ projects, title, copy, selectProject }: {
 function KnowledgeWorkspace({ selectProject }: { selectProject: (project: WorkspaceProject) => void }) {
   return (
     <main className="aw-center aw-knowledge aw-enter">
-      <WorkspaceHeader eyebrow="Public project record" title="Knowledge" copy="What each project can show, and where its public boundary sits. Open a row for the full case." meta={allWorkspaceProjects.length + " projects"} />
+      <WorkspaceHeader eyebrow={tk("Public project record")} title={tk("Knowledge")} copy={tk("What each project can show, and where its public boundary sits. Open a row for the full case.")} meta={L(`${allProjects().length} projects`, `${allProjects().length} proyek`)} />
       <div className="aw-knowledge-list">
-        {allWorkspaceProjects.map((project) => (
-          <button type="button" key={project.slug} onClick={() => selectProject(project)} aria-label={"Open " + project.title}>
+        {allProjects().map((project) => (
+          <button type="button" key={project.slug} onClick={() => selectProject(project)} aria-label={L(`Open ${project.title}`, `Buka ${project.title}`)}>
             {project.thumb ?? project.image ? <figure><Image src={project.thumb ?? project.image ?? ""} alt="" fill sizes="160px" className="object-cover object-center" /></figure> : <figure />}
             <span className="aw-knowledge-name"><strong>{project.title}</strong><small>{project.eyebrow}{project.status ? " · " + project.status : ""}</small></span>
             <dl>{project.evidence.slice(0, 3).map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
@@ -859,18 +893,18 @@ function AskWorkspace({ query, setQuery, history, currentQuestion, answer, statu
     <main className={`aw-center aw-ask aw-enter ${hasConversation ? "is-conversation" : "is-empty"}`}>
       {!hasConversation ? (
         <section className="aw-ask-empty">
-          <span>Ask Adjie Workspace</span>
-          <h1>What would you like to understand?</h1>
-          <p>Answers use the verified public portfolio context.</p>
+          <span>{t("Ask Adjie Workspace")}</span>
+          <h1>{t("What would you like to understand?")}</h1>
+          <p>{t("Answers use the verified public portfolio context.")}</p>
           <Composer query={query} setQuery={setQuery} submit={submit} stop={stop} busy={active} />
-          <div>{prompts.map((prompt) => <button type="button" key={prompt.label} onClick={() => choose(prompt.query)}>{prompt.label}<Glyph name="arrow" /></button>)}</div>
+          <div>{prompts.map((prompt) => <button type="button" key={prompt.label} onClick={() => choose(t(prompt.query))}>{t(prompt.label)}<Glyph name="arrow" /></button>)}</div>
         </section>
       ) : (
         <section className="aw-conversation">
-          {history.map((message, index) => <div className={"aw-message " + (message.role === "user" ? "is-user" : "")} key={message.role + index}><span>{message.role === "user" ? "You" : "Workspace"}</span><p>{message.content}</p></div>)}
-          {currentQuestion && <div className="aw-message is-user"><span>You</span><p>{currentQuestion}</p></div>}
-          {(answer !== null || active || error) && <div className="aw-message"><span>Workspace{active ? " · responding" : ""}</span><p aria-live="polite">{answer || (active ? "Thinking…" : error)}</p></div>}
-          {error && <div className="aw-result-list"><button type="button" onClick={openProjects}><span><strong>Explore projects</strong><small>Browse without AI</small></span><Glyph name="arrow" /></button><a href={site.cv} target="_blank" rel="noopener noreferrer"><span><strong>Résumé</strong><small>Open PDF</small></span><Glyph name="arrow" /></a><a href={"mailto:" + site.email}><span><strong>Contact</strong><small>Email Adjie</small></span><Glyph name="arrow" /></a></div>}
+          {history.map((message, index) => <div className={"aw-message " + (message.role === "user" ? "is-user" : "")} key={message.role + index}><span>{message.role === "user" ? t("You") : t("Workspace")}</span><p>{message.content}</p></div>)}
+          {currentQuestion && <div className="aw-message is-user"><span>{t("You")}</span><p>{currentQuestion}</p></div>}
+          {(answer !== null || active || error) && <div className="aw-message"><span>{t("Workspace")}{active ? " · " + t("responding") : ""}</span><p aria-live="polite">{answer || (active ? t("Thinking…") : error)}</p></div>}
+          {error && <div className="aw-result-list"><button type="button" onClick={openProjects}><span><strong>{t("Explore projects")}</strong><small>{t("Browse without AI")}</small></span><Glyph name="arrow" /></button><a href={site.cv} target="_blank" rel="noopener noreferrer"><span><strong>{t("Résumé")}</strong><small>{t("Open PDF")}</small></span><Glyph name="arrow" /></a><a href={"mailto:" + site.email}><span><strong>{t("Contact")}</strong><small>{t("Email Adjie")}</small></span><Glyph name="arrow" /></a></div>}
           <Composer query={query} setQuery={setQuery} submit={submit} stop={stop} busy={active} />
         </section>
       )}
@@ -889,15 +923,15 @@ function CommandPalette({ open, close, setView, selectProject }: {
   const [activeIndex, setActiveIndex] = useState(0);
   const selectProjectStable = useCallback((project: WorkspaceProject) => selectProject(project), [selectProject]);
   const commands = useMemo(() => [
-    { label: "Go home", run: () => setView("home") },
-    { label: "Browse featured work", run: () => setView("work") },
-    { label: "Open projects", run: () => setView("projects") },
-    { label: "Open Labs", run: () => setView("labs") },
-    { label: "Open Knowledge", run: () => setView("knowledge") },
-    { label: "Ask about Adjie", run: () => setView("ask") },
-    { label: "Open résumé", run: () => window.open(site.cv, "_blank", "noopener,noreferrer") },
-    { label: "Contact Adjie", run: () => window.open("mailto:" + site.email, "_self") },
-    ...allWorkspaceProjects.map((project) => ({ label: "Open " + project.title, run: () => selectProjectStable(project) })),
+    { label: t("Go home"), run: () => setView("home") },
+    { label: t("Browse featured work"), run: () => setView("work") },
+    { label: t("Open projects"), run: () => setView("projects") },
+    { label: t("Open Labs"), run: () => setView("labs") },
+    { label: t("Open Knowledge"), run: () => setView("knowledge") },
+    { label: t("Ask about Adjie"), run: () => setView("ask") },
+    { label: t("Open résumé"), run: () => window.open(site.cv, "_blank", "noopener,noreferrer") },
+    { label: t("Contact Adjie"), run: () => window.open("mailto:" + site.email, "_self") },
+    ...allProjects().map((project) => ({ label: L(`Open ${project.title}`, `Buka ${project.title}`), run: () => selectProjectStable(project) })),
   ].filter((item) => item.label.toLowerCase().includes(filter.toLowerCase())), [filter, selectProjectStable, setView]);
 
   useEffect(() => {
@@ -922,13 +956,13 @@ function CommandPalette({ open, close, setView, selectProject }: {
 
   return createPortal(
     <div className="aw-palette-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-      <section ref={paletteRef} className="aw-palette" role="dialog" aria-modal="true" aria-label="Command palette">
+      <section ref={paletteRef} className="aw-palette" role="dialog" aria-modal="true" aria-label={t("Command palette")}>
         <label><Glyph name="search" /><input autoFocus value={filter} onChange={(event) => { setFilter(event.target.value); setActiveIndex(0); }} onKeyDown={(event) => {
           if (event.key === "ArrowDown") { event.preventDefault(); setActiveIndex((value) => Math.min(value + 1, commands.length - 1)); }
           if (event.key === "ArrowUp") { event.preventDefault(); setActiveIndex((value) => Math.max(value - 1, 0)); }
           if (event.key === "Enter") { event.preventDefault(); run(activeIndex); }
           if (event.key === "Escape") close();
-        }} placeholder="Search projects and actions…" /></label>
+        }} placeholder={t("Search projects and actions…")} /></label>
         <div>{commands.map((command, index) => <button type="button" className={index === activeIndex ? "is-active" : ""} aria-current={index === activeIndex ? "true" : undefined} key={command.label} onMouseEnter={() => setActiveIndex(index)} onClick={() => run(index)}>{command.label}<span>↵</span></button>)}</div>
       </section>
     </div>,
@@ -972,6 +1006,41 @@ function writeProjectParam(slug: string | null) {
   window.dispatchEvent(new Event(URL_CHANGE_EVENT));
 }
 
+// Background music: CC0 ambient track (docs/design/audio-provenance.md). Off by default; it never
+// starts on its own, including after a reload. Only the volume is remembered.
+const MUSIC_SRC = "/audio/ambient-wilfredor-cc0.m4a";
+const MUSIC_VOLUME_KEY = "aw-music-volume";
+
+function MusicButton({ className = "" }: { className?: string }) {
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => () => audioRef.current?.pause(), []);
+  function toggle() {
+    let audio = audioRef.current;
+    if (!audio) {
+      audio = new Audio(MUSIC_SRC);
+      audio.loop = true;
+      let volume = 0.2;
+      try { const saved = Number(localStorage.getItem(MUSIC_VOLUME_KEY)); if (saved > 0 && saved <= 1) volume = saved; else localStorage.setItem(MUSIC_VOLUME_KEY, String(volume)); } catch { /* keep default */ }
+      audio.volume = volume;
+      audio.onplay = () => setPlaying(true);
+      audio.onpause = () => setPlaying(false);
+      audioRef.current = audio;
+    }
+    if (audio.paused) void audio.play().catch(() => setPlaying(false));
+    else audio.pause();
+  }
+  return <button type="button" className={"aw-music " + className + (playing ? " is-playing" : "")} onClick={toggle} aria-pressed={playing} aria-label={playing ? t("Pause music") : t("Play music")} title={playing ? t("Pause music") : t("Play music")}><Glyph name="music" /></button>;
+}
+
+function LanguageSwitch({ locale, className = "" }: { locale: Locale; className?: string }) {
+  return (
+    <span className={"aw-lang " + className} role="group" aria-label={t("Language")}>
+      {(["en", "id"] as const).map((code) => <button type="button" key={code} aria-pressed={locale === code} onClick={() => setLocale(code)} lang={code}>{code.toUpperCase()}</button>)}
+    </span>
+  );
+}
+
 export function WorkspacePrototype() {
   const windowRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; start: Point; origin: Point } | null>(null);
@@ -983,7 +1052,7 @@ export function WorkspacePrototype() {
   const [dragging, setDragging] = useState(false);
   const [baseView, setBaseView] = useState<Exclude<WorkspaceView, "project">>("home");
   const urlProject = useSyncExternalStore(subscribeToUrl, readProjectParam, readProjectParamOnServer);
-  const urlProjectValid = allWorkspaceProjects.some((project) => project.slug === urlProject);
+  const urlProjectValid = allProjects().some((project) => project.slug === urlProject);
   const view: WorkspaceView = urlProjectValid ? "project" : baseView;
   const selectedSlug = urlProjectValid && urlProject ? urlProject : "labstock";
   const setView = useCallback((next: WorkspaceView) => {
@@ -1000,14 +1069,17 @@ export function WorkspacePrototype() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const theme = useSyncExternalStore(subscribeToTheme, readTheme, readThemeOnServer);
+  const locale = useSyncExternalStore(subscribeToLocale, readLocale, readLocaleOnServer);
+  // Children render after this line in the same pass, so every t()/L() below reads this locale.
+  setActiveLocale(locale);
   const [windowState, setWindowState] = useState<WindowState>("open");
   const [maximized, setMaximized] = useState(false);
   const [quickLookIndex, setQuickLookIndex] = useState<number | null>(null);
   const [projectRevision, setProjectRevision] = useState(0);
 
-  const selected = allWorkspaceProjects.find((project) => project.slug === selectedSlug) ?? featuredWork[0];
+  const selected = allProjects().find((project) => project.slug === selectedSlug) ?? featuredProjects()[0];
   const quickLookImages = useMemo<QuickLookImage[]>(() => [
-    ...(selected.image ? [{ src: selected.image, caption: selected.title + " project view" }] : []),
+    ...(selected.image ? [{ src: selected.image, caption: selected.title }] : []),
     ...(selected.gallery ?? []),
   ], [selected]);
 
@@ -1124,6 +1196,7 @@ export function WorkspacePrototype() {
       const completed = await streamPortfolioAnswer({
         message: clean,
         projectId,
+        locale,
         history: priorHistory,
         signal: controller.signal,
         onToken(token) {
@@ -1141,7 +1214,7 @@ export function WorkspacePrototype() {
         setAskStatus(partial ? "complete" : "idle");
       } else {
         setAnswer(partial || null);
-        setAskError("Adjie AI is temporarily unavailable. You can still explore the projects directly.");
+        setAskError(t("Adjie AI is temporarily unavailable. You can still explore the projects directly."));
         setAskStatus("error");
       }
     } finally {
@@ -1222,15 +1295,17 @@ export function WorkspacePrototype() {
           onPointerCancel={endDrag}
           onDoubleClick={(event) => { if (!(event.target as HTMLElement).closest("[data-no-drag]")) toggleMaximize(); }}
         >
-          <div className="aw-traffic" aria-label="Window controls" data-no-drag>
-            <button type="button" className="is-close" onClick={() => setWindowState("closed")} aria-label="Close workspace" title="Close" />
-            <button type="button" className="is-minimize" onClick={() => setWindowState("minimized")} aria-label="Minimize workspace" title="Minimize" />
-            <button type="button" className="is-maximize" onClick={toggleMaximize} aria-label={maximized ? "Restore workspace" : "Maximize workspace"} title={maximized ? "Restore" : "Maximize"} />
+          <div className="aw-traffic" aria-label={t("Window controls")} data-no-drag>
+            <button type="button" className="is-close" onClick={() => setWindowState("closed")} aria-label={t("Close workspace")} title={t("Close")} />
+            <button type="button" className="is-minimize" onClick={() => setWindowState("minimized")} aria-label={t("Minimize workspace")} title={t("Minimize")} />
+            <button type="button" className="is-maximize" onClick={toggleMaximize} aria-label={maximized ? t("Restore workspace") : t("Maximize workspace")} title={maximized ? t("Restore") : t("Maximize")} />
           </div>
           <div className="aw-title-actions" data-no-drag>
-            <span>Build · Solve · Improve</span>
+            <span>{t("Build · Solve · Improve")}</span>
             <button type="button" onClick={openPalette}><kbd>⌘ K</kbd></button>
-            <button type="button" className="aw-appearance" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={theme === "dark" ? "Light mode" : "Dark mode"}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
+            <LanguageSwitch locale={locale} />
+            <MusicButton />
+            <button type="button" className="aw-appearance" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")} title={theme === "dark" ? t("Light mode") : t("Dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             <span className="aw-avatar">AR</span>
           </div>
         </header>
@@ -1240,14 +1315,16 @@ export function WorkspacePrototype() {
 
           <section className="aw-stage">
             <header className="aw-mobile-header">
-              <button type="button" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Glyph name="menu" /></button>
-              <strong>Adjie Workspace</strong>
-              <button type="button" className="aw-mobile-theme" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
+              <button type="button" onClick={() => setSidebarOpen(true)} aria-label={t("Open navigation")}><Glyph name="menu" /></button>
+              <strong>{t("Adjie Workspace")}</strong>
+              <LanguageSwitch locale={locale} className="aw-mobile-lang" />
+              <MusicButton className="aw-mobile-music" />
+              <button type="button" className="aw-mobile-theme" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             </header>
             {view === "home" ? <HomeWorkspace query={query} setQuery={setQuery} submit={() => void runAsk()} ask={(question) => void runAsk(question)} setView={setView} selectProject={selectProject} />
               : view === "work" ? <WorkWorkspace selectProject={selectProject} />
-                : view === "projects" ? <ProjectDirectory projects={allWorkspaceProjects} title="Projects" copy="A single workspace index for featured systems and focused experiments." selectProject={selectProject} />
-                  : view === "labs" ? <ProjectDirectory projects={labWork} title="Labs" copy="Focused experiments in computer vision, 3D pipelines, and interactive systems." selectProject={selectProject} />
+                : view === "projects" ? <ProjectDirectory projects={allProjects()} title={tk("Projects")} copy={tk("A single workspace index for featured systems and focused experiments.")} selectProject={selectProject} />
+                  : view === "labs" ? <ProjectDirectory projects={labProjects()} title={tk("Labs")} copy={tk("Focused experiments in computer vision, 3D pipelines, and interactive systems.")} selectProject={selectProject} />
                     : view === "knowledge" ? <KnowledgeWorkspace selectProject={selectProject} />
                       : view === "project" ? <ProjectWorkspace key={selected.slug + "-" + projectRevision} project={selected} query={query} setQuery={setQuery} ask={(question) => void runAsk(question ?? query, selected.slug)} back={() => setView("work")} openImage={openQuickLook} />
                         : <AskWorkspace query={query} setQuery={setQuery} history={askHistory} currentQuestion={currentQuestion} answer={answer} status={askStatus} error={askError} submit={() => void runAsk()} stop={stopAsk} choose={(question) => void runAsk(question)} openProjects={() => setView("projects")} />}
@@ -1255,17 +1332,17 @@ export function WorkspacePrototype() {
         </div>
       </div>
 
-      <nav className="aw-dock" aria-label="Workspace dock">
+      <nav className="aw-dock" aria-label={t("Workspace dock")}>
         {([
-          { label: "Workspace", icon: "home", view: undefined },
-          { label: "Work", icon: "work", view: "work" },
-          { label: "Projects", icon: "projects", view: "projects" },
-          { label: "Labs", icon: "labs", view: "labs" },
-          { label: "Ask", icon: "ask", view: "ask" },
+          { label: tk("Workspace"), icon: "home", view: undefined },
+          { label: tk("Work"), icon: "work", view: "work" },
+          { label: tk("Projects"), icon: "projects", view: "projects" },
+          { label: tk("Labs"), icon: "labs", view: "labs" },
+          { label: tk("Ask"), icon: "ask", view: "ask" },
         ] as { label: string; icon: "home" | "work" | "projects" | "labs" | "ask"; view?: WorkspaceView }[]).map((item) => {
           const active = windowState === "open" && (item.view ? view === item.view : view === "home");
           const open = item.label === "Workspace" && windowState !== "closed";
-          return <button type="button" className={(active ? "is-active " : "") + (open ? "is-open " : "") + (item.label === "Workspace" && windowState === "minimized" ? "is-minimized" : "")} key={item.label} onClick={() => openWorkspace(item.view)} aria-label={item.label}><Glyph name={item.icon} /><span className="aw-dock-tooltip" role="tooltip">{item.label}</span><i /></button>;
+          return <button type="button" className={(active ? "is-active " : "") + (open ? "is-open " : "") + (item.label === "Workspace" && windowState === "minimized" ? "is-minimized" : "")} key={item.label} onClick={() => openWorkspace(item.view)} aria-label={t(item.label)}><Glyph name={item.icon} /><span className="aw-dock-tooltip" role="tooltip">{t(item.label)}</span><i /></button>;
         })}
       </nav>
 

@@ -77,6 +77,7 @@ export async function readWorkersAiStream(response: Response, onToken: (token: s
 export async function streamPortfolioAnswer(input: {
   message: string;
   projectId?: string;
+  locale?: "en" | "id";
   history: PortfolioChatMessage[];
   signal: AbortSignal;
   onToken: (token: string) => void;
@@ -89,6 +90,7 @@ export async function streamPortfolioAnswer(input: {
     body: JSON.stringify({
       message: input.message,
       projectId: input.projectId,
+      locale: input.locale,
       history: input.history.slice(-6).map((message) => ({
         ...message,
         content: message.content.slice(0, MAX_CHAT_MESSAGE_LENGTH),

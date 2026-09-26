@@ -7,7 +7,8 @@ const MAX_REQUEST_BYTES = 16_384;
 
 type ChatRole = "user" | "assistant";
 export type ChatMessage = { role: ChatRole; content: string };
-export type AskBody = { message: string; projectId?: string; history?: ChatMessage[] };
+export type AskLocale = "en" | "id";
+export type AskBody = { message: string; projectId?: string; history?: ChatMessage[]; locale?: AskLocale };
 type ModelMessage = { role: "system" | ChatRole; content: string };
 
 export interface AiBinding {
@@ -110,16 +111,18 @@ function validateHistory(value: unknown): ChatMessage[] | null {
 
 export function validateAskBody(value: unknown): { ok: true; value: AskBody } | { ok: false; error: string } {
   if (!value || typeof value !== "object" || Array.isArray(value)) return { ok: false, error: "Request body must be a JSON object." };
-  const body = value as { message?: unknown; projectId?: unknown; history?: unknown };
+  const body = value as { message?: unknown; projectId?: unknown; history?: unknown; locale?: unknown };
   if (typeof body.message !== "string" || !body.message.trim()) return { ok: false, error: "Message is required." };
   const message = body.message.trim();
   if (message.length > MAX_MESSAGE_LENGTH) return { ok: false, error: `Message must be ${MAX_MESSAGE_LENGTH} characters or fewer.` };
   if (body.projectId !== undefined && typeof body.projectId !== "string") return { ok: false, error: "projectId must be a string." };
   const projectId = typeof body.projectId === "string" ? body.projectId.trim() : undefined;
   if (projectId && !portfolioContext.projects.some((project) => project.id === projectId)) return { ok: false, error: "Unknown projectId." };
+  if (body.locale !== undefined && body.locale !== "en" && body.locale !== "id") return { ok: false, error: "locale must be \"en\" or \"id\"." };
+  const locale = body.locale as AskLocale | undefined;
   const history = validateHistory(body.history);
   if (history === null) return { ok: false, error: `History must contain at most ${MAX_HISTORY_MESSAGES} valid messages.` };
-  return { ok: true, value: { message, ...(projectId ? { projectId } : {}), history } };
+  return { ok: true, value: { message, ...(projectId ? { projectId } : {}), history, ...(locale ? { locale } : {}) } };
 }
 
 export function buildModelMessages(body: AskBody): ModelMessage[] {
@@ -136,8 +139,12 @@ export function buildModelMessages(body: AskBody): ModelMessage[] {
   const scopedInstruction = selectedProject
     ? `\nThe visitor explicitly selected ${selectedProject.name}. Prioritize that project, while staying within the verified context.`
     : "";
+  // The site's language switch decides the answer language; without it, follow the visitor.
+  const localeInstruction = body.locale === "id"
+    ? "\nThe visitor selected Indonesian. Answer in natural, professional Indonesian; keep established technical terms (Computer Vision, YOLOv11, mAP, dataset, pipeline, API) in English."
+    : body.locale === "en" ? "\nThe visitor selected English. Answer in English." : "";
   return [
-    { role: "system", content: `${BASE_SYSTEM_PROMPT}${scopedInstruction}\n\nVERIFIED PORTFOLIO CONTEXT:\n${JSON.stringify(verifiedContext)}\n\n${FINAL_RESPONSE_REMINDER}` },
+    { role: "system", content: `${BASE_SYSTEM_PROMPT}${scopedInstruction}${localeInstruction}\n\nVERIFIED PORTFOLIO CONTEXT:\n${JSON.stringify(verifiedContext)}\n\n${FINAL_RESPONSE_REMINDER}` },
     ...(body.history ?? []).slice(-MAX_HISTORY_MESSAGES),
     { role: "user", content: body.message },
   ];

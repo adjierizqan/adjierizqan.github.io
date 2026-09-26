@@ -1236,6 +1236,23 @@
         border-top: 1px solid #333536
     }
 }
+:root[data-theme="dark"] .aw-lang {
+    border: 1px solid #35373a
+}
+:root[data-theme="dark"] .aw-lang button {
+    color: #a2a8b1
+}
+:root[data-theme="dark"] .aw-lang button[aria-pressed="true"] {
+    background: #131416;
+    color: #ced1d6
+}
+:root[data-theme="dark"] .aw-title-actions > button.aw-music:hover {
+    border-color: #35373a;
+    background: #131416
+}
+:root[data-theme="dark"] .aw-music.is-playing {
+    color: #71c59c
+}
 :root[data-theme="dark"] .ps-eyebrow {
     color: #a6abb6
 }
@@ -1546,6 +1563,15 @@
 }
 :root[data-theme="dark"] .aw-padel-replay-track > span {
     background: #002742
+}
+:root[data-theme="dark"] .aw-padel-real-stage > button {
+    border: 1px solid rgb(46 46 46 / 0.45)
+}
+:root[data-theme="dark"] .aw-padel-real figcaption {
+    color: #a8aeb7
+}
+:root[data-theme="dark"] .aw-padel-real figcaption strong {
+    color: #c7cbd2
 }
 :root[data-theme="dark"] .aw-evidence {
     border-top: 1px solid #333536

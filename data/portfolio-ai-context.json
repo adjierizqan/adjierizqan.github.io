@@ -1,11 +1,12 @@
 {
   "identity": {
     "name": "Adjie Rizqan",
+    "legalName": "Muhammad Rizqan Nur Adjie Adzani",
     "positioning": "Adjie builds operational software and applied AI systems.",
-    "publicRoles": [
-      "AI Researcher",
-      "Computer Vision Engineer",
-      "Full-Stack Developer"
+    "focusAreas": [
+      "Software engineering",
+      "Applied AI and computer vision research",
+      "Full-stack web development"
     ],
     "contact": {
       "email": "adjierizqan@gmail.com",
@@ -14,7 +15,16 @@
       "resumeTarget": "/muhammad-rizqan-nur-adjie-cv-2026.pdf"
     }
   },
-  "education": [],
+  "education": [
+    {
+      "institution": "Tamkang University",
+      "program": "Computer Science and Information Engineering (master's program; thesis research on TomatoVision)"
+    },
+    {
+      "institution": "Telkom University",
+      "program": "S1 Rekayasa Perangkat Lunak (Software Engineering), alumnus"
+    }
+  ],
   "coreCapabilities": [
     "Operational software and workflow design",
     "Full-stack web engineering",
