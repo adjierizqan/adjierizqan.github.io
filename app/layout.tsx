@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,12 +14,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://adjierizqan.github.io"),
-  title: {
-    default: "Adjie Rizqan — AI Researcher & Computer Vision Engineer",
-    template: "%s — Adjie Rizqan",
-  },
+  title: "Adjie — Software Engineer & AI Builder",
   description:
-    "Portfolio of Adjie Rizqan: AI research, computer vision, object detection, and full-stack interactive web projects.",
+    "Explore Adjie Rizqan's operational software and applied AI work through a browse-first interactive workspace.",
+  alternates: { canonical: "/" },
 };
 
 export default function RootLayout({
@@ -35,9 +31,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <Header />
         <main className="site-main flex-1">{children}</main>
-        <Footer />
       </body>
     </html>
   );

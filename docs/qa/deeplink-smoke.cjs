@@ -38,13 +38,13 @@ async function expectProject(page, slug) {
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
     for (const slug of Object.keys(PROJECTS)) {
-      await page.goto(`${BASE}/workspace/?project=${slug}`, { waitUntil: "networkidle" });
+      await page.goto(`${BASE}/?project=${slug}`, { waitUntil: "networkidle" });
       check(`${motion}: direct ${slug}`, await expectProject(page, slug).catch(() => false));
       await page.reload({ waitUntil: "networkidle" });
       check(`${motion}: refresh ${slug}`, await expectProject(page, slug).catch(() => false));
     }
     // sidebar -> URL, Back/Forward, Home clears the param
-    await page.goto(`${BASE}/workspace/`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
     await page.locator(".aw-project-shortcuts button", { hasText: "TomatoVision" }).click();
     check(`${motion}: sidebar Tomato updates URL + content`, await expectProject(page, "tomato-ripeness").catch(() => false));
     await page.locator(".aw-project-shortcuts button", { hasText: "LabStock" }).click();
@@ -61,8 +61,20 @@ async function expectProject(page, slug) {
     check(`${motion}: Home clears project`, (await page.locator("main.aw-home").count()) === 1 && !page.url().includes("project="), page.url());
     await page.locator(".aw-primary-nav button", { hasText: "Work" }).click();
     check(`${motion}: Work view without param`, (await page.locator("main.aw-work").count()) === 1 && !page.url().includes("project="));
-    await page.goto(`${BASE}/workspace/?project=objecttwin`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE}/?project=objecttwin`, { waitUntil: "networkidle" });
     check(`${motion}: unknown project falls back to Home`, (await page.locator("main.aw-home").count()) === 1);
+    // Compatibility: the old /workspace/ route and old project pages forward to the root experience.
+    await page.goto(`${BASE}/workspace/`);
+    await page.waitForURL((u) => u.pathname === "/" && !u.search, { timeout: 10000 }).catch(() => null);
+    check(`${motion}: /workspace/ forwards to /`, new URL(page.url()).pathname === "/" && (await page.locator("main.aw-home").count()) === 1, page.url());
+    await page.goto(`${BASE}/workspace/?project=bdrs`);
+    await page.waitForURL(/\/\?project=bdrs$/, { timeout: 10000 }).catch(() => null);
+    check(`${motion}: /workspace/?project=bdrs keeps the project`, await expectProject(page, "bdrs").catch(() => false), page.url());
+    for (const slug of ["tomato-ripeness", "padel-vision", "suhulog", "porsche-3d"]) {
+      await page.goto(`${BASE}/projects/${slug}/`);
+      await page.waitForURL(new RegExp(`/\\?project=${slug}$`), { timeout: 10000 }).catch(() => null);
+      check(`${motion}: legacy /projects/${slug}/ opens its dossier`, await expectProject(page, slug).catch(() => false), page.url());
+    }
     check(`${motion}: no page errors`, errors.length === 0, errors.join(" | "));
     await ctx.close();
   }
@@ -80,12 +92,12 @@ async function expectProject(page, slug) {
       await page.screenshot({ path: `${SHOTS}/${file}`, fullPage: !!opts.full });
       await ctx.close();
     };
-    await shot(1536, 960, "/workspace/", "01-workspace-home-1536.png", { settle: 800 });
-    await shot(1536, 960, "/workspace/?project=tomato-ripeness", "02-tomato-direct-link-1536.png", { wait: ".ps-progression" });
-    await shot(1536, 960, "/workspace/?project=tomato-ripeness", "03-tomato-refresh-1536.png", { reload: true, wait: ".ps-progression" });
-    await shot(1440, 900, "/workspace/?project=labstock", "04-labstock-direct-link-1440.png", { wait: "main.aw-labstock-dossier" });
-    await shot(820, 1180, "/workspace/?project=tomato-ripeness", "05-workspace-tablet-820.png", { wait: ".ps-progression" });
-    await shot(390, 844, "/workspace/?project=tomato-ripeness", "06-workspace-mobile-390.png", { wait: ".ps-progression", dpr: 2, mobile: true });
+    await shot(1536, 960, "/", "01-workspace-home-1536.png", { settle: 800 });
+    await shot(1536, 960, "/?project=tomato-ripeness", "02-tomato-direct-link-1536.png", { wait: ".ps-progression" });
+    await shot(1536, 960, "/?project=tomato-ripeness", "03-tomato-refresh-1536.png", { reload: true, wait: ".ps-progression" });
+    await shot(1440, 900, "/?project=labstock", "04-labstock-direct-link-1440.png", { wait: "main.aw-labstock-dossier" });
+    await shot(820, 1180, "/?project=tomato-ripeness", "05-workspace-tablet-820.png", { wait: ".ps-progression" });
+    await shot(390, 844, "/?project=tomato-ripeness", "06-workspace-mobile-390.png", { wait: ".ps-progression", dpr: 2, mobile: true });
   }
   await browser.close();
   for (const r of results) console.log((r.pass ? "PASS " : "FAIL ") + r.name + (r.pass ? "" : "  " + r.detail));
