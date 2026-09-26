@@ -25,6 +25,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # Public endpoint of cloudflare/ask-worker; it is embedded in client JS, not a secret.
+          NEXT_PUBLIC_ASK_API_URL: https://adjie-workspace-ask.adjierizqan.workers.dev
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

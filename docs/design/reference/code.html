@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Adjie Rizqan — Personal AI Workspace</title>
+<!-- External Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            app: {
+              bg: '#EBECEF',
+              panel: '#F8F9FA',
+              card: '#FFFFFF',
+              border: '#E3E5E8',
+              muted: '#717680',
+              heading: '#15171C',
+              accent: '#18191B',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+          },
+          boxShadow: {
+            subtle: '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02)',
+            composer: '0 8px 30px -4px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
+            window: '0 25px 60px -15px rgba(0, 0, 0, 0.35)',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scrollbars-and-rendering">
+    /* Crisp antialiasing and scrollbar refinement */
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D4D6DA;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #B6B9C0;
+    }
+  </style>
+</head>
+<body class="bg-[#1C1E22] text-[#1E2024] min-h-screen flex items-center justify-center p-0 md:p-4 lg:p-6 select-none overflow-x-hidden font-sans">
+<!-- BEGIN: Ambient Background Workspace Setup -->
+<!-- Subtle dark desktop vignette with architectural perspective mimicking reference workspace -->
+<div class="fixed inset-0 pointer-events-none opacity-40 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-700 via-neutral-900 to-black"></div>
+<!-- Left desk mockup aesthetic accents peeking out behind application -->
+<div class="fixed left-4 bottom-8 hidden xl:flex flex-col gap-2 pointer-events-none text-xs text-neutral-400 font-mono tracking-wider opacity-75">
+<div class="bg-neutral-800/90 backdrop-blur px-3 py-1.5 rounded border border-neutral-700 shadow text-neutral-300">Better Tools</div>
+<div class="bg-neutral-800/90 backdrop-blur px-3 py-1.5 rounded border border-neutral-700 shadow text-neutral-300">Better Systems</div>
+<div class="bg-neutral-800/90 backdrop-blur px-3 py-1.5 rounded border border-neutral-700 shadow text-neutral-300">A More Capable Me</div>
+</div>
+<!-- END: Ambient Background Workspace Setup -->
+<!-- BEGIN: Main macOS Styled Application Container -->
+<div class="relative w-full max-w-[1536px] h-screen md:h-[96vh] bg-[#F4F5F7] md:rounded-2xl shadow-window flex flex-col overflow-hidden border border-neutral-700/30">
+<!-- BEGIN: Top Window Titlebar -->
+<header class="h-11 bg-[#F4F5F7] border-b border-[#E5E7EB] px-4 flex items-center justify-between shrink-0 select-none z-20">
+<!-- Window Traffic Light Dots -->
+<div class="flex items-center space-x-2 w-48">
+<button aria-label="Close window" class="w-3 h-3 rounded-full bg-[#EC6A5E] border border-[#D04E43] hover:opacity-80 transition" type="button"></button>
+<button aria-label="Minimize window" class="w-3 h-3 rounded-full bg-[#F4BF4F] border border-[#D69F34] hover:opacity-80 transition" type="button"></button>
+<button aria-label="Maximize window" class="w-3 h-3 rounded-full bg-[#62C554] border border-[#48A53B] hover:opacity-80 transition" type="button"></button>
+</div>
+<!-- Center Minimal Title / Status (Blank in reference) -->
+<div class="text-xs font-medium text-neutral-400 tracking-wide"></div>
+<!-- Right Utility Bar: Motto, Quick Search, Theme & Profile -->
+<div class="flex items-center space-x-4 justify-end">
+<div class="hidden sm:flex items-center space-x-1.5 text-[11px] font-medium text-neutral-400">
+<span>Build</span>
+<span>·</span>
+<span>Solve</span>
+<span>·</span>
+<span>Improve</span>
+</div>
+<div class="h-3.5 w-px bg-neutral-300 hidden sm:block"></div>
+<!-- ⌘ K Shortcut pill -->
+<button class="flex items-center space-x-1 px-2 py-0.5 rounded-md bg-[#E8EAEF] hover:bg-[#DEE1E7] border border-[#D5D8E0] text-[11px] text-neutral-600 transition" type="button">
+<span class="text-[10px]">⌘</span>
+<span>K</span>
+</button>
+<!-- Theme Toggle Icon -->
+<button aria-label="Toggle theme" class="p-1 text-neutral-500 hover:text-neutral-800 transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<!-- User Profile Avatar -->
+<div class="flex items-center">
+<div class="w-6 h-6 rounded-full overflow-hidden ring-1 ring-neutral-300 bg-neutral-200">
+<!-- Initials representation for user profile badge -->
+<div class="w-full h-full bg-[#18191B] text-white flex items-center justify-center text-[10px] font-semibold">AR</div>
+</div>
+</div>
+</div>
+</header>
+<!-- END: Top Window Titlebar -->
+<!-- BEGIN: Three-Column Body Layout -->
+<div class="flex-1 flex overflow-hidden">
+<!-- ============================================== -->
+<!-- COLUMN 1: LEFT NAVIGATION SIDEBAR             -->
+<!-- ============================================== -->
+<!-- BEGIN: LeftSidebar -->
+<aside class="w-60 bg-[#F4F5F7] border-r border-[#E5E7EB] flex flex-col justify-between shrink-0 select-none overflow-y-auto">
+<!-- Top Section: User Profile & Nav Links -->
+<div class="p-4 space-y-4">
+<!-- Identity Header -->
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center space-x-2.5">
+<div class="w-9 h-9 rounded-full bg-[#E5E7EC] border border-[#D5D8E0] flex items-center justify-center text-xs font-semibold text-neutral-800 tracking-tight shadow-sm">
+                AR
+              </div>
+<div class="leading-tight">
+<div class="text-xs font-semibold text-neutral-900">Adjie Rizqan</div>
+<div class="text-[10px] text-neutral-500 font-medium">Personal AI Workspace</div>
+</div>
+</div>
+<!-- Audio Indicator button -->
+<button aria-label="Pronounce identity" class="text-neutral-400 hover:text-neutral-700 p-1" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+<path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+<path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+</svg>
+</button>
+</div>
+<!-- New Session Button -->
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white border border-[#DCDEE3] hover:border-neutral-400/80 shadow-subtle text-xs font-medium text-neutral-800 transition group" type="button">
+<div class="flex items-center space-x-2">
+<svg class="w-3.5 h-3.5 text-neutral-500 group-hover:text-neutral-800 transition" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 4v16m8-8H4"></path>
+</svg>
+<span>New Session</span>
+</div>
+<span class="text-[10px] text-neutral-400 font-mono tracking-tighter">⌘ N</span>
+</button>
+<!-- Main Nav Links -->
+<nav class="space-y-0.5 text-xs font-medium pt-1">
+<!-- Home (Active) -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg bg-[#EAECEF] text-neutral-900 font-semibold shadow-xs" href="#">
+<svg class="w-4 h-4 text-neutral-800" fill="currentColor" viewbox="0 0 24 24">
+<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+</svg>
+<span>Home</span>
+</a>
+<!-- Work -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-[#EAECEF]/60 transition" href="#">
+<svg class="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<rect height="14" rx="2" ry="2" width="20" x="2" y="7"></rect>
+<path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+</svg>
+<span>Work</span>
+</a>
+<!-- Projects -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-[#EAECEF]/60 transition" href="#">
+<svg class="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<rect height="7" width="7" x="3" y="3"></rect>
+<rect height="7" width="7" x="14" y="3"></rect>
+<rect height="7" width="7" x="14" y="14"></rect>
+<rect height="7" width="7" x="3" y="14"></rect>
+</svg>
+<span>Projects</span>
+</a>
+<!-- Labs -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-[#EAECEF]/60 transition" href="#">
+<svg class="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M10 2v7.31L4.14 20.35A1 1 0 0 0 5 22h14a1 1 0 0 0 .86-1.65L14 9.31V2"></path>
+</svg>
+<span>Labs</span>
+</a>
+<!-- Knowledge -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-[#EAECEF]/60 transition" href="#">
+<svg class="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+</svg>
+<span>Knowledge</span>
+</a>
+<!-- Ask -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-[#EAECEF]/60 transition" href="#">
+<svg class="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+</svg>
+<span>Ask</span>
+</a>
+<!-- More -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 transition" href="#">
+<svg class="w-4 h-4 text-neutral-400" fill="currentColor" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="1.5"></circle>
+<circle cx="19" cy="12" r="1.5"></circle>
+<circle cx="5" cy="12" r="1.5"></circle>
+</svg>
+<span>More</span>
+</a>
+</nav>
+<!-- Projects Sub-list Section -->
+<div class="pt-2">
+<div class="flex items-center justify-between px-2 pb-2 text-[10px] font-semibold text-neutral-400 uppercase tracking-wider">
+<span>PROJECTS</span>
+<button aria-label="Add project" class="hover:text-neutral-700 transition" type="button">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+<div class="space-y-0.5 text-xs">
+<!-- LabStock -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF]/70 transition" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-100 shrink-0"></span>
+<span class="truncate">LabStock</span>
+</a>
+<!-- BDRS -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF]/70 transition" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-blue-500 ring-2 ring-blue-100 shrink-0"></span>
+<span class="truncate">BDRS</span>
+</a>
+<!-- SuhuLog -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF]/70 transition" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-sky-400 ring-2 ring-sky-100 shrink-0"></span>
+<span class="truncate">SuhuLog</span>
+</a>
+<!-- TomatoVision -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF]/70 transition" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-rose-100 shrink-0"></span>
+<span class="truncate">TomatoVision</span>
+</a>
+<!-- THINK IT -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF]/70 transition" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-purple-500 ring-2 ring-purple-100 shrink-0"></span>
+<span class="truncate">THINK IT</span>
+</a>
+<!-- ObjectTwin -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF]/70 transition" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-slate-600 ring-2 ring-slate-200 shrink-0"></span>
+<span class="truncate">ObjectTwin</span>
+</a>
+<!-- Porsche 3D -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF]/70 transition" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-amber-600 ring-2 ring-amber-100 shrink-0"></span>
+<span class="truncate">Porsche 3D</span>
+</a>
+<!-- Quantara -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF]/70 transition" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-teal-600 ring-2 ring-teal-100 shrink-0"></span>
+<span class="truncate">Quantara</span>
+</a>
+<!-- Flutter -->
+<a class="flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF]/70 transition" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-orange-500 ring-2 ring-orange-100 shrink-0"></span>
+<span class="truncate">Flutter</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Sidebar Bottom Pinned Controls -->
+<div class="p-3 border-t border-[#E5E7EB] space-y-2 bg-[#F4F5F7]">
+<!-- Quick Search Pill -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white border border-[#DCDEE3] text-xs text-neutral-500">
+<div class="flex items-center space-x-2">
+<svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="11" cy="11" r="8"></circle>
+<line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+</svg>
+<span>Search</span>
+</div>
+<span class="text-[10px] text-neutral-400">⌘ K</span>
+</div>
+<!-- Settings Button -->
+<button class="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-neutral-700 hover:bg-[#EAECEF] text-xs font-medium transition" type="button">
+<svg class="w-3.5 h-3.5 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="3"></circle>
+<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+</svg>
+<span>Settings</span>
+</button>
+<!-- User Online Footnote -->
+<div class="flex items-center space-x-2.5 px-2.5 py-1.5 rounded-xl bg-white border border-[#E1E3E8] shadow-xs">
+<div class="relative">
+<div class="w-7 h-7 rounded-full bg-neutral-800 text-white flex items-center justify-center text-[10px] font-bold">AR</div>
+<span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-white"></span>
+</div>
+<div class="leading-none text-[11px] overflow-hidden">
+<span class="font-medium text-neutral-900 block truncate">Online</span>
+<span class="text-[9px] text-neutral-400 truncate block mt-0.5">Build · Solve · Improve</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- END: LeftSidebar -->
+<!-- ============================================== -->
+<!-- COLUMN 2: CENTER STAGE / PRIMARY WORKSPACE     -->
+<!-- ============================================== -->
+<!-- BEGIN: CenterWorkspace -->
+<main class="flex-1 bg-white overflow-y-auto px-6 py-8 md:px-12 md:py-10 flex flex-col justify-start max-w-5xl mx-auto space-y-7">
+<!-- Workspace Header Banner -->
+<section class="relative" data-purpose="workspace-hero">
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+<!-- Greeting & Title -->
+<div class="space-y-1">
+<span class="text-neutral-500 text-sm font-medium tracking-tight">Good evening,</span>
+<div class="flex items-center space-x-2.5">
+<h1 class="text-3xl sm:text-4xl font-extrabold text-[#15171C] tracking-tight">Adjie Rizqan</h1>
+<button aria-label="Listen name pronunciation" class="w-7 h-7 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+<path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+<path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+</svg>
+</button>
+</div>
+<p class="text-neutral-500 text-sm font-normal pt-0.5">Turn ideas into useful systems.</p>
+</div>
+<!-- Quote in top right italic / serif -->
+<div class="text-right hidden sm:block max-w-xs">
+<blockquote class="text-[13px] italic font-serif text-neutral-500 leading-snug">
+                “A more capable me,<br/>for a more useful tomorrow.”
+              </blockquote>
+</div>
+</div>
+<!-- Focus Area Pill Tags -->
+<div class="flex flex-wrap gap-1.5 mt-5">
+<span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F4F5F7] text-neutral-600 border border-[#E3E5E8] hover:border-neutral-400 cursor-pointer transition">Software Engineering</span>
+<span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F4F5F7] text-neutral-600 border border-[#E3E5E8] hover:border-neutral-400 cursor-pointer transition">Applied AI</span>
+<span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F4F5F7] text-neutral-600 border border-[#E3E5E8] hover:border-neutral-400 cursor-pointer transition">Healthcare Systems</span>
+<span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F4F5F7] text-neutral-600 border border-[#E3E5E8] hover:border-neutral-400 cursor-pointer transition">Computer Vision</span>
+<span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F4F5F7] text-neutral-600 border border-[#E3E5E8] hover:border-neutral-400 cursor-pointer transition">Automation</span>
+</div>
+</section>
+<!-- BEGIN: Floating AI Composer Box -->
+<section class="pt-1" data-purpose="ai-composer-box">
+<div class="w-full bg-[#FAFAFB] border border-[#DCDEE3] rounded-2xl shadow-subtle p-3.5 focus-within:border-neutral-400 focus-within:shadow-composer transition duration-150">
+<!-- Textarea Prompt -->
+<textarea class="w-full bg-transparent border-0 resize-none p-1 text-sm text-neutral-900 placeholder:text-neutral-400 focus:ring-0 focus:outline-none" placeholder="Ask anything about my work..." rows="2"></textarea>
+<!-- Bottom Action Toolbar inside Composer -->
+<div class="flex items-center justify-between pt-2 mt-1 border-t border-neutral-100">
+<div class="flex items-center space-x-1.5 flex-wrap gap-y-1">
+<!-- Add context button -->
+<button aria-label="Add context" class="w-7 h-7 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+</button>
+<!-- Tool Pill: Search -->
+<button class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#E1E3E8] hover:bg-neutral-50 text-[11px] font-medium text-neutral-700 shadow-xs transition" type="button">
+<svg class="w-3 h-3 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg>
+<span>Search</span>
+</button>
+<!-- Tool Pill: Deep Research -->
+<button class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#E1E3E8] hover:bg-neutral-50 text-[11px] font-medium text-neutral-700 shadow-xs transition" type="button">
+<svg class="w-3 h-3 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+<span>Deep Research</span>
+</button>
+<!-- Tool Pill: Create -->
+<button class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#E1E3E8] hover:bg-neutral-50 text-[11px] font-medium text-neutral-700 shadow-xs transition" type="button">
+<svg class="w-3 h-3 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>
+<span>Create</span>
+</button>
+<!-- Tool Pill: Code -->
+<button class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#E1E3E8] hover:bg-neutral-50 text-[11px] font-medium text-neutral-700 shadow-xs transition" type="button">
+<svg class="w-3 h-3 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+<span>Code</span>
+</button>
+</div>
+<!-- Right Model Picker and Send Button -->
+<div class="flex items-center space-x-2">
+<!-- Claude 3.5 Selector -->
+<div class="flex items-center space-x-1 text-xs text-neutral-700 font-medium px-2 py-1 rounded-md hover:bg-neutral-100 cursor-pointer transition">
+<span>Claude 3.5</span>
+<svg class="w-3 h-3 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</div>
+<!-- Submit Button -->
+<button aria-label="Send query" class="w-8 h-8 rounded-full bg-[#1A1C20] hover:bg-black text-white flex items-center justify-center transition shadow-sm" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><line x1="22" x2="11" y1="2" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Floating AI Composer Box -->
+<!-- BEGIN: 'Start with' Action Grid -->
+<section data-purpose="starter-prompts">
+<h2 class="text-xs font-semibold text-neutral-800 tracking-tight mb-2.5">Start with</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+<!-- Card 1 -->
+<button class="text-left p-3 rounded-xl bg-white border border-[#E3E5E8] hover:border-neutral-400 hover:shadow-xs transition duration-150 group" type="button">
+<div class="w-6 h-6 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-600 mb-2 group-hover:bg-neutral-200">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+</div>
+<div class="text-xs font-semibold text-neutral-900">Explore my projects</div>
+<div class="text-[11px] text-neutral-400 mt-0.5">See what I've built</div>
+</button>
+<!-- Card 2 -->
+<button class="text-left p-3 rounded-xl bg-white border border-[#E3E5E8] hover:border-neutral-400 hover:shadow-xs transition duration-150 group" type="button">
+<div class="w-6 h-6 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-600 mb-2 group-hover:bg-neutral-200">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+</div>
+<div class="text-xs font-semibold text-neutral-900">Ask about my work</div>
+<div class="text-[11px] text-neutral-400 mt-0.5">Technical details</div>
+</button>
+<!-- Card 3 -->
+<button class="text-left p-3 rounded-xl bg-white border border-[#E3E5E8] hover:border-neutral-400 hover:shadow-xs transition duration-150 group" type="button">
+<div class="w-6 h-6 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-600 mb-2 group-hover:bg-neutral-200">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect><line x1="12" x2="12" y1="3" y2="21"></line></svg>
+</div>
+<div class="text-xs font-semibold text-neutral-900">Compare ideas</div>
+<div class="text-[11px] text-neutral-400 mt-0.5">Get different perspectives</div>
+</button>
+<!-- Card 4 -->
+<button class="text-left p-3 rounded-xl bg-white border border-[#E3E5E8] hover:border-neutral-400 hover:shadow-xs transition duration-150 group" type="button">
+<div class="w-6 h-6 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-600 mb-2 group-hover:bg-neutral-200">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>
+</div>
+<div class="text-xs font-semibold text-neutral-900">Create something</div>
+<div class="text-[11px] text-neutral-400 mt-0.5">Draft, plan, or generate</div>
+</button>
+</div>
+</section>
+<!-- END: 'Start with' Action Grid -->
+<!-- BEGIN: Recent Activity Feed Section -->
+<section class="pt-1" data-purpose="recent-activity-section">
+<!-- Feed Filter Header -->
+<div class="flex items-center justify-between pb-3">
+<div class="flex items-center space-x-3 text-xs">
+<span class="font-bold text-neutral-900 mr-1">Recent</span>
+<button class="px-2.5 py-1 rounded-md bg-[#EAECEF] text-neutral-900 font-semibold shadow-2xs" type="button">Chats</button>
+<button class="px-2.5 py-1 rounded-md text-neutral-500 hover:text-neutral-800 transition" type="button">Projects</button>
+<button class="px-2.5 py-1 rounded-md text-neutral-500 hover:text-neutral-800 transition" type="button">Notes</button>
+<button class="px-2.5 py-1 rounded-md text-neutral-500 hover:text-neutral-800 transition" type="button">Files</button>
+</div>
+<a class="text-xs font-medium text-neutral-500 hover:text-neutral-900 flex items-center space-x-1" href="#">
+<span>View all</span>
+<span>→</span>
+</a>
+</div>
+<!-- Activity List Rows -->
+<div class="space-y-1.5">
+<!-- Item 1 -->
+<div class="group flex items-center justify-between p-2.5 rounded-xl border border-[#ECEEF2] hover:border-[#DCDEE3] hover:bg-[#FAFAFB] transition">
+<div class="flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 mt-0.5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+</div>
+<div class="leading-tight">
+<h3 class="text-xs font-semibold text-neutral-900 group-hover:text-black">Improve tomato detection performance</h3>
+<p class="text-[11px] text-neutral-400 mt-0.5 truncate max-w-md">Discuss dataset, model architecture, and evaluation results...</p>
+</div>
+</div>
+<div class="flex items-center space-x-3 text-neutral-400">
+<span class="text-[11px] whitespace-nowrap">2h ago</span>
+<button aria-label="More options" class="hover:text-neutral-700" type="button">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle></svg>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="group flex items-center justify-between p-2.5 rounded-xl border border-[#ECEEF2] hover:border-[#DCDEE3] hover:bg-[#FAFAFB] transition">
+<div class="flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 mt-0.5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+</div>
+<div class="leading-tight">
+<h3 class="text-xs font-semibold text-neutral-900 group-hover:text-black">BDRS deployment plan</h3>
+<p class="text-[11px] text-neutral-400 mt-0.5 truncate max-w-md">Server setup, database schema, and integration with SuhuLog...</p>
+</div>
+</div>
+<div class="flex items-center space-x-3 text-neutral-400">
+<span class="text-[11px] whitespace-nowrap">5h ago</span>
+<button aria-label="More options" class="hover:text-neutral-700" type="button">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle></svg>
+</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="group flex items-center justify-between p-2.5 rounded-xl border border-[#ECEEF2] hover:border-[#DCDEE3] hover:bg-[#FAFAFB] transition">
+<div class="flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 mt-0.5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+</div>
+<div class="leading-tight">
+<h3 class="text-xs font-semibold text-neutral-900 group-hover:text-black">Design ideas for Think It</h3>
+<p class="text-[11px] text-neutral-400 mt-0.5 truncate max-w-md">UI direction and core features...</p>
+</div>
+</div>
+<div class="flex items-center space-x-3 text-neutral-400">
+<span class="text-[11px] whitespace-nowrap">1 day ago</span>
+<button aria-label="More options" class="hover:text-neutral-700" type="button">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle></svg>
+</button>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="group flex items-center justify-between p-2.5 rounded-xl border border-[#ECEEF2] hover:border-[#DCDEE3] hover:bg-[#FAFAFB] transition">
+<div class="flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 mt-0.5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect height="18" rx="2" ry="2" width="18" x="3" y="4"></rect><line x1="16" x2="16" y1="2" y2="6"></line><line x1="8" x2="8" y1="2" y2="6"></line><line x1="3" x2="21" y1="10" y2="10"></line></svg>
+</div>
+<div class="leading-tight">
+<h3 class="text-xs font-semibold text-neutral-900 group-hover:text-black">How to integrate with SATUSEHAT?</h3>
+<p class="text-[11px] text-neutral-400 mt-0.5 truncate max-w-md">Exploring HL7 FHIR implementation for hospital systems...</p>
+</div>
+</div>
+<div class="flex items-center space-x-3 text-neutral-400">
+<span class="text-[11px] whitespace-nowrap">2 days ago</span>
+<button aria-label="More options" class="hover:text-neutral-700" type="button">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle></svg>
+</button>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="group flex items-center justify-between p-2.5 rounded-xl border border-[#ECEEF2] hover:border-[#DCDEE3] hover:bg-[#FAFAFB] transition">
+<div class="flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 mt-0.5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" x2="8" y1="13" y2="13"></line><line x1="16" x2="8" y1="17" y2="17"></line></svg>
+</div>
+<div class="leading-tight">
+<h3 class="text-xs font-semibold text-neutral-900 group-hover:text-black">Rewrite this documentation</h3>
+<p class="text-[11px] text-neutral-400 mt-0.5 truncate max-w-md">Make it clearer and more structured...</p>
+</div>
+</div>
+<div class="flex items-center space-x-3 text-neutral-400">
+<span class="text-[11px] whitespace-nowrap">3 days ago</span>
+<button aria-label="More options" class="hover:text-neutral-700" type="button">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle></svg>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Recent Activity Feed Section -->
+</main>
+<!-- END: CenterWorkspace -->
+<!-- ============================================== -->
+<!-- COLUMN 3: RIGHT CONTEXTUAL RAIL / UTILITIES    -->
+<!-- ============================================== -->
+<!-- BEGIN: RightContextualRail -->
+<aside class="w-80 bg-[#F4F5F7] border-l border-[#E5E7EB] p-4 flex flex-col space-y-4 overflow-y-auto select-none shrink-0">
+<!-- Header Status -->
+<div class="flex items-center space-x-1.5 text-xs font-semibold text-neutral-800">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>Current Context</span>
+</div>
+<!-- Card 1: Current Project (LabStock) -->
+<section class="bg-white rounded-2xl p-3 border border-[#E1E3E8] shadow-subtle space-y-3" data-purpose="current-project-card">
+<!-- Project Top Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center font-bold text-xs">
+                ⚗️
+              </div>
+<div>
+<h4 class="text-xs font-bold text-neutral-900">LabStock</h4>
+<p class="text-[10px] text-neutral-400 font-medium leading-none">In development</p>
+</div>
+</div>
+<button aria-label="Project actions" class="text-neutral-400 hover:text-neutral-700" type="button">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle></svg>
+</button>
+</div>
+<!-- Project Screenshot/Dashboard Mockup View -->
+<div class="relative w-full h-24 rounded-lg overflow-hidden bg-neutral-900 border border-neutral-200 shadow-inner group">
+<!-- Simulated application dashboard UI -->
+<div class="absolute inset-0 flex text-[7px] text-neutral-400 font-mono">
+<div class="w-1/3 bg-neutral-900 border-r border-neutral-800 p-1.5 flex flex-col justify-between">
+<span class="text-emerald-400 font-bold">LabStock UI</span>
+<div class="space-y-1 opacity-70">
+<div class="h-1 bg-neutral-700 rounded w-full"></div>
+<div class="h-1 bg-neutral-700 rounded w-3/4"></div>
+<div class="h-1 bg-neutral-700 rounded w-1/2"></div>
+</div>
+<span class="text-[6px] text-neutral-500">v1.2-beta</span>
+</div>
+<div class="w-2/3 bg-neutral-850 p-2 flex flex-col justify-between bg-neutral-900">
+<div class="flex justify-between items-center border-b border-neutral-800 pb-1">
+<span class="text-white">Inventory Overview</span>
+<span class="text-emerald-400">98.4%</span>
+</div>
+<div class="grid grid-cols-2 gap-1 py-1">
+<div class="bg-neutral-800 p-1 rounded"><span class="block text-neutral-500">Reagents</span>4,210</div>
+<div class="bg-neutral-800 p-1 rounded"><span class="block text-neutral-500">Pipettes</span>120</div>
+</div>
+<div class="h-1 bg-emerald-500/40 rounded-full w-full overflow-hidden">
+<div class="h-full bg-emerald-400 w-3/4"></div>
+</div>
+</div>
+</div>
+<div class="absolute inset-0 bg-neutral-900/10 hover:bg-transparent transition"></div>
+</div>
+<!-- Description -->
+<p class="text-[11px] text-neutral-500 leading-relaxed">
+            Inventory &amp; procurement system for laboratory operations.
+          </p>
+<!-- Quick Context Action Links -->
+<div class="space-y-1.5 pt-1 text-xs font-medium text-neutral-700">
+<a class="flex items-center justify-between p-1.5 rounded-lg hover:bg-neutral-50 transition" href="#">
+<div class="flex items-center space-x-2">
+<svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" x2="21" y1="14" y2="3"></line></svg>
+<span>Open project</span>
+</div>
+</a>
+<a class="flex items-center justify-between p-1.5 rounded-lg hover:bg-neutral-50 transition" href="#">
+<div class="flex items-center space-x-2">
+<svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+<span>View documentation</span>
+</div>
+</a>
+<a class="flex items-center justify-between p-1.5 rounded-lg hover:bg-neutral-50 transition" href="#">
+<div class="flex items-center space-x-2">
+<svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><line x1="1.05" x2="7" y1="12" y2="12"></line><line x1="17.01" x2="22.96" y1="12" y2="12"></line></svg>
+<span>Recent commits</span>
+</div>
+</a>
+<a class="flex items-center justify-between p-1.5 rounded-lg hover:bg-neutral-50 transition" href="#">
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>Deployment status</span>
+</div>
+<span class="text-[10px] text-emerald-600 font-mono">Live</span>
+</a>
+</div>
+</section>
+<!-- Card 2: Focus & Daily Tasks -->
+<section class="bg-white rounded-2xl p-3 border border-[#E1E3E8] shadow-subtle space-y-2.5" data-purpose="focus-task-card">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-1.5 text-xs font-bold text-neutral-900">
+<svg class="w-3.5 h-3.5 text-neutral-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect height="18" rx="2" ry="2" width="18" x="3" y="4"></rect><line x1="16" x2="16" y1="2" y2="6"></line><line x1="8" x2="8" y1="2" y2="6"></line><line x1="3" x2="21" y1="10" y2="10"></line></svg>
+<span>Focus</span>
+</div>
+<span class="text-[10px] font-medium text-neutral-500 flex items-center space-x-1">
+<svg class="w-3 h-3 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+<span>Today</span>
+</span>
+</div>
+<div class="space-y-1.5 text-xs text-neutral-700">
+<!-- Task 1 -->
+<label class="flex items-center space-x-2.5 p-1 rounded-md hover:bg-neutral-50 cursor-pointer">
+<input class="rounded border-neutral-300 text-neutral-900 focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+<span>Finalize BDRS testing</span>
+</label>
+<!-- Task 2 (Checked) -->
+<label class="flex items-center space-x-2.5 p-1 rounded-md hover:bg-neutral-50 cursor-pointer text-neutral-400 line-through">
+<input checked="" class="rounded border-neutral-300 text-neutral-800 focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+<span>Continue Inventory module</span>
+</label>
+<!-- Task 3 -->
+<label class="flex items-center space-x-2.5 p-1 rounded-md hover:bg-neutral-50 cursor-pointer">
+<input class="rounded border-neutral-300 text-neutral-900 focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+<span>Review email &amp; respond</span>
+</label>
+<!-- Task 4 -->
+<label class="flex items-center space-x-2.5 p-1 rounded-md hover:bg-neutral-50 cursor-pointer">
+<input class="rounded border-neutral-300 text-neutral-900 focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+<span>Plan next milestone</span>
+</label>
+<!-- Task 5 -->
+<label class="flex items-center space-x-2.5 p-1 rounded-md hover:bg-neutral-50 cursor-pointer">
+<input class="rounded border-neutral-300 text-neutral-900 focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+<span>Read latest AI agent research</span>
+</label>
+</div>
+</section>
+<!-- Card 3: Quick Tools (2x2 Grid) -->
+<section class="bg-white rounded-2xl p-3 border border-[#E1E3E8] shadow-subtle space-y-2" data-purpose="quick-tools-card">
+<div class="text-xs font-bold text-neutral-900 flex items-center space-x-1.5">
+<svg class="w-3.5 h-3.5 text-neutral-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+<span>Quick Tools</span>
+</div>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<!-- Tool 1: New Note -->
+<button class="flex items-center space-x-2 p-2 rounded-xl border border-[#E5E7EB] hover:bg-neutral-50 transition text-neutral-800" type="button">
+<svg class="w-3.5 h-3.5 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" x2="8" y1="13" y2="13"></line><line x1="16" x2="8" y1="17" y2="17"></line></svg>
+<span class="truncate">New Note</span>
+</button>
+<!-- Tool 2: Upload File -->
+<button class="flex items-center space-x-2 p-2 rounded-xl border border-[#E5E7EB] hover:bg-neutral-50 transition text-neutral-800" type="button">
+<svg class="w-3.5 h-3.5 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
+<span class="truncate">Upload File</span>
+</button>
+<!-- Tool 3: Screenshot -->
+<button class="flex items-center space-x-2 p-2 rounded-xl border border-[#E5E7EB] hover:bg-neutral-50 transition text-neutral-800" type="button">
+<svg class="w-3.5 h-3.5 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+<span class="truncate">Screenshot</span>
+</button>
+<!-- Tool 4: Voice Input -->
+<button class="flex items-center space-x-2 p-2 rounded-xl border border-[#E5E7EB] hover:bg-neutral-50 transition text-neutral-800" type="button">
+<svg class="w-3.5 h-3.5 text-neutral-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" x2="12" y1="19" y2="23"></line><line x1="8" x2="16" y1="23" y2="23"></line></svg>
+<span class="truncate">Voice Input</span>
+</button>
+</div>
+</section>
+<!-- Card 4: Lo-fi Audio Player Widget -->
+<section class="bg-white rounded-2xl p-2.5 border border-[#E1E3E8] shadow-subtle flex items-center justify-between" data-purpose="audio-widget-card">
+<div class="flex items-center space-x-2.5">
+<!-- Calming sunset thumbnail -->
+<div class="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-tr from-amber-700 via-rose-600 to-indigo-900 shrink-0 relative flex items-center justify-center shadow-xs">
+<div class="absolute inset-0 bg-black/20"></div>
+<svg class="w-4 h-4 text-white/90 relative z-10" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M8 12a4 4 0 0 1 8 0"></path></svg>
+</div>
+<div class="leading-tight">
+<h5 class="text-xs font-bold text-neutral-900">Lo-fi Focus</h5>
+<p class="text-[10px] text-neutral-400 mt-0.5">A calmer mind</p>
+</div>
+</div>
+<!-- Play Action Button -->
+<button aria-label="Play lo-fi track" class="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center transition" type="button">
+<svg class="w-3.5 h-3.5 translate-x-0.5" fill="currentColor" viewbox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+</button>
+</section>
+</aside>
+<!-- END: RightContextualRail -->
+</div>
+<!-- END: Three-Column Body Layout -->
+</div>
+<!-- END: Main macOS Styled Application Container -->
+</body></html>

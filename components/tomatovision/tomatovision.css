@@ -1,0 +1,116 @@
+/* TomatoVision case study (approved B Final). Shared primitives live in project-story.css. */
+
+.aw-tomato-story { width: min(100%, 64rem); }
+.tv-story { container: story / inline-size; }
+
+/* 01 — problem figures */
+.tv-problem-figures { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-top: 1.5rem; }
+/* .tv-story prefix outranks the shell's icon-sized `.aw-desktop svg` rule */
+.tv-story .tv-annotation-map { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; border: 1px solid #e3e5e8; stroke-linecap: butt; stroke-linejoin: miter; }
+.tv-annotation-ground { fill: #f8f9fa; }
+.tv-annotation-box { fill-opacity: .16; stroke-width: 2.4; vector-effect: non-scaling-stroke; }
+
+/* 02 — method chip placement: header on wide columns, below the diagram on narrow ones */
+.tv-method-chip { display: none; margin-top: 1rem; }
+
+/* 03 — dense scene with a baseline divider */
+.tv-scene-tabs { display: flex; gap: .25rem; margin-bottom: 1rem; border-bottom: 1px solid #e3e5e8; padding-bottom: .55rem; overflow-x: auto; scrollbar-width: none; }
+.tv-scene-tabs button { flex: 0 0 auto; min-height: 1.9rem; border: 1px solid transparent; padding: .25rem .55rem; color: #717680; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: .75rem; }
+.tv-scene-tabs button:hover { color: #1e2024; }
+.tv-scene-tabs button[aria-selected="true"] { border-color: #e3e5e8; background: #f4f5f7; color: #15171c; font-weight: 600; }
+.tv-scene-stage { position: relative; aspect-ratio: 1; overflow: hidden; border: 1px solid #e3e5e8; background: #eef0ee; }
+.tv-scene-baseline { position: absolute; inset: 0; z-index: 1; }
+.tv-scene-handle { position: absolute; z-index: 2; top: 0; bottom: 0; width: 1px; background: rgb(255 255 255 / 85%); pointer-events: none; }
+.tv-scene-handle b { position: absolute; top: 50%; left: 50%; width: 1.1rem; height: 1.1rem; border: 2px solid #fff; border-radius: 50%; background: rgb(21 23 28 / 55%); transform: translate(-50%, -50%); }
+.tv-scene-stage input { position: absolute; z-index: 3; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; }
+.tv-scene-stage:has(input:focus-visible) { outline: 2px solid #15171c; outline-offset: 3px; }
+
+/* 04 — ensemble members read as secondary detail */
+.tv-members { color: inherit; }
+
+/* 05 — accuracy vs speed */
+.tv-speed { display: grid; grid-template-columns: minmax(0, 1fr) 18rem; gap: 1.6rem; align-items: start; }
+.tv-scatter { border: 1px solid #e3e5e8; background: #f8f9fa; padding: 1rem 1rem .8rem; }
+.tv-story .tv-scatter svg { display: block; width: 100%; height: auto; overflow: visible; stroke: none; stroke-width: 1; font-family: var(--font-geist-mono), ui-monospace, monospace; }
+.tv-axis-title { fill: #717680; font-size: 9px; }
+.tv-axis-title.is-narrow { display: none; }
+.tv-tick { fill: #717680; font-size: 8.5px; }
+.tv-grid { stroke: #e3e5e8; stroke-dasharray: 2 3; }
+.tv-axis { stroke: #c9cdd2; }
+.tv-point.is-single { fill: #15171c; }
+.tv-point.is-ensemble { fill: #f8f9fa; stroke: #15171c; stroke-width: 1.5; }
+.tv-point-label { fill: #15171c; font-size: 8.5px; font-weight: 600; }
+.tv-scatter-key { display: flex; gap: 1.1rem; margin-top: .5rem; color: #717680; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: .68rem; }
+.tv-scatter-key span { display: inline-flex; align-items: center; gap: .35rem; }
+.tv-scatter-key i { width: .5rem; height: .5rem; border: 1.5px solid #15171c; border-radius: 50%; }
+.tv-scatter-key i.is-single { background: #15171c; }
+.tv-scatter-yaxis { display: none !important; }
+
+/* 06 — dataset */
+.tv-dataset-facts { color: #717680; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: .75rem !important; line-height: 1.8 !important; }
+.tv-dataset-facts b { color: #15171c; font-weight: 600; }
+.tv-dataset-facts i { font-style: normal; }
+.tv-dataset-maps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; margin-top: 1.1rem; }
+
+/* 07 — findings */
+.tv-learned { counter-reset: learned; font-family: var(--font-geist-mono), ui-monospace, monospace; }
+.tv-learned li { position: relative; max-width: 58rem; padding-left: 1rem; color: #1e2024; font-size: .75rem; line-height: 1.6; counter-increment: learned; }
+.tv-learned li + li { margin-top: .6rem; }
+.tv-learned li::before { position: absolute; left: 0; content: counter(learned); }
+
+/* Ask */
+.tv-ask { margin-top: 3rem; border-top: 1px solid #e3e5e8; padding: 1.6rem 0 2rem; }
+.tv-ask h2 { color: #15171c; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: .78rem; font-weight: 650; }
+.tv-ask form { display: flex; gap: .5rem; margin-top: 1rem; }
+.tv-ask input { min-width: 0; flex: 1; min-height: 2.75rem; border: 1px solid #e3e5e8; padding: 0 .8rem; color: #1e2024; font-size: .78rem; }
+.tv-ask input::placeholder { color: #717680; }
+.tv-ask input:focus-visible { outline: 2px solid #15171c; outline-offset: 1px; }
+.tv-ask form button { display: grid; width: 2.75rem; flex: 0 0 auto; place-items: center; background: #15171c; color: #fff; font-size: 1rem; }
+.tv-ask form button:disabled { background: #d9dce0; color: #717680; cursor: not-allowed; }
+.tv-ask-suggestions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .9rem; }
+.tv-ask-suggestions button { min-height: 2rem; border: 1px solid #e3e5e8; background: #f8f9fa; padding: .3rem .55rem; color: #555a63; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: .72rem; text-align: left; }
+.tv-ask-suggestions button:hover { border-color: #b9bdc3; color: #15171c; }
+
+@container story (max-width: 43.75rem) {
+  .tv-problem-figures { grid-template-columns: 1fr; margin-top: 1.2rem; }
+  .tv-problem-secondary { display: none; }
+  .tv-method > header .ps-section-aside { display: none; }
+  .tv-method-chip { display: block; }
+
+  .tv-scene-tabs { gap: .45rem; border-bottom: 0; padding-bottom: 0; margin-inline: 0; }
+  .tv-scene-tabs button { min-height: 2.5rem; border-color: #e3e5e8; border-radius: .3rem; background: #f8f9fa; padding: .35rem .8rem; font-size: .8rem; }
+  .tv-scene-tabs button[aria-selected="true"] { background: #fff; border-color: #15171c; }
+  .tv-scene-baseline,
+  .tv-scene-handle,
+  .tv-scene-stage input { display: none; }
+  .tv-members { display: none; }
+
+  .tv-speed { grid-template-columns: 1fr; gap: 1rem; }
+  .tv-scatter { border-radius: .35rem; background: #fff; padding: .8rem .6rem .8rem .2rem; }
+  .tv-axis-title.is-wide { display: none; }
+  .tv-axis-title.is-narrow { display: inline; font-size: 17px; }
+  .tv-tick { font-size: 16px; }
+  .tv-point-label { font-size: 16px; }
+  .tv-scatter-key { flex-wrap: wrap; gap: .3rem 1rem; padding-left: .6rem; font-size: .78rem; }
+  .tv-scatter-yaxis { display: inline-flex !important; }
+  .tv-dataset-facts { font-size: .82rem !important; line-height: 1.75 !important; }
+  .tv-dataset-facts > b,
+  .tv-dataset-facts > span { display: block; font-weight: 400; color: #1e2024; }
+  .tv-dataset-facts > i { display: none; }
+  .tv-dataset-maps { grid-template-columns: 1fr 1fr; }
+
+  .tv-learned { font-family: Inter, -apple-system, sans-serif; }
+  .tv-learned li { padding-left: 1.3rem; font-size: .92rem; line-height: 1.6; }
+  .tv-learned li + li { margin-top: .75rem; }
+
+  .tv-ask { border-top: 0; margin-top: 2.6rem; }
+  .tv-ask h2 { font-family: Inter, -apple-system, sans-serif; font-size: 1.25rem; font-weight: 720; letter-spacing: -.02em; }
+  .tv-ask input { min-height: 3rem; border-radius: .35rem; background: #f8f9fa; font-size: 1rem; }
+  .tv-ask form button { width: 3rem; border-radius: .35rem; }
+  .tv-ask-suggestions { flex-direction: column; }
+  .tv-ask-suggestions button { min-height: 2.9rem; border-radius: .35rem; padding: .6rem .9rem; font-family: Inter, -apple-system, sans-serif; font-size: .9rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tv-story .aw-stream-structure { animation: none; }
+}
