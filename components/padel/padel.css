@@ -72,3 +72,8 @@
   .pv-movement th, .pv-movement td { padding: .7rem .4rem; }
 }
 .aw-padel-player > header small { white-space: nowrap; }
+
+.aw-padel-replay { margin: 1.1rem 0 1.2rem; }
+.aw-padel-replay video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #06182a; border: 1px solid rgb(255 255 255 / 13%); }
+.aw-padel-replay figcaption { margin-top: .55rem; color: #89a5b4; font-size: var(--aw-text-micro); line-height: 1.5; }
+.aw-suhulog-frame.is-contained { box-shadow: none; }

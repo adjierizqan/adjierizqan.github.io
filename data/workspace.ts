@@ -15,6 +15,7 @@ export type WorkspaceProject = {
   publicLimitations: string;
   askSuggestion: string;
   image?: string;
+  thumb?: string;
   video?: string;
   gallery?: { src: string; caption: string }[];
   href?: string;
@@ -46,9 +47,17 @@ export const featuredWork: WorkspaceProject[] = [
       { label: "Monthly output", value: "Detail + recap workbook" },
     ],
     whyItMatters: "The system keeps inventory movements and familiar reporting outputs connected to the evidence they came from.",
-    publicLimitations: "Public material is limited to workflow-level evidence. Production infrastructure, hospital data, URLs, and unsanitized screenshots are withheld.",
+    publicLimitations: "Screens shown come from a demo database with synthetic items, rooms, requesters, and users. Production infrastructure, hospital data, URLs, and unsanitized screenshots are withheld.",
     askSuggestion: "How does LabStock keep imports and reports traceable?",
-    assetNote: "No demonstrably sanitized LabStock product screenshot is available in the portfolio, so this case uses a text evidence state.",
+    assetNote: "Screens were captured from the final release running against the labstock_pk_demo database: demo users, 22 generic items, rooms and requesters marked demo, no migrated hospital rows.",
+    image: "/projects/labstock/stok.webp",
+    thumb: "/projects/labstock/thumb.webp",
+    gallery: [
+      { src: "/projects/labstock/hari-ini.webp", caption: "Hari Ini: what needs action today, recent requests and movements." },
+      { src: "/projects/labstock/amprah.webp", caption: "Amprah: one request posts every item to the stock ledger in one step." },
+      { src: "/projects/labstock/amprah-mobile.webp", caption: "Amprah on a phone: room and requester for items leaving the lab." },
+      { src: "/projects/labstock/laporan.webp", caption: "Monthly report read from the same ledger, ready as the Excel workbook." },
+    ],
   },
   {
     slug: "bdrs",
@@ -70,9 +79,18 @@ export const featuredWork: WorkspaceProject[] = [
       { label: "Withheld", value: "Patient and production data" },
     ],
     whyItMatters: "The project demonstrates domain-first product thinking while preserving a strict public evidence boundary.",
-    publicLimitations: "No production, deployment, user, compliance, or release claim is published until the latest evidence is reconciled; no public-safe screenshot is currently available.",
+    publicLimitations: "No production, deployment, user, compliance, or release claim is published until the latest evidence is reconciled; screens come from a seeded demo environment with synthetic patients, bags, and staff.",
     askSuggestion: "What is currently verified about BDRS?",
-    assetNote: "The BDRS case remains text-only until its public evidence is reconciled and a synthetic or demonstrably sanitized screenshot set is available.",
+    assetNote: "Screens come from the final UI evidence set, captured against seeded e2e fixtures only (KLINIS DEMO patients, DEMO bags, E2E staff) and probed for real names and secrets; the sidebar with the hospital badge is cropped out.",
+    image: "/projects/bdrs/workstation.webp",
+    thumb: "/projects/bdrs/thumb.webp",
+    gallery: [
+      { src: "/projects/bdrs/dashboard.webp", caption: "Operational summary: active services, items needing action, stock condition." },
+      { src: "/projects/bdrs/pengeluaran.webp", caption: "Issue register: bags leaving the bank and their outcome." },
+      { src: "/projects/bdrs/inventaris.webp", caption: "Inventory by component and blood group, with expiry." },
+      { src: "/projects/bdrs/episode.webp", caption: "Transfusion episodes traced from request to result." },
+      { src: "/projects/bdrs/laporan.webp", caption: "Monthly report centre for the lab's workbook templates." },
+    ],
   },
   {
     slug: "suhulog",
@@ -100,11 +118,12 @@ export const featuredWork: WorkspaceProject[] = [
     whyItMatters: "SuhuLog replaces a fragile manual handoff while preserving the reporting format and audit history the laboratory relies on.",
     publicLimitations: "Only sanitized portfolio screenshots and public-safe system behavior are shown; operational records and hospital-identifying data are excluded.",
     askSuggestion: "How does SuhuLog preserve trustworthy temperature records?",
-    image: "/projects/suhulog.jpg",
+    image: "/projects/suhulog/device-story.webp",
+    thumb: "/projects/suhulog/thumb.webp",
     gallery: [
-      { src: "/projects/suhulog-catat-suhu.jpg", caption: "Entry for one monitoring point and period; out-of-range values remain recorded and visibly flagged." },
-      { src: "/projects/suhulog-monitoring.jpg", caption: "Monthly monitoring curve with configured limits and explicit exceptions." },
-      { src: "/projects/suhulog-laporan.jpg", caption: "Report preview backed by the same effective records used for Excel and PDF export." },
+      { src: "/projects/suhulog/phone-catat-suhu.webp", caption: "On a phone: staff pick the point and period (Pagi or Sore) and enter the reading." },
+      { src: "/projects/suhulog/desktop-monitoring.webp", caption: "On a laptop: the monthly curve per point, with configured limits and exceptions." },
+      { src: "/projects/suhulog/desktop-laporan.webp", caption: "Monthly report backed by the same records used for the Excel and PDF export." },
       { src: "/projects/suhulog-label-qr.jpg", caption: "Printable QR labels that open the exact monitoring point's entry flow." },
     ],
     href: "/projects/suhulog",
@@ -135,6 +154,7 @@ export const featuredWork: WorkspaceProject[] = [
     publicLimitations: "The portfolio reports evaluated research results and public project media; it does not claim a deployed agricultural product.",
     askSuggestion: "How were the TomatoVision models evaluated?",
     image: "/projects/tomato-ripeness/research/demo1-combine4.webp",
+    thumb: "/projects/tomato-ripeness/research/thumb.webp",
     href: "/projects/tomato-ripeness",
   },
 ];
@@ -156,6 +176,8 @@ export const labWork: WorkspaceProject[] = [
     publicLimitations: "The portfolio presents an experiment and public media, not a production analytics service.",
     askSuggestion: "How does Padel Vision analyze one broadcast camera?",
     image: "/projects/padel-vision/analytics/court-control.webp",
+    thumb: "/projects/padel-vision/analytics/thumb.webp",
+    video: "/projects/padel-vision/analytics/replay.mp4",
     href: "/projects/padel-vision",
   },
   {
@@ -174,6 +196,7 @@ export const labWork: WorkspaceProject[] = [
     publicLimitations: "This is a fan project; 3D models are credited to Ddiaz Design on Sketchfab.",
     askSuggestion: "How was the Porsche 3D interaction built?",
     image: "/projects/porsche-3d/cinematic/01-rwb964-hero.webp",
+    thumb: "/projects/porsche-3d/cinematic/thumb.webp",
     video: "/projects/porsche-3d.mp4",
     gallery: [
       { src: "/projects/porsche-3d/cinematic/02-918-profile.webp", caption: "918 Spyder Weissach, side on, rendered in the site's Three.js scene." },

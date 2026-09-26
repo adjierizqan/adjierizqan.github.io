@@ -66,7 +66,7 @@
         }
       ],
       "whyItMatters": "The system keeps inventory movements and familiar reporting outputs connected to the evidence they came from.",
-      "publicLimitations": "Public material is limited to workflow-level evidence. Production infrastructure, hospital data, URLs, and unsanitized screenshots are withheld.",
+      "publicLimitations": "Screens shown come from a demo database with synthetic items, rooms, requesters, and users. Production infrastructure, hospital data, URLs, and unsanitized screenshots are withheld.",
       "askSuggestion": "How does LabStock keep imports and reports traceable?"
     },
     {
@@ -98,7 +98,7 @@
         }
       ],
       "whyItMatters": "The project demonstrates domain-first product thinking while preserving a strict public evidence boundary.",
-      "publicLimitations": "No production, deployment, user, compliance, or release claim is published until the latest evidence is reconciled; no public-safe screenshot is currently available.",
+      "publicLimitations": "No production, deployment, user, compliance, or release claim is published until the latest evidence is reconciled; screens come from a seeded demo environment with synthetic patients, bags, and staff.",
       "askSuggestion": "What is currently verified about BDRS?"
     },
     {
