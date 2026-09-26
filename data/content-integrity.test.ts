@@ -63,9 +63,13 @@ describe("portfolio content integrity", () => {
     const labstock = featuredWork.find((project) => project.slug === "labstock");
     const bdrs = featuredWork.find((project) => project.slug === "bdrs");
     expect(labstock?.publicLimitations).toContain("Production infrastructure");
-    expect(labstock?.image).toBeUndefined();
     expect(bdrs?.publicLimitations).toContain("No production, deployment, user, compliance, or release claim");
-    expect(bdrs?.image).toBeUndefined();
+    // Screens are shown only from recorded synthetic sources, and say so.
+    for (const project of [labstock, bdrs]) {
+      const media = [project?.image, ...(project?.gallery ?? []).map((item) => item.src)];
+      expect(media.every((src) => src?.startsWith(`/projects/${project?.slug}/`))).toBe(true);
+      expect(project?.assetNote).toMatch(/demo|fixtures/i);
+    }
   });
 
   test("authoritative TomatoVision metrics remain distinct and exact", () => {
@@ -131,7 +135,8 @@ describe("TomatoVision public media", () => {
   });
 
   test("no thesis-dataset imagery is published", () => {
-    expect(readdirSync(research).every((file) => file.startsWith("demo"))).toBe(true);
+    // thumb.webp is a split of demo1-yolov11 and demo1-combine4 (docs/design/v101/build_assets.py)
+    expect(readdirSync(research).every((file) => file.startsWith("demo") || file === "thumb.webp")).toBe(true);
     expect(readdirSync("public/projects/tomato-ripeness")).toEqual(["research"]);
   });
 });
@@ -142,6 +147,17 @@ describe("Portfolio V1 scope", () => {
       expect(allWorkspaceProjects.some((project) => project.slug === slug)).toBe(false);
       expect(aiContext.projects.some((project) => project.id === slug)).toBe(false);
       expect(legacyProjects.some((project) => project.slug === slug)).toBe(false);
+    }
+  });
+});
+
+describe("V1.0.1 media", () => {
+  test("every project has an existing 16:10 thumbnail and its gallery files exist", () => {
+    for (const project of allWorkspaceProjects) {
+      expect(project.thumb).toBeTruthy();
+      for (const src of [project.thumb, project.image, project.video, ...(project.gallery ?? []).map((item) => item.src)].filter(Boolean)) {
+        expect(existsSync("public" + src)).toBe(true);
+      }
     }
   });
 });

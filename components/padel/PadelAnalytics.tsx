@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import data from "@/data/padel-analytics.json";
 import "./padel.css";
 
@@ -189,12 +189,13 @@ const views = [
   { label: "Movement", note: "Distance, pace and time near the net per player.", View: Movement },
 ];
 
-export function PadelAnalytics() {
+export function PadelAnalytics({ replay }: { replay?: ReactNode }) {
   const [active, setActive] = useState(0);
   const { View } = views[active];
   return (
     <section className="aw-padel-player" aria-label="Padel Vision tracking output">
       <header><div><span>What the system sees</span><h2>One {Math.round(data.duration_s)}-second broadcast clip, rebuilt as court data.</h2></div><small>{String(active + 1).padStart(2, "0")} / {String(views.length).padStart(2, "0")}</small></header>
+      {replay}
       <div className="aw-padel-stage-grid">
         <div className="pv-visual" key={active}><View /></div>
         <div role="tablist" aria-label="Tracking output views">{views.map((item, index) => <button type="button" role="tab" aria-selected={active === index} className={active === index ? "is-active" : ""} key={item.label} onClick={() => setActive(index)}><small>{String(index + 1).padStart(2, "0")}</small><strong>{item.label}</strong><p>{item.note}</p></button>)}</div>
