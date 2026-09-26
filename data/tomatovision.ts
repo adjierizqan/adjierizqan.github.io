@@ -31,9 +31,9 @@ export const tomatoConfigurations: TomatoConfiguration[] = [
 ];
 
 export const tomatoMatchedScene = [
-  { id: "baseline", tab: "Baseline", label: "YOLOv11 baseline", src: `${research}/demo1-yolov11.webp`, alt: "YOLOv11 baseline detections on a public-domain photo of tomatoes on the vine" },
-  { id: "best", tab: "Best single", label: "Best single · Swin-T + MS-SPPF", src: `${research}/demo1-yolov11_swint_mssppf.webp`, alt: "Swin-T plus multi-scale SPPF detections on the same scene" },
-  { id: "wbf", tab: "WBF", label: "Three-model WBF", src: `${research}/demo1-combine4.webp`, alt: "Three-model Weighted Boxes Fusion detections on the same scene" },
+  { id: "baseline", tab: "Baseline", label: "YOLOv11 baseline", src: `${research}/real1-yolov11.webp`, alt: "YOLOv11 baseline detections on a photograph of a tomato plant in a garden greenhouse" },
+  { id: "best", tab: "Best single", label: "Best single · Swin-T + MS-SPPF", src: `${research}/real1-yolov11_swint_mssppf.webp`, alt: "Swin-T plus multi-scale SPPF detections on the same scene" },
+  { id: "wbf", tab: "WBF", label: "Three-model WBF", src: `${research}/real1-combine4.webp`, alt: "Three-model Weighted Boxes Fusion detections on the same scene" },
 ];
 
 export const tomatoDataset = {
@@ -44,7 +44,7 @@ export const tomatoDataset = {
 };
 
 export const tomatoDemo = {
-  photos: "three CC0 photos from Wikimedia Commons (Dan Gold; Alabama Extension; Pascal Kings)",
+  photos: "three Wikimedia Commons photographs: Kolforn (CC BY-SA 4.0), Alabama Extension and Pascal Kings (CC0)",
   settings: "960 px, display threshold 0.25, WBF IoU 0.6",
 };
 

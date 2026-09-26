@@ -1,0 +1,29 @@
+{
+ "device": "mps",
+ "crop": [
+  100,
+  1150,
+  3300,
+  4350
+ ],
+ "detections": {
+  "yolov11": {
+   "green": 11,
+   "orange": 3,
+   "red": 0,
+   "total": 14
+  },
+  "yolov11_swint_mssppf": {
+   "green": 13,
+   "orange": 3,
+   "red": 0,
+   "total": 16
+  },
+  "combine4": {
+   "green": 12,
+   "orange": 3,
+   "red": 0,
+   "total": 15
+  }
+ }
+}

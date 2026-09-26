@@ -110,8 +110,8 @@ save(Image.open(SL / "desktop/06-laporan-bulanan.png").convert("RGB").resize((14
 
 # ---- TomatoVision: baseline | WBF on the same CC0 photo, split down the middle
 tv = PUB / "tomato-ripeness/research"
-base = Image.open(tv / "demo1-yolov11.webp").convert("RGB")
-wbf = Image.open(tv / "demo1-combine4.webp").convert("RGB")
+base = Image.open(tv / "real1-yolov11.webp").convert("RGB")
+wbf = Image.open(tv / "real1-combine4.webp").convert("RGB")
 t = Image.new("RGB", THUMB, (0, 0, 0))
 half = (THUMB[0] // 2, THUMB[1])
 t.paste(fit(base.crop((0, 60, 960, 900)), half), (0, 0))

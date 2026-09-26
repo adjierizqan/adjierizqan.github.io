@@ -129,14 +129,14 @@ describe("TomatoVision public media", () => {
       featuredWork.find((project) => project.slug === "tomato-ripeness")?.image ?? "",
     ];
     for (const path of paths) {
-      expect(path).toMatch(/^\/projects\/tomato-ripeness\/research\/demo\d-[\w]+\.webp$/);
+      expect(path).toMatch(/^\/projects\/tomato-ripeness\/research\/(demo|real)\d-[\w]+\.webp$/);
       expect(existsSync("public" + path)).toBe(true);
     }
   });
 
   test("no thesis-dataset imagery is published", () => {
-    // thumb.webp is a split of demo1-yolov11 and demo1-combine4 (docs/design/v101/build_assets.py)
-    expect(readdirSync(research).every((file) => file.startsWith("demo") || file === "thumb.webp")).toBe(true);
+    // thumb.webp is a split of real1-yolov11 and real1-combine4 (docs/design/v101/build_assets.py)
+    expect(readdirSync(research).every((file) => file.startsWith("demo") || file.startsWith("real") || file === "thumb.webp")).toBe(true);
     expect(readdirSync("public/projects/tomato-ripeness")).toEqual(["research"]);
   });
 });
