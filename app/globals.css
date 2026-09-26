@@ -116,8 +116,9 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   position: relative;
   z-index: var(--aw-z-window);
   display: grid;
-  width: min(91vw, 1460px);
-  height: min(88vh, 920px);
+  width: min(96vw, 1500px);
+  height: min(90vh, 1000px);
+  height: min(90dvh, 1000px);
   min-height: 660px;
   grid-template-rows: 2.75rem minmax(0, 1fr);
   overflow: hidden;
