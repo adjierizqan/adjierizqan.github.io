@@ -11,14 +11,6 @@
   "wbf_final_conf": 0.25
  },
  "photos": {
-  "demo1": {
-   "title": "File:Tomatoes on the Vine (Unsplash).jpg",
-   "page": "https://commons.wikimedia.org/wiki/File:Tomatoes_on_the_Vine_(Unsplash).jpg",
-   "license": "CC0",
-   "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-   "author": "Dan Gold danielcgold",
-   "source": "https://unsplash.com/photos/4LiUI-Y2mI8 archive copy at the Wayback Machine Image at the Wayback Machine"
-  },
   "demo2": {
    "title": "File:Cluster of Tomatoes on Vine.jpg",
    "page": "https://commons.wikimedia.org/wiki/File:Cluster_of_Tomatoes_on_Vine.jpg",
@@ -34,27 +26,19 @@
    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
    "author": "Pascal Kings",
    "source": "Own work"
+  },
+  "real1": {
+   "title": "File:-2020-07-20 Bush tomato plant (Totem), Trimingham, Norfolk (1).JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:-2020-07-20_Bush_tomato_plant_(Totem),_Trimingham,_Norfolk_(1).JPG",
+   "license": "CC BY-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+   "author": "Kolforn",
+   "source": "Own work",
+   "downloaded": "2026-09-26",
+   "note": "Replaces demo1 (V1.0.2); see real-photo-provenance.md"
   }
  },
  "detections": {
-  "demo1-yolov11": {
-   "green": 3,
-   "orange": 7,
-   "red": 3,
-   "total": 13
-  },
-  "demo1-yolov11_swint_mssppf": {
-   "green": 3,
-   "orange": 8,
-   "red": 0,
-   "total": 11
-  },
-  "demo1-combine4": {
-   "green": 3,
-   "orange": 8,
-   "red": 1,
-   "total": 12
-  },
   "demo2-yolov11": {
    "green": 15,
    "orange": 28,
@@ -102,6 +86,24 @@
    "orange": 4,
    "red": 0,
    "total": 4
+  },
+  "real1-yolov11": {
+   "green": 11,
+   "orange": 3,
+   "red": 0,
+   "total": 14
+  },
+  "real1-yolov11_swint_mssppf": {
+   "green": 13,
+   "orange": 3,
+   "red": 0,
+   "total": 16
+  },
+  "real1-combine4": {
+   "green": 12,
+   "orange": 3,
+   "red": 0,
+   "total": 15
   }
  }
 }

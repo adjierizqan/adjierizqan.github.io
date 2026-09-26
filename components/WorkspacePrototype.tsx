@@ -70,7 +70,7 @@ const projectTones: Record<string, string> = {
   "porsche-3d": "#d97706",
 };
 
-function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" | "ask" | "more" | "plus" | "search" | "send" | "menu" | "close" | "arrow" | "spark" | "context" | "speaker" | "sun" | "link" | "play" | "pause" }) {
+function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" | "ask" | "more" | "plus" | "search" | "send" | "menu" | "close" | "arrow" | "spark" | "context" | "speaker" | "sun" | "moon" | "link" | "play" | "pause" }) {
   const paths = {
     home: <><path d="m3 10 7-6 7 6" /><path d="M5.5 9v7h9V9" /></>,
     work: <><rect x="3" y="5" width="14" height="11" rx="1.5" /><path d="M7 5V3h6v2M3 9h14" /></>,
@@ -88,6 +88,7 @@ function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" 
     spark: <path d="M10 2.5c.45 4.4 2.1 6.05 6.5 6.5-4.4.45-6.05 2.1-6.5 6.5C9.55 11.1 7.9 9.45 3.5 9 7.9 8.55 9.55 6.9 10 2.5Z" />,
     context: <><rect x="3" y="3" width="14" height="14" rx="2" /><path d="M12 3v14" /></>,
     speaker: <><path d="M4 8h3l4-3v10l-4-3H4Z" /><path d="M14 7.5a4 4 0 0 1 0 5M16 5a7 7 0 0 1 0 10" /></>,
+    moon: <path d="M15.5 12.6A6.5 6.5 0 0 1 7.4 4.5a6.5 6.5 0 1 0 8.1 8.1Z" />,
     sun: <><circle cx="10" cy="10" r="3" /><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M15.7 4.3l-1.4 1.4M5.7 14.3l-1.4 1.4" /></>,
     link: <><path d="M8.5 11.5 11.5 8.5" /><path d="M6.5 13.5H5a3 3 0 0 1 0-6h3M11.5 6.5H13a3 3 0 0 1 0 6h-3" /></>,
     play: <path d="m7 4 9 6-9 6Z" fill="currentColor" stroke="none" />,
@@ -407,9 +408,9 @@ type ProjectViewProps = {
 };
 
 const PROJECT_DEMO_PROMPTS: Record<string, string> = {
-  labstock: "Jelaskan project LabStock ini secara ringkas. Apa masalahnya, solusinya, fitur utama, dan status sekarang?",
-  bdrs: "Apa yang sudah dibangun di BDRS, dan apa yang masih dalam tahap pengembangan atau perencanaan?",
-  suhulog: "Bagaimana SuhuLog mengubah pencatatan suhu menjadi workflow yang cepat dan tetap dapat diaudit?",
+  labstock: "Give me a short overview of LabStock: the problem, the solution, the main features, and where it stands now.",
+  bdrs: "What has been built in BDRS, and what is still in development or planning?",
+  suhulog: "How does SuhuLog turn temperature logging into a fast workflow that stays auditable?",
   "tomato-ripeness": "What did TomatoVision test, and what do the evaluation results actually show?",
   "padel-vision": "How does Padel Vision turn one broadcast camera into an inspectable match-analysis pipeline?",
   "porsche-3d": "How was Porsche 3D built as a real-time WebGL interaction study?",
@@ -659,7 +660,7 @@ function SuhuLogShowcase({ project, openImage }: Pick<ProjectViewProps, "project
 }
 
 const EVIDENCE_LABELS: Record<string, string[]> = {
-  labstock: ["Stok", "Hari Ini", "Amprah", "Amprah on a phone", "Monthly report"],
+  labstock: ["Stock", "Today", "Requisitions", "Requisitions on a phone", "Monthly report"],
   bdrs: ["Service workstation", "Dashboard", "Issue register", "Inventory", "Transfusion episodes", "Reports"],
 };
 
@@ -667,7 +668,7 @@ function evidenceFrames(project: WorkspaceProject): EvidenceFrame[] {
   const labels = EVIDENCE_LABELS[project.slug] ?? [];
   const items = [...(project.image ? [{ src: project.image, caption: labels[0] ?? project.title }] : []), ...(project.gallery ?? [])];
   const first: Record<string, string> = {
-    labstock: "Stok: usable stock per item with expiry and condition, derived from the ledger.",
+    labstock: "The Stok screen: usable stock per item with expiry and condition, derived from the ledger.",
     bdrs: "Service workstation: one patient's request, crossmatch, bags and finalisation checklist.",
   };
   return items.map((item, index) => ({
@@ -718,10 +719,51 @@ function TomatoVisionDossier({project,query,setQuery,ask,back}:ProjectViewProps)
 
 function PadelReplay({ src }: { src: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const barRef = useRef<HTMLSpanElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [time, setTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   useEffect(() => {
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) void videoRef.current?.play().catch(() => undefined);
+    const video = videoRef.current;
+    if (!video) return;
+    // `muted` must be set before play() for autoplay policies (Safari reads the attribute).
+    video.muted = true;
+    video.setAttribute("muted", "");
+    let raf = 0;
+    const tick = () => {
+      if (barRef.current && video.duration) barRef.current.style.transform = `scaleX(${video.currentTime / video.duration})`;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) void video.play().catch(() => undefined);
+    return () => cancelAnimationFrame(raf);
   }, []);
-  return <figure className="aw-padel-replay"><video ref={videoRef} src={src} poster="/projects/padel-vision/analytics/replay-poster.webp" muted loop playsInline controls preload="metadata" aria-label="Padel Vision tracking replay: players, hits, ball arcs and court control over the 55-second clip at five times speed"/><figcaption>Tracking replay at 5× speed, drawn from the pipeline&apos;s own positions, hits and ball arcs. No broadcast footage.</figcaption></figure>;
+  function toggle() {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) void video.play().catch(() => undefined);
+    else video.pause();
+  }
+  const clock = (value: number) => `0:${String(Math.floor(value)).padStart(2, "0")}`;
+  return (
+    <figure className={"aw-padel-replay" + (playing ? " is-playing" : " is-paused")}>
+      <div className="aw-padel-replay-stage">
+        <video ref={videoRef} src={src} poster="/projects/padel-vision/analytics/replay-poster.webp" muted loop playsInline preload="auto"
+          onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
+          onTimeUpdate={(event) => setTime(event.currentTarget.currentTime)} onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
+          onClick={toggle}
+          aria-label="Padel Vision tracking replay: players, hits, ball arcs and court control over the 55-second clip at five times speed" />
+        {!playing && <button type="button" className="aw-padel-replay-start" onClick={toggle}><Glyph name="play" /> Play replay</button>}
+      </div>
+      <div className="aw-padel-replay-bar">
+        <button type="button" onClick={toggle} aria-label={playing ? "Pause replay" : "Play replay"} aria-pressed={playing}><Glyph name={playing ? "pause" : "play"} /><span>{playing ? "Pause" : "Play"}</span></button>
+        <span className="aw-padel-replay-track" aria-hidden="true"><span ref={barRef} /></span>
+        <span className="aw-padel-replay-time">{clock(time)} / {clock(duration || 11)}</span>
+        <span className="aw-padel-replay-tag">Replay · 5× speed</span>
+      </div>
+      <figcaption>Tracking replay drawn from the pipeline&apos;s own positions, hits and ball arcs. No broadcast footage.</figcaption>
+    </figure>
+  );
 }
 
 function PadelVisionResponse({project,query,setQuery,ask,back}:ProjectViewProps){const prompt=PROJECT_DEMO_PROMPTS[project.slug];const{projectViewportRef,typedPrompt,responseVisible,responseProgress,runPresentation}=useProjectPresentation(prompt);return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-compact-project aw-padel-project aw-enter"><button type="button" className="aw-project-back" onClick={back}>← Labs</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)}/>{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>Workspace response</span></div>
@@ -767,7 +809,7 @@ function ProjectDirectory({ projects, title, copy, selectProject }: {
 }) {
   return (
     <main className="aw-center aw-directory aw-enter">
-      <WorkspaceHeader eyebrow="Adjie Workspace" title={title} copy={copy} meta={projects.length + " project objects"} />
+      <WorkspaceHeader eyebrow="Adjie Workspace" title={title} copy={copy} meta={projects.length + " projects"} />
       <div className="aw-project-objects">
         {projects.map((project) => (
           <button type="button" key={project.slug} onClick={() => selectProject(project)}>
@@ -894,6 +936,21 @@ function CommandPalette({ open, close, setView, selectProject }: {
   );
 }
 
+// Theme: html[data-theme] is set before paint by app/layout.tsx; this reads and switches it.
+const THEME_KEY = "aw-theme";
+type Theme = "light" | "dark";
+function subscribeToTheme(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  return () => observer.disconnect();
+}
+const readTheme = (): Theme => (document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+const readThemeOnServer = (): Theme => "light";
+function setTheme(theme: Theme) {
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem(THEME_KEY, theme); } catch { /* private mode: the choice lasts for this page */ }
+}
+
 // Project deep links: ?project=<slug> in the URL is the source of truth for which dossier is open.
 const URL_CHANGE_EVENT = "aw:urlchange";
 function subscribeToUrl(onChange: () => void) {
@@ -942,7 +999,7 @@ export function WorkspacePrototype() {
   const [askError, setAskError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [strongContrast, setStrongContrast] = useState(false);
+  const theme = useSyncExternalStore(subscribeToTheme, readTheme, readThemeOnServer);
   const [windowState, setWindowState] = useState<WindowState>("open");
   const [maximized, setMaximized] = useState(false);
   const [quickLookIndex, setQuickLookIndex] = useState<number | null>(null);
@@ -1148,7 +1205,7 @@ export function WorkspacePrototype() {
   const windowTransform = "translate3d(" + position.x + "px, " + position.y + "px, 0)" + (windowState === "open" ? " scale(1)" : " scale(.94)");
 
   return (
-    <div className={"aw-desktop " + (strongContrast ? "is-strong-contrast" : "")}>
+    <div className="aw-desktop">
       <div className="aw-wallpaper" aria-hidden="true" />
       <div
         ref={windowRef}
@@ -1173,7 +1230,7 @@ export function WorkspacePrototype() {
           <div className="aw-title-actions" data-no-drag>
             <span>Build · Solve · Improve</span>
             <button type="button" onClick={openPalette}><kbd>⌘ K</kbd></button>
-            <button type="button" className="aw-appearance" onClick={() => setStrongContrast((value) => !value)} aria-pressed={strongContrast} aria-label="Toggle interface contrast"><Glyph name="sun" /></button>
+            <button type="button" className="aw-appearance" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={theme === "dark" ? "Light mode" : "Dark mode"}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             <span className="aw-avatar">AR</span>
           </div>
         </header>
@@ -1185,7 +1242,7 @@ export function WorkspacePrototype() {
             <header className="aw-mobile-header">
               <button type="button" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Glyph name="menu" /></button>
               <strong>Adjie Workspace</strong>
-              <span className="aw-mobile-header-spacer" aria-hidden="true" />
+              <button type="button" className="aw-mobile-theme" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             </header>
             {view === "home" ? <HomeWorkspace query={query} setQuery={setQuery} submit={() => void runAsk()} ask={(question) => void runAsk(question)} setView={setView} selectProject={selectProject} />
               : view === "work" ? <WorkWorkspace selectProject={selectProject} />

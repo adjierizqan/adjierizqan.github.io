@@ -74,6 +74,17 @@
 .aw-padel-player > header small { white-space: nowrap; }
 
 .aw-padel-replay { margin: 1.1rem 0 1.2rem; }
-.aw-padel-replay video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #06182a; border: 1px solid rgb(255 255 255 / 13%); }
+.aw-padel-replay-stage { position: relative; }
+.aw-padel-replay video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #06182a; border: 1px solid rgb(255 255 255 / 13%); cursor: pointer; }
+.aw-padel-replay-start { position: absolute; top: 50%; left: 50%; display: inline-flex; align-items: center; gap: .5rem; min-height: 2.9rem; border: 1px solid rgb(255 255 255 / 40%); border-radius: 999px; background: rgb(6 24 42 / 82%); padding: 0 1.2rem; color: #eef8ff; font-size: var(--aw-text-ui); font-weight: 600; transform: translate(-50%, -50%); }
+.aw-padel-replay-start:hover { border-color: #48bff0; }
+.aw-padel-replay-start svg, .aw-padel-replay-bar button svg { width: .8rem; height: .8rem; }
+.aw-padel-replay-bar { display: flex; align-items: center; gap: .8rem; margin-top: .6rem; color: #89a5b4; font-family: var(--font-geist-mono), monospace; font-size: var(--aw-text-micro); }
+.aw-padel-replay-bar button { display: inline-flex; align-items: center; gap: .4rem; min-height: 2.25rem; border: 1px solid rgb(255 255 255 / 22%); border-radius: .35rem; padding: 0 .75rem; color: #eef8ff; font-family: Inter, -apple-system, sans-serif; font-size: var(--aw-text-ui); }
+.aw-padel-replay-bar button:hover { border-color: #48bff0; }
+.aw-padel-replay-track { position: relative; flex: 1; height: 3px; overflow: hidden; background: rgb(255 255 255 / 14%); }
+.aw-padel-replay-track > span { position: absolute; inset: 0; background: #48bff0; transform: scaleX(0); transform-origin: left; }
+.aw-padel-replay-tag { color: #f5a623; }
 .aw-padel-replay figcaption { margin-top: .55rem; color: #89a5b4; font-size: var(--aw-text-micro); line-height: 1.5; }
+@container padel (max-width: 46rem) { .aw-padel-replay-tag { display: none; } }
 .aw-suhulog-frame.is-contained { box-shadow: none; }

@@ -153,3 +153,4 @@
   .ps-artifacts li > span,
   .ps-artifacts a { padding: .8rem 0; line-height: 1.45; }
 }
+.ps-caption a { text-decoration: underline; text-underline-offset: 2px; }

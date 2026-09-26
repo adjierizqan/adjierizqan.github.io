@@ -80,7 +80,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   font-size: var(--aw-text-body);
   line-height: 1.45;
 }
-.aw-desktop.is-strong-contrast { --muted: #5e636d; }
+
 .aw-wallpaper {
   position: absolute;
   z-index: var(--aw-z-wallpaper);
@@ -1436,7 +1436,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
     padding: 0 .8rem;
     backdrop-filter: blur(12px);
   }
-  .aw-mobile-header button { display: grid; width: 2rem; height: 2rem; place-items: center; color: #666b75; }
+  .aw-mobile-header button { display: grid; width: 2.75rem; height: 2.75rem; place-items: center; color: #666b75; }
   .aw-mobile-header strong { font-size: .65rem; }
   .aw-mobile-header-spacer { width: 2rem; height: 2rem; }
   .aw-center { width: 100%; min-height: calc(100vh - 3.25rem); height: auto; overflow: visible; padding: 2rem 1rem 3rem; }

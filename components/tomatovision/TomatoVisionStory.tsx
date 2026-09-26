@@ -143,7 +143,7 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
       <ProjectHero
         eyebrow="Research · Computer Vision · Master’s thesis"
         title="TomatoVision"
-        summary="Three-class tomato maturity detection in a crowded greenhouse — a YOLOv11 baseline, two architecture changes, and a three-model Weighted Boxes Fusion ensemble."
+        summary="Three-class tomato maturity detection in a crowded greenhouse: a YOLOv11 baseline, two architecture changes, and a three-model Weighted Boxes Fusion ensemble."
         status={tomatoStatus}
       />
 
@@ -151,7 +151,7 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
         items={tomatoMatchedScene}
         defaultId="wbf"
         legend={legend}
-        caption={<>Portfolio demo: one public-domain photo, outside the thesis dataset, through the three trained models. Every number on this page comes from thesis validation, not from these images. <EvidenceChip label="Demo inference" target={evidence.demo} /></>}
+        caption={<>Qualitative portfolio demo: one real photograph, outside the thesis dataset, through the three trained models. The thesis metrics come from the validation dataset, not from this image. Photo: <a href="https://commons.wikimedia.org/wiki/File:-2020-07-20_Bush_tomato_plant_(Totem),_Trimingham,_Norfolk_(1).JPG" target="_blank" rel="noopener noreferrer">Kolforn</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>; detections overlaid, shared under the same licence. <EvidenceChip label="Demo inference" target={evidence.demo} /></>}
       /></div>}
 
       {reveal(.16) && <div className="aw-stream-structure"><MetricProgression
@@ -231,7 +231,7 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
             }))}
           />
         </div>
-        <p className="ps-caption">Throughput at batch 8, FP16, RTX 5090 — not single-image latency. <EvidenceChip label="Paper Table IV" target={evidence.results} /></p>
+        <p className="ps-caption">Throughput at batch 8, FP16, RTX 5090, not single-image latency. <EvidenceChip label="Paper Table IV" target={evidence.results} /></p>
       </EditorialSection>}
 
       {reveal(.76) && <EditorialSection index="06" title="Dataset" className="aw-stream-structure">
@@ -255,7 +255,7 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
         <ol className="tv-learned">
           <li>Swin-T gave the largest single-model gain: +{delta(byId["swin-t"].map50, baseline.map50)} mAP@0.5.</li>
           <li>Multi-scale SPPF added +{delta(bestSingle.map50, byId["swin-t"].map50)} and was the fastest single model ({bestSingle.msPerImage.toFixed(2)} ms).</li>
-          <li>Fusion helped most: +{delta(wbf.map50, bestSingle.map50)} over the best single model — at {wbf.msPerImage.toFixed(2)} ms instead of {bestSingle.msPerImage.toFixed(2)} ms.</li>
+          <li>Fusion helped most: +{delta(wbf.map50, bestSingle.map50)} over the best single model, at {wbf.msPerImage.toFixed(2)} ms instead of {bestSingle.msPerImage.toFixed(2)} ms.</li>
           <li>Limits: one farm, a 160-image validation split, per-model visualisation thresholds; a research result, not a deployed product.</li>
         </ol>
       </EditorialSection>}
