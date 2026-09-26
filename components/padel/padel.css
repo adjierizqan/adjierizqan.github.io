@@ -88,3 +88,13 @@
 .aw-padel-replay figcaption { margin-top: .55rem; color: #89a5b4; font-size: var(--aw-text-micro); line-height: 1.5; }
 @container padel (max-width: 46rem) { .aw-padel-replay-tag { display: none; } }
 .aw-suhulog-frame.is-contained { box-shadow: none; }
+
+/* Real play clip (licensed), above the analysis panel */
+.aw-padel-real { margin-top: 1rem; }
+.aw-padel-real-stage { position: relative; overflow: hidden; border-radius: .5rem; background: #0b1b2a; }
+.aw-padel-real video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; cursor: pointer; }
+.aw-padel-real-stage > button { position: absolute; right: .7rem; bottom: .7rem; display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid rgb(255 255 255 / 45%); border-radius: 50%; background: rgb(6 24 42 / 70%); color: #fff; }
+.aw-padel-real-stage > button svg { width: .8rem; height: .8rem; }
+.aw-padel-real figcaption { margin-top: .55rem; color: #6b7079; font-size: var(--aw-text-micro); line-height: 1.5; }
+.aw-padel-real figcaption strong { color: #2a2d33; font-weight: 620; }
+.aw-padel-real figcaption a { text-decoration: underline; text-underline-offset: 2px; }

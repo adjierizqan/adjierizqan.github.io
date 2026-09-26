@@ -25,6 +25,7 @@ import {
   ResearchTable,
 } from "@/components/project-story/ProjectStory";
 import "./tomatovision.css";
+import { L, t } from "@/lib/i18n";
 
 const classColors = ["#22c55e", "#f59e0b", "#ef4444"];
 const legend = [
@@ -68,15 +69,15 @@ function DenseSceneViewer() {
   const split = activeId !== baseline.id;
   return (
     <div className="tv-scene">
-      <div className="tv-scene-tabs" role="tablist" aria-label="Model configuration">
+      <div className="tv-scene-tabs" role="tablist" aria-label={t("Model configuration")}>
         {tomatoConfigurations.map((configuration) => <button type="button" role="tab" aria-selected={activeId === configuration.id} key={configuration.id} onClick={() => setActiveId(configuration.id)}>{configuration.shortLabel}</button>)}
       </div>
       <div className={"tv-scene-stage" + (split ? " is-split" : "")}>
-        <Image src={active.denseSceneImage} alt={`${active.label} detections on a dense public-domain greenhouse photo`} fill sizes="(max-width: 760px) 100vw, 920px" className="object-cover" />
+        <Image src={active.denseSceneImage} alt={L(`${active.label} detections on a dense public-domain greenhouse photo`, `Deteksi ${active.label} pada foto rumah kaca domain publik yang padat`)} fill sizes="(max-width: 760px) 100vw, 920px" className="object-cover" />
         {split && <>
           <div className="tv-scene-baseline" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}><Image src={baseline.denseSceneImage} alt="" fill sizes="(max-width: 760px) 100vw, 920px" className="object-cover" /></div>
           <i className="tv-scene-handle" aria-hidden="true" style={{ left: position + "%" }}><b /></i>
-          <input type="range" min="0" max="100" value={position} onChange={(event) => setPosition(Number(event.target.value))} aria-label={`Divider: YOLOv11 on the left, ${active.label} on the right`} />
+          <input type="range" min="0" max="100" value={position} onChange={(event) => setPosition(Number(event.target.value))} aria-label={L(`Divider: YOLOv11 on the left, ${active.label} on the right`, `Pembatas: YOLOv11 di kiri, ${active.label} di kanan`)} />
         </>}
       </div>
     </div>
@@ -93,10 +94,10 @@ function SpeedScatter() {
   };
   return (
     <figure className="tv-scatter">
-      <svg viewBox="0 0 540 236" role="img" aria-label="mAP@0.5 against milliseconds per image for all seven configurations; filled points are single models, open points are ensembles">
+      <svg viewBox="0 0 540 236" role="img" aria-label={t("mAP@0.5 against milliseconds per image for all seven configurations; filled points are single models, open points are ensembles")}>
         <text x="16" y="10" className="tv-axis-title is-wide">y: mAP@0.5 (0.79 – 0.83)</text>
-        <text x="524" y="10" className="tv-axis-title is-wide" textAnchor="end">x: ms per image (50 – 92)</text>
-        <text x="280" y="232" className="tv-axis-title is-narrow" textAnchor="middle">ms per image</text>
+        <text x="524" y="10" className="tv-axis-title is-wide" textAnchor="end">{t("x: ms per image (50 – 92)")}</text>
+        <text x="280" y="232" className="tv-axis-title is-narrow" textAnchor="middle">{t("ms per image")}</text>
         {[0.79, 0.8, 0.81, 0.82, 0.83].map((tick) => <g key={tick}><line x1="60" x2="500" y1={y(tick)} y2={y(tick)} className="tv-grid" /><text x="52" y={y(tick) + 3} textAnchor="end" className="tv-tick">{tick.toFixed(2)}</text></g>)}
         {[50, 60, 70, 80, 90].map((tick) => <text key={tick} x={x(tick)} y="206" textAnchor="middle" className="tv-tick">{tick}</text>)}
         <line x1="60" x2="60" y1="22" y2="190" className="tv-axis" />
@@ -104,11 +105,11 @@ function SpeedScatter() {
           const label = labelled[configuration.id];
           return <g key={configuration.id}>
             <circle cx={x(configuration.msPerImage)} cy={y(configuration.map50)} r="4" className={configuration.kind === "single" ? "tv-point is-single" : "tv-point is-ensemble"} />
-            {label && <text x={x(configuration.msPerImage) + label.dx} y={y(configuration.map50) + label.dy} textAnchor={label.anchor} className="tv-point-label">{label.text}</text>}
+            {label && <text x={x(configuration.msPerImage) + label.dx} y={y(configuration.map50) + label.dy} textAnchor={label.anchor} className="tv-point-label">{t(label.text)}</text>}
           </g>;
         })}
       </svg>
-      <figcaption className="tv-scatter-key"><span className="tv-scatter-yaxis">y: mAP@0.5</span><span><i className="is-single" /> single model</span><span><i className="is-ensemble" /> WBF ensemble</span></figcaption>
+      <figcaption className="tv-scatter-key"><span className="tv-scatter-yaxis">y: mAP@0.5</span><span><i className="is-single" /> {t("single model")}</span><span><i className="is-ensemble" /> {t("WBF ensemble")}</span></figcaption>
     </figure>
   );
 }
@@ -121,12 +122,12 @@ function TomatoAsk({ query, setQuery, ask }: { query: string; setQuery: (value: 
   const suggestions = ["Why does fusion beat the best single model?", "What makes the orange stage hard?"];
   return (
     <section className="tv-ask" aria-labelledby="tv-ask-title">
-      <h2 id="tv-ask-title">Ask about TomatoVision</h2>
+      <h2 id="tv-ask-title">{t("Ask about TomatoVision")}</h2>
       <form onSubmit={submit}>
-        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ask about the models, data or results…" aria-label="Ask about TomatoVision" maxLength={800} />
-        <button type="submit" disabled={!query.trim()} aria-label="Send question"><span aria-hidden="true">→</span></button>
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Ask about the models, data or results…")} aria-label={t("Ask about TomatoVision")} maxLength={800} />
+        <button type="submit" disabled={!query.trim()} aria-label={t("Send question")}><span aria-hidden="true">→</span></button>
       </form>
-      <div className="tv-ask-suggestions">{suggestions.map((suggestion) => <button type="button" key={suggestion} onClick={() => ask(suggestion)}>{suggestion}</button>)}</div>
+      <div className="tv-ask-suggestions">{suggestions.map((suggestion) => t(suggestion)).map((suggestion) => <button type="button" key={suggestion} onClick={() => ask(suggestion)}>{suggestion}</button>)}</div>
     </section>
   );
 }
@@ -141,62 +142,62 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
   return (
     <div className="tv-story">
       <ProjectHero
-        eyebrow="Research · Computer Vision · Master’s thesis"
+        eyebrow={t("Research · Computer Vision · Master’s thesis")}
         title="TomatoVision"
-        summary="Three-class tomato maturity detection in a crowded greenhouse: a YOLOv11 baseline, two architecture changes, and a three-model Weighted Boxes Fusion ensemble."
-        status={tomatoStatus}
+        summary={t("Three-class tomato maturity detection in a crowded greenhouse: a YOLOv11 baseline, two architecture changes, and a three-model Weighted Boxes Fusion ensemble.")}
+        status={t(tomatoStatus)}
       />
 
       {reveal(.08) && <div className="aw-stream-structure"><DetectionComparison
-        items={tomatoMatchedScene}
+        items={tomatoMatchedScene.map((item) => ({ ...item, tab: t(item.tab), label: t(item.label), alt: t(item.alt) }))}
         defaultId="wbf"
-        legend={legend}
-        caption={<>Qualitative portfolio demo: one real photograph, outside the thesis dataset, through the three trained models. The thesis metrics come from the validation dataset, not from this image. Photo: <a href="https://commons.wikimedia.org/wiki/File:-2020-07-20_Bush_tomato_plant_(Totem),_Trimingham,_Norfolk_(1).JPG" target="_blank" rel="noopener noreferrer">Kolforn</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>; detections overlaid, shared under the same licence. <EvidenceChip label="Demo inference" target={evidence.demo} /></>}
+        legend={legend.map((entry) => ({ ...entry, label: t(entry.label) }))}
+        caption={<>{t("Qualitative portfolio demo: one real photograph, outside the thesis dataset, through the three trained models. The thesis metrics come from the validation dataset, not from this image. Photo:")} <a href="https://commons.wikimedia.org/wiki/File:-2020-07-20_Bush_tomato_plant_(Totem),_Trimingham,_Norfolk_(1).JPG" target="_blank" rel="noopener noreferrer">Kolforn</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>{t("; detections overlaid, shared under the same licence.")} <EvidenceChip label={t("Demo inference")} target={evidence.demo} /></>}
       /></div>}
 
       {reveal(.16) && <div className="aw-stream-structure"><MetricProgression
         unit="mAP@0.5"
         steps={[
           { value: formatMetric(baseline.map50), label: "YOLOv11" },
-          { value: formatMetric(bestSingle.map50), label: "Best single" },
+          { value: formatMetric(bestSingle.map50), label: t("Best single") },
           { value: formatMetric(wbf.map50), label: "Three-model WBF" },
         ]}
-      >Architecture changes add {delta(bestSingle.map50, baseline.map50)} mAP@0.5; fusing three detectors adds a further {delta(wbf.map50, bestSingle.map50)}. <EvidenceChip label="Paper Table II" target={evidence.results} /> <EvidenceChip label="Paper Table III" target={evidence.results} /></MetricProgression></div>}
+      >{L(`Architecture changes add ${delta(bestSingle.map50, baseline.map50)} mAP@0.5; fusing three detectors adds a further ${delta(wbf.map50, bestSingle.map50)}.`, `Perubahan arsitektur menambah ${delta(bestSingle.map50, baseline.map50)} mAP@0.5; menggabungkan tiga detektor menambah ${delta(wbf.map50, bestSingle.map50)} lagi.`)} <EvidenceChip label="Paper Table II" target={evidence.results} /> <EvidenceChip label="Paper Table III" target={evidence.results} /></MetricProgression></div>}
 
-      {reveal(.26) && <EditorialSection index="01" title="The problem" className="aw-stream-structure">
-        <p className="ps-lede">Fruit grow in dense clusters, hide behind leaves and stems, and are lit unevenly. The change from green to orange to red is gradual, so the orange stage is the hardest to call.</p>
+      {reveal(.26) && <EditorialSection index="01" title={t("The problem")} className="aw-stream-structure">
+        <p className="ps-lede">{t("Fruit grow in dense clusters, hide behind leaves and stems, and are lit unevenly. The change from green to orange to red is gradual, so the orange stage is the hardest to call.")}</p>
         <div className="tv-problem-figures">
-          <AnnotationMapFigure map={dense} caption={`${count(dense.boxes.length)} annotated fruit in one image · annotation boxes`} />
-          <Figure className="tv-problem-secondary" caption="Orange-stage fruit · Combine 4 on a public-domain demo photo">
-            <div className="ps-frame is-landscape"><Image src="/projects/tomato-ripeness/research/demo3-combine4.webp" alt="Combine 4 detections on orange-stage tomatoes in a public-domain photo" fill sizes="(max-width: 760px) 100vw, 450px" className="object-cover" /></div>
+          <AnnotationMapFigure map={dense} caption={L(`${count(dense.boxes.length)} annotated fruit in one image · annotation boxes`, `${count(dense.boxes.length)} buah teranotasi dalam satu gambar · kotak anotasi`)} />
+          <Figure className="tv-problem-secondary" caption={t("Orange-stage fruit · Combine 4 on a public-domain demo photo")}>
+            <div className="ps-frame is-landscape"><Image src="/projects/tomato-ripeness/research/demo3-combine4.webp" alt={t("Combine 4 detections on orange-stage tomatoes in a public-domain photo")} fill sizes="(max-width: 760px) 100vw, 450px" className="object-cover" /></div>
           </Figure>
         </div>
       </EditorialSection>}
 
-      {reveal(.36) && <EditorialSection index="02" title="What changed" className="aw-stream-structure tv-method" aside={<EvidenceChip label="Training config" target={evidence.training} />}>
-        <MethodDiagram label="Detection pipeline" steps={[
+      {reveal(.36) && <EditorialSection index="02" title={t("What changed")} className="aw-stream-structure tv-method" aside={<EvidenceChip label={t("Training config")} target={evidence.training} />}>
+        <MethodDiagram label={t("Detection pipeline")} steps={[
           { label: "Input 1280×1280" },
           { label: "YOLOv11 baseline" },
-          { label: "Swin-T backbone", detail: "shifted-window attention" },
-          { label: "Multi-scale SPPF", detail: "multi-scale features for small, occluded fruit" },
-          { label: "three detectors" },
-          { label: "Weighted Boxes Fusion", detail: "confidence-weighted box averaging" },
-          { label: "Detections" },
+          { label: "Swin-T backbone", detail: t("shifted-window attention") },
+          { label: "Multi-scale SPPF", detail: t("multi-scale features for small, occluded fruit") },
+          { label: t("three detectors") },
+          { label: "Weighted Boxes Fusion", detail: t("confidence-weighted box averaging") },
+          { label: t("Detections") },
         ]} />
-        <div className="tv-method-chip"><EvidenceChip label="Training config" target={evidence.training} /></div>
+        <div className="tv-method-chip"><EvidenceChip label={t("Training config")} target={evidence.training} /></div>
       </EditorialSection>}
 
-      {reveal(.46) && <EditorialSection index="03" title="Same scene, different models" className="aw-stream-structure">
+      {reveal(.46) && <EditorialSection index="03" title={t("Same scene, different models")} className="aw-stream-structure">
         <DenseSceneViewer />
-        <p className="ps-caption">A dense public-domain greenhouse photo through all seven configurations; a qualitative demo, not part of the evaluation. <EvidenceChip label="Demo inference" target={evidence.demo} /></p>
+        <p className="ps-caption">{t("A dense public-domain greenhouse photo through all seven configurations; a qualitative demo, not part of the evaluation.")} <EvidenceChip label={t("Demo inference")} target={evidence.demo} /></p>
       </EditorialSection>}
 
-      {reveal(.56) && <EditorialSection index="04" title="Experiments" className="aw-stream-structure">
+      {reveal(.56) && <EditorialSection index="04" title={t("Experiments")} className="aw-stream-structure">
         <ResearchTable
-          label="Validation results for all seven configurations"
-          secondaryToggle="precision and recall"
+          label={t("Validation results for all seven configurations")}
+          secondaryToggle={t("precision and recall")}
           columns={[
-            { key: "configuration", label: "Configuration" },
+            { key: "configuration", label: t("Configuration") },
             { key: "precision", label: "Precision", numeric: true, secondary: true },
             { key: "recall", label: "Recall", numeric: true, secondary: true },
             { key: "map50", label: "mAP@0.5", numeric: true },
@@ -207,7 +208,7 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
             key: item.id,
             emphasis: item.id === wbf.id,
             cells: {
-              configuration: <>{item.label}{item.members && <span className="tv-members"> · {item.members}</span>}</>,
+              configuration: <>{item.label}{item.members && <span className="tv-members"> · {t(item.members)}</span>}</>,
               precision: formatMetric(item.precision),
               recall: formatMetric(item.recall),
               map50: formatMetric(item.map50),
@@ -215,60 +216,60 @@ export function TomatoVisionStory({ progress, query, setQuery, ask }: { progress
             },
           }))}
         />
-        <p className="ps-caption">Validation setting: 960 px, conf 0.05, IoU 0.6. <EvidenceChip label="Paper Table II" target={evidence.results} /> <EvidenceChip label="Paper Table III" target={evidence.results} /></p>
+        <p className="ps-caption">{t("Validation setting: 960 px, conf 0.05, IoU 0.6.")} <EvidenceChip label="Paper Table II" target={evidence.results} /> <EvidenceChip label="Paper Table III" target={evidence.results} /></p>
       </EditorialSection>}
 
-      {reveal(.66) && <EditorialSection index="05" title="Accuracy vs speed" className="aw-stream-structure">
+      {reveal(.66) && <EditorialSection index="05" title={t("Accuracy vs speed")} className="aw-stream-structure">
         <div className="tv-speed">
           <SpeedScatter />
           <ResearchTable
-            label="Throughput for the baseline, best single model and Combine 4"
-            columns={[{ key: "model", label: "Model" }, { key: "fps", label: "FPS", numeric: true }, { key: "ms", label: "ms", numeric: true }]}
-            rows={[{ id: baseline.id, label: "YOLOv11" }, { id: bestSingle.id, label: "Best single" }, { id: wbf.id, label: "Combine 4" }].map(({ id, label }) => ({
+            label={t("Throughput for the baseline, best single model and Combine 4")}
+            columns={[{ key: "model", label: t("Model") }, { key: "fps", label: "FPS", numeric: true }, { key: "ms", label: "ms", numeric: true }]}
+            rows={[{ id: baseline.id, label: "YOLOv11" }, { id: bestSingle.id, label: t("Best single") }, { id: wbf.id, label: "Combine 4" }].map(({ id, label }) => ({
               key: id,
               emphasis: id === wbf.id,
               cells: { model: label, fps: byId[id].fps.toFixed(3), ms: byId[id].msPerImage.toFixed(2) },
             }))}
           />
         </div>
-        <p className="ps-caption">Throughput at batch 8, FP16, RTX 5090, not single-image latency. <EvidenceChip label="Paper Table IV" target={evidence.results} /></p>
+        <p className="ps-caption">{t("Throughput at batch 8, FP16, RTX 5090, not single-image latency.")} <EvidenceChip label="Paper Table IV" target={evidence.results} /></p>
       </EditorialSection>}
 
-      {reveal(.76) && <EditorialSection index="06" title="Dataset" className="aw-stream-structure">
+      {reveal(.76) && <EditorialSection index="06" title={t("Dataset")} className="aw-stream-structure">
         <p className="tv-dataset-facts">
-          <b>{count(tomatoDataset.sourceImages)} source images</b><i aria-hidden="true"> · </i>
-          <b>{count(totalBoxes)} annotated fruit</b><i aria-hidden="true"> · </i>
-          <span>green {count(tomatoDataset.boxes.green)}<i aria-hidden="true"> · </i>orange {count(tomatoDataset.boxes.orange)}<i aria-hidden="true"> · </i>red {count(tomatoDataset.boxes.red)}</span><i aria-hidden="true"> · </i>
+          <b>{L(`${count(tomatoDataset.sourceImages)} source images`, `${count(tomatoDataset.sourceImages)} gambar sumber`)}</b><i aria-hidden="true"> · </i>
+          <b>{L(`${count(totalBoxes)} annotated fruit`, `${count(totalBoxes)} buah teranotasi`)}</b><i aria-hidden="true"> · </i>
+          <span>{t("green")} {count(tomatoDataset.boxes.green)}<i aria-hidden="true"> · </i>{t("orange")} {count(tomatoDataset.boxes.orange)}<i aria-hidden="true"> · </i>{t("red")} {count(tomatoDataset.boxes.red)}</span><i aria-hidden="true"> · </i>
           <span>{tomatoDataset.source}</span><i aria-hidden="true"> · </i>
-          <span>{tomatoDataset.split}</span>
+          <span>{t(tomatoDataset.split)}</span>
         </p>
         <div className="tv-dataset-maps">
           {maps.map((map) => {
             const classes = Object.entries(map.counts).filter(([, value]) => value > 0);
-            return <AnnotationMapFigure key={map.id} map={map} caption={classes.length === 1 ? `${map.boxes.length} ${classes[0][0]}` : `${map.boxes.length} mixed`} />;
+            return <AnnotationMapFigure key={map.id} map={map} caption={classes.length === 1 ? `${map.boxes.length} ${t(classes[0][0])}` : `${map.boxes.length} ${t("mixed")}`} />;
           })}
         </div>
-        <p className="ps-caption">Annotation boxes drawn from the source label files; the field photographs are not reproduced here. <EvidenceChip label="Annotation files" target={evidence.annotations} /></p>
+        <p className="ps-caption">{t("Annotation boxes drawn from the source label files; the field photographs are not reproduced here.")} <EvidenceChip label={t("Annotation files")} target={evidence.annotations} /></p>
       </EditorialSection>}
 
-      {reveal(.84) && <EditorialSection index="07" title="What I learned" className="aw-stream-structure">
+      {reveal(.84) && <EditorialSection index="07" title={t("What I learned")} className="aw-stream-structure">
         <ol className="tv-learned">
-          <li>Swin-T gave the largest single-model gain: +{delta(byId["swin-t"].map50, baseline.map50)} mAP@0.5.</li>
-          <li>Multi-scale SPPF added +{delta(bestSingle.map50, byId["swin-t"].map50)} and was the fastest single model ({bestSingle.msPerImage.toFixed(2)} ms).</li>
-          <li>Fusion helped most: +{delta(wbf.map50, bestSingle.map50)} over the best single model, at {wbf.msPerImage.toFixed(2)} ms instead of {bestSingle.msPerImage.toFixed(2)} ms.</li>
-          <li>Limits: one farm, a 160-image validation split, per-model visualisation thresholds; a research result, not a deployed product.</li>
+          <li>{L(`Swin-T gave the largest single-model gain: +${delta(byId["swin-t"].map50, baseline.map50)} mAP@0.5.`, `Swin-T memberi peningkatan terbesar untuk satu model: +${delta(byId["swin-t"].map50, baseline.map50)} mAP@0.5.`)}</li>
+          <li>{L(`Multi-scale SPPF added +${delta(bestSingle.map50, byId["swin-t"].map50)} and was the fastest single model (${bestSingle.msPerImage.toFixed(2)} ms).`, `Multi-scale SPPF menambah +${delta(bestSingle.map50, byId["swin-t"].map50)} dan menjadi model tunggal tercepat (${bestSingle.msPerImage.toFixed(2)} ms).`)}</li>
+          <li>{L(`Fusion helped most: +${delta(wbf.map50, bestSingle.map50)} over the best single model, at ${wbf.msPerImage.toFixed(2)} ms instead of ${bestSingle.msPerImage.toFixed(2)} ms.`, `Fusion membantu paling banyak: +${delta(wbf.map50, bestSingle.map50)} di atas model tunggal terbaik, dengan ${wbf.msPerImage.toFixed(2)} ms alih-alih ${bestSingle.msPerImage.toFixed(2)} ms.`)}</li>
+          <li>{t("Limits: one farm, a 160-image validation split, per-model visualisation thresholds; a research result, not a deployed product.")}</li>
         </ol>
       </EditorialSection>}
 
-      {reveal(.9) && <EditorialSection index="08" title="Evidence" className="aw-stream-structure">
+      {reveal(.9) && <EditorialSection index="08" title={t("Evidence")} className="aw-stream-structure">
         <ArtifactLinks items={[
-          { id: evidence.thesis, label: "Master’s thesis", detail: "research, 2026" },
-          { id: "tv-evidence-code", label: "Code", detail: "private research repository" },
-          { id: evidence.results, label: "Results tables", detail: "from the validation runs (thesis Tables II–IV)" },
-          { id: evidence.training, label: "Training configs", detail: `imgsz ${tomatoTraining.imgsz}, batch ${tomatoTraining.batch}, ${tomatoTraining.epochs} epochs, patience ${tomatoTraining.patience} (args.yaml ×3)` },
-          { id: evidence.outputs, label: "Thesis model outputs", detail: `${tomatoMatchedSceneCount} matched scenes × ${tomatoConfigurations.length} configurations; not published (field photos without reuse permission)` },
-          { id: evidence.demo, label: "Demo inference", detail: `${tomatoDemo.photos} through the thesis weights; ${tomatoDemo.settings}` },
-          { id: evidence.annotations, label: "Annotation files", detail: `${count(tomatoDataset.sourceImages)} Pascal VOC files; the box counts on this page are counted from them` },
+          { id: evidence.thesis, label: t("Master’s thesis"), detail: t("research, 2026") },
+          { id: "tv-evidence-code", label: t("Code"), detail: t("private research repository") },
+          { id: evidence.results, label: t("Results tables"), detail: t("from the validation runs (thesis Tables II–IV)") },
+          { id: evidence.training, label: t("Training configs"), detail: `imgsz ${tomatoTraining.imgsz}, batch ${tomatoTraining.batch}, ${tomatoTraining.epochs} epochs, patience ${tomatoTraining.patience} (args.yaml ×3)` },
+          { id: evidence.outputs, label: t("Thesis model outputs"), detail: L(`${tomatoMatchedSceneCount} matched scenes × ${tomatoConfigurations.length} configurations; not published (field photos without reuse permission)`, `${tomatoMatchedSceneCount} scene × ${tomatoConfigurations.length} konfigurasi; tidak dipublikasikan (foto lapangan tanpa izin penggunaan ulang)`) },
+          { id: evidence.demo, label: t("Demo inference"), detail: L(`${tomatoDemo.photos} through the thesis weights; ${tomatoDemo.settings}`, `${t(tomatoDemo.photos)}, dijalankan dengan bobot tesis; ${tomatoDemo.settings}`) },
+          { id: evidence.annotations, label: t("Annotation files"), detail: L(`${count(tomatoDataset.sourceImages)} Pascal VOC files; the box counts on this page are counted from them`, `${count(tomatoDataset.sourceImages)} file Pascal VOC; jumlah kotak di halaman ini dihitung dari file tersebut`) },
         ]} />
       </EditorialSection>}
 

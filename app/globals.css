@@ -1637,3 +1637,18 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-porsche-record ol { grid-template-columns:1fr; }
   .aw-porsche-record li:nth-child(even) { border-left:0; padding-left:0; }
 }
+
+/* Language switch and music control (title bar and mobile header) */
+.aw-lang { display: inline-flex; align-items: center; gap: 1px; border: 1px solid #d5d8e0; border-radius: .45rem; padding: 1px; }
+.aw-lang button { min-width: 1.7rem; height: 1.45rem; border-radius: .35rem; color: #7a7f88; font-size: .6rem; font-weight: 650; letter-spacing: .03em; }
+.aw-lang button[aria-pressed="true"] { background: #e8eaef; color: #1e2024; }
+.aw-title-actions > button.aw-music { width: 1.7rem; justify-content: center; border-color: transparent; background: transparent; padding: 0; }
+.aw-title-actions > button.aw-music:hover { border-color: #d5d8e0; background: #e8eaef; }
+.aw-music svg { width: .9rem; }
+.aw-music.is-playing { color: #1f7a55; }
+@media (max-width: 760px) {
+  .aw-mobile-header { gap: .15rem; }
+  .aw-mobile-header .aw-mobile-lang { margin-left: auto; }
+  .aw-mobile-lang button { min-width: 2.2rem; height: 2.2rem; font-size: .72rem; }
+  .aw-mobile-header .aw-mobile-lang button { width: auto; }
+}

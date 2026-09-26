@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { MouseEvent, ReactNode, useId, useState } from "react";
 import "./project-story.css";
+import { t } from "@/lib/i18n";
 
 // Editorial primitives for project case studies. TomatoVision is the pilot; other projects keep their own layouts.
 
@@ -52,8 +53,8 @@ export function DetectionComparison({ items, defaultId, legend, caption }: { ite
   const [active, setActive] = useState(defaultId);
   const baseId = useId();
   return (
-    <section className="ps-detections" aria-label="Same scene across models">
-      <div className="ps-segmented" role="tablist" aria-label="Choose a model">
+    <section className="ps-detections" aria-label={t("Same scene across models")}>
+      <div className="ps-segmented" role="tablist" aria-label={t("Choose a model")}>
         {items.map((item) => (
           <button type="button" role="tab" id={baseId + item.id} aria-selected={active === item.id} aria-controls={baseId + item.id + "-panel"} key={item.id} onClick={() => setActive(item.id)}>{item.tab}</button>
         ))}
@@ -66,7 +67,7 @@ export function DetectionComparison({ items, defaultId, legend, caption }: { ite
           </figure>
         ))}
       </div>
-      {legend && <ul className="ps-legend" aria-label="Class colours">{legend.map((entry) => <li key={entry.label}><i style={{ background: entry.color }} />{entry.label}</li>)}</ul>}
+      {legend && <ul className="ps-legend" aria-label={t("Class colours")}>{legend.map((entry) => <li key={entry.label}><i style={{ background: entry.color }} />{entry.label}</li>)}</ul>}
       {caption && <p className="ps-caption">{caption}</p>}
     </section>
   );
@@ -121,7 +122,7 @@ export function ResearchTable({ label, columns, rows, strong = {}, secondaryTogg
           </tbody>
         </table>
       </div>
-      {hasSecondary && secondaryToggle && <button type="button" className="ps-table-toggle" aria-expanded={showSecondary} onClick={() => setShowSecondary((value) => !value)}>{showSecondary ? "Hide " : "Show "}{secondaryToggle}<span aria-hidden="true">{showSecondary ? " ↑" : " ↓"}</span></button>}
+      {hasSecondary && secondaryToggle && <button type="button" className="ps-table-toggle" aria-expanded={showSecondary} onClick={() => setShowSecondary((value) => !value)}>{showSecondary ? t("Hide") + " " : t("Show") + " "}{secondaryToggle}<span aria-hidden="true">{showSecondary ? " ↑" : " ↓"}</span></button>}
     </div>
   );
 }

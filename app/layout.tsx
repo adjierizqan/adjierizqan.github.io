@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const THEME_BOOT = `(function(){try{var d=document.documentElement,m=window.matchMedia("(prefers-color-scheme: dark)"),k="aw-theme";var s=localStorage.getItem(k);d.dataset.theme=s==="dark"||s==="light"?s:(m.matches?"dark":"light");m.addEventListener("change",function(e){if(!localStorage.getItem(k))d.dataset.theme=e.matches?"dark":"light"})}catch(e){}})();`;
+const THEME_BOOT = `(function(){try{var d=document.documentElement,m=window.matchMedia("(prefers-color-scheme: dark)"),k="aw-theme";var s=localStorage.getItem(k);d.dataset.theme=s==="dark"||s==="light"?s:(m.matches?"dark":"light");var l=localStorage.getItem("aw-locale");d.lang=l==="id"?"id":"en";m.addEventListener("change",function(e){if(!localStorage.getItem(k))d.dataset.theme=e.matches?"dark":"light"})}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -35,7 +35,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Theme before first paint: saved choice, else the system preference (followed live). */}
+        {/* Theme and language before first paint: saved choice, else system theme / English. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
       </head>
       <body className="flex min-h-full flex-col">

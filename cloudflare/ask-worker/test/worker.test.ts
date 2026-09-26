@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { buildModelMessages, handleRequest, MAX_MESSAGE_LENGTH, MODEL, type Env } from "../src/core";
+import { buildModelMessages, handleRequest, validateAskBody, MAX_MESSAGE_LENGTH, MODEL, type Env } from "../src/core";
 
 const origin = "http://localhost:4174";
 
@@ -129,5 +129,17 @@ describe("Adjie Workspace Ask Worker", () => {
     const body = await response.text();
     expect(body).toContain("temporarily unavailable");
     expect(body).not.toContain("secret internal failure");
+  });
+});
+
+describe("locale", () => {
+  test("locale is validated and steers the answer language", () => {
+    expect(validateAskBody({ message: "hi", locale: "fr" }).ok).toBe(false);
+    const id = validateAskBody({ message: "hi", locale: "id" });
+    expect(id.ok && id.value.locale).toBe("id");
+    if (!id.ok) return;
+    expect(buildModelMessages(id.value)[0].content).toContain("selected Indonesian");
+    const none = validateAskBody({ message: "hi" });
+    expect(none.ok && buildModelMessages(none.value)[0].content).not.toContain("selected Indonesian");
   });
 });
