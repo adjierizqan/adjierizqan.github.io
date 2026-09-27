@@ -232,52 +232,46 @@
     border: 1px solid #333436;
     background: #101111
 }
-:root[data-theme="dark"] .aw-primary-work {
-    border: 1px solid #343537;
-    background: #0f0f0f
-}
-:root[data-theme="dark"] .aw-primary-work h2 {
-    color: #d1d4db
-}
-:root[data-theme="dark"] .aw-primary-work p {
-    color: #a9aeb8
-}
-:root[data-theme="dark"] .aw-primary-work section > strong,
-:root[data-theme="dark"] .aw-secondary-work section > strong {
-    color: #b0b6c1
-}
-:root[data-theme="dark"] .aw-system-artifact {
-    border-left: 1px solid #333435;
-    background: #111112
-}
-:root[data-theme="dark"] .aw-system-flow > div {
+:root[data-theme="dark"] .aw-work-case {
     border: 1px solid #333436;
     background: #0f0f0f
 }
-:root[data-theme="dark"] .aw-system-flow strong {
-    color: #c2c6ce
+:root[data-theme="dark"] .aw-work-case:hover {
+    border-color: #393b3e
 }
-:root[data-theme="dark"] .aw-secondary-work > button {
-    border: 1px solid #333436;
-    background: #0f0f0f
+:root[data-theme="dark"] .aw-work-cases > .aw-work-case:nth-child(odd):not(.is-lead) figure {
+    border-left: 1px solid #313233
 }
-:root[data-theme="dark"] .aw-secondary-work figure {
+:root[data-theme="dark"] .aw-work-case figure {
+    border-right: 1px solid #313233;
     background: #121314
 }
-:root[data-theme="dark"] .aw-evidence-preview {
-    background: #111112
+:root[data-theme="dark"] .aw-work-case section > span {
+    color: #a0a5af
 }
-:root[data-theme="dark"] .aw-evidence-preview dl {
-    border-top: 1px solid #343537
+:root[data-theme="dark"] .aw-work-case h2 {
+    color: #d1d4db
 }
-:root[data-theme="dark"] .aw-evidence-preview dd {
-    color: #b9bec7
+:root[data-theme="dark"] .aw-work-case p {
+    color: #abb0ba
 }
-:root[data-theme="dark"] .aw-secondary-work h3 {
-    color: #cbced4
+:root[data-theme="dark"] .aw-work-case section > strong {
+    color: #bcc1cb
 }
-:root[data-theme="dark"] .aw-secondary-work p {
-    color: #a6aab5
+:root[data-theme="dark"] .aw-work-case.is-lead figure {
+    border-bottom: 1px solid #313233
+}
+:root[data-theme="dark"] .aw-work-lab > h2 {
+    color: #bec3cb
+}
+:root[data-theme="dark"] .aw-work-lab .aw-work-case figure {
+    border-bottom: 1px solid #313233
+}
+@media (max-width: 1180px) {
+    :root[data-theme="dark"] .aw-work-case figure,
+:root[data-theme="dark"] .aw-work-cases > .aw-work-case:nth-child(odd):not(.is-lead) figure {
+        border-bottom: 1px solid #313233
+    }
 }
 :root[data-theme="dark"] .aw-project-objects > button {
     border: 1px solid #333436;
@@ -903,6 +897,21 @@
 :root[data-theme="dark"] .aw-result-list a {
     border-top: 1px solid #333435
 }
+:root[data-theme="dark"] .aw-ask-label {
+    color: #a8aeb7
+}
+:root[data-theme="dark"] .aw-ask-switch::before,
+:root[data-theme="dark"] .aw-ask-switch::after {
+    border-top: 1px solid #333436
+}
+:root[data-theme="dark"] .aw-ask-context {
+    color: #a8aeb7
+}
+:root[data-theme="dark"] .aw-ask-context select {
+    border: 1px solid #343638;
+    background: #0f0f0f;
+    color: #cbcdd4
+}
 :root[data-theme="dark"] .aw-dock {
     border: 1px solid rgb(46 46 46 / 0.45);
     background: rgb(17 18 20 / 0.78);
@@ -1204,9 +1213,6 @@
         border-right: 1px solid #333436
     }
     :root[data-theme="dark"] .aw-status-progression button + button {
-        border-top: 1px solid #333435
-    }
-    :root[data-theme="dark"] .aw-system-artifact {
         border-top: 1px solid #333435
     }
     :root[data-theme="dark"] .aw-project-record > div + div {

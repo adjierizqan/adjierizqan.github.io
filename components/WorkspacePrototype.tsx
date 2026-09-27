@@ -19,7 +19,8 @@ import { L, t, tk, setActiveLocale, setLocale, subscribeToLocale, readLocale, re
 import { localizeProject } from "@/lib/localize-project";
 import { ProductEvidence, type EvidenceFrame } from "@/components/evidence/ProductEvidence";
 import { site } from "@/data/site";
-import { streamPortfolioAnswer, type PortfolioChatMessage } from "@/lib/portfolio-ai";
+import { streamPortfolioAnswer } from "@/lib/portfolio-ai";
+import { contextHistory, groupTurns, type AskTurn } from "@/lib/ask-context";
 import {
   allWorkspaceProjects as rawAll,
   featuredWork as rawFeatured,
@@ -364,44 +365,44 @@ function WorkspaceHeader({ eyebrow, title, copy, meta }: { eyebrow: string; titl
   );
 }
 
-function WorkWorkspace({ selectProject }: { selectProject: (project: WorkspaceProject) => void }) {
-  const primary = featuredProjects()[0];
-  const secondary = featuredProjects().slice(1);
+// Work media: one readable, project-specific visual per case (crops from docs/design/v105/work_media.py or the
+// project's own outputs). Projects uses the device thumbnails; Work shows the product itself, larger.
+const WORK_MEDIA: Record<string, { src: string; alt: string }> = {
+  labstock: { src: "/projects/labstock/work.webp", alt: tk("LabStock Today screen: items needing action and today's stock movements, demo data") },
+  bdrs: { src: "/projects/bdrs/work.webp", alt: tk("BDRS patient workstation: blood request, cross-match step and service workflow, demo data") },
+  suhulog: { src: "/projects/suhulog/device-story.webp", alt: tk("SuhuLog on phone for entry and on desktop for monitoring, demo data") },
+  "tomato-ripeness": { src: "/projects/tomato-ripeness/research/thumb.webp", alt: tk("The same tomato plant: YOLOv11 baseline next to three-model WBF detections") },
+  "padel-vision": { src: "/projects/padel-vision/analytics/thumb.webp", alt: tk("Padel Vision frame: player boxes, IDs, ball and a marked hit on a real rally") },
+  "porsche-3d": { src: "/projects/porsche-3d/cinematic/01-rwb964-hero.webp", alt: tk("RWB 964 render from the Porsche 3D configurator") },
+};
 
+function WorkCase({ project, selectProject, lead = false }: { project: WorkspaceProject; selectProject: (project: WorkspaceProject) => void; lead?: boolean }) {
+  const media = WORK_MEDIA[project.slug];
+  return (
+    <button type="button" className={"aw-work-case" + (lead ? " is-lead" : "")} onClick={() => selectProject(project)}>
+      <figure>{media && <Image src={media.src} alt={t(media.alt)} fill sizes={lead ? "(max-width: 1000px) 100vw, 900px" : "(max-width: 1000px) 100vw, 620px"} className="object-cover object-top" priority={lead} />}</figure>
+      <section>
+        <span>{project.eyebrow} · {project.year}{project.status ? " · " + project.status : ""}</span>
+        <h2>{project.title}</h2>
+        <p>{project.summary}</p>
+        <strong>{t("Open case")} <Glyph name="arrow" /></strong>
+      </section>
+    </button>
+  );
+}
+
+function WorkWorkspace({ selectProject }: { selectProject: (project: WorkspaceProject) => void }) {
+  const [lead, ...rest] = featuredProjects();
   return (
     <main className="aw-center aw-work aw-enter">
       <WorkspaceHeader eyebrow={tk("Selected systems")} title={tk("Work")} copy={tk("Operational software and applied AI, organized around inspectable project evidence.")} meta={L("4 featured cases", "4 kasus unggulan")} />
-
-      <button type="button" className="aw-primary-work" onClick={() => selectProject(primary)}>
-        <section>
-          <span>Primary workspace artifact · {primary.year}</span>
-          <h2>{primary.title}</h2>
-          <p>{primary.summary}</p>
-          <strong>{t("Open context")} <Glyph name="arrow" /></strong>
-        </section>
-        <div className="aw-system-artifact">
-          <header><span>{t("Verified system boundary")}</span><small>{t("Evidence-led")}</small></header>
-          <div className="aw-system-flow">
-            {primary.evidence.map((item, index) => <div key={item.label}><small>0{index + 1}</small><span>{item.label}</span><strong>{item.value}</strong></div>)}
-          </div>
-          <footer>{t("No production screenshot is published without a verified sanitized asset.")}</footer>
-        </div>
-      </button>
-
-      <section className="aw-secondary-work" aria-label={t("More featured work")}>
-        {secondary.map((project) => (
-          <button type="button" key={project.slug} onClick={() => selectProject(project)}>
-            {project.thumb ?? project.image ? (
-              <figure><Image src={project.thumb ?? project.image ?? ""} alt={project.title} fill sizes="(max-width: 760px) 100vw, 480px" className="object-cover object-center" /></figure>
-            ) : (
-              <div className="aw-evidence-preview">
-                <span>{t("Evidence state")}</span>
-                {project.evidence.map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}
-              </div>
-            )}
-            <section><span>{project.eyebrow}</span><h3>{project.title}</h3><p>{project.summary}</p><strong>{t("Inspect project")} <Glyph name="arrow" /></strong></section>
-          </button>
-        ))}
+      <div className="aw-work-cases">
+        <WorkCase project={lead} selectProject={selectProject} lead />
+        {rest.map((project) => <WorkCase key={project.slug} project={project} selectProject={selectProject} />)}
+      </div>
+      <section className="aw-work-lab" aria-labelledby="aw-work-lab-title">
+        <h2 id="aw-work-lab-title">{t("From the lab")}</h2>
+        <div>{labProjects().map((project) => <WorkCase key={project.slug} project={project} selectProject={selectProject} />)}</div>
       </section>
     </main>
   );
@@ -775,8 +776,8 @@ function PadelReplay({ src }: { src: string }) {
   );
 }
 
-// Pipeline output on real play: a licensed news clip (RN7, CC BY 3.0) run through Padel Vision
-// (docs/design/padel-vision/rn7_analysis.py). The broadcast-clip analytics follow in the dark panel.
+// Pipeline output on real play: a licensed drone clip (UsaOne Ell, Pexels License) run through Padel Vision
+// (docs/design/padel-vision/pexels_analysis.py). The broadcast-clip analytics follow in the dark panel.
 function PadelRealClip() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -791,10 +792,10 @@ function PadelRealClip() {
   return (
     <figure className="aw-padel-real">
       <div className="aw-padel-real-stage">
-        <video ref={videoRef} src="/projects/padel-vision/real/rn7-analyzed.mp4" poster="/projects/padel-vision/real/rn7-analyzed-poster.webp" muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onClick={toggle} aria-label={t("Padel Vision player detection, pose and IDs on a real rally from an RN7 news report, CC BY 3.0")} />
+        <video ref={videoRef} src="/projects/padel-vision/real/pexels-analyzed.mp4" poster="/projects/padel-vision/real/pexels-analyzed-poster.webp" muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onClick={toggle} aria-label={t("Padel Vision tracking players, ball and hits on a real rally filmed by drone")} />
         <button type="button" onClick={toggle} aria-pressed={playing} aria-label={playing ? t("Pause") : t("Play")}><Glyph name={playing ? "pause" : "play"} /></button>
       </div>
-      <figcaption><strong>{t("Padel Vision on real play")}</strong> {t("Player boxes, pose and P1–P4 IDs are the pipeline's own output. Ball tracking is not shown: on this low, behind-the-glass angle it was unreliable. Footage: RN7, CC BY 3.0 (Padel Nations Cup, Nijmegen, 2018).")} <a href="https://commons.wikimedia.org/wiki/File:Padel_Nations_Cup_moet_harten_veroveren_op_Plein_%2744.webm" target="_blank" rel="noopener noreferrer">{t("Source")}</a> · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a></figcaption>
+      <figcaption><strong>{t("Padel Vision on real play")}</strong> {t("Player boxes, P1–P4 IDs, the ball track, hit markers and the court map are the pipeline's own output. The drone drifts, so every frame is registered to the first before the court is mapped. A hit is marked only where the ball turns within a player's reach, so some contacts go unmarked.")} {t("Footage: UsaOne Ell, Pexels.")} <a href="https://www.pexels.com/video/aerial-view-of-exciting-padel-match-33444758/" target="_blank" rel="noopener noreferrer">{t("Source")}</a> · <a href="https://www.pexels.com/license/" target="_blank" rel="noopener noreferrer">{t("Pexels License")}</a></figcaption>
     </figure>
   );
 }
@@ -877,21 +878,42 @@ function KnowledgeWorkspace({ selectProject }: { selectProject: (project: Worksp
   );
 }
 
-function AskWorkspace({ query, setQuery, history, currentQuestion, answer, status, error, submit, stop, choose, openProjects }: {
+const contextName = (projectId: string | null) => (projectId ? allProjects().find((project) => project.slug === projectId)?.title ?? projectId : t("General"));
+
+// The project context the next question is asked in. A plain select: General or one project.
+function AskContextBar({ context, setContext, busy }: { context: string | null; setContext: (projectId: string | null) => void; busy: boolean }) {
+  return (
+    <label className="aw-ask-context">
+      <span>{t("Context")}</span>
+      <select value={context ?? ""} onChange={(event) => setContext(event.target.value || null)} disabled={busy}>
+        <option value="">{t("General")}</option>
+        {allProjects().map((project) => <option key={project.slug} value={project.slug}>{project.title}</option>)}
+      </select>
+    </label>
+  );
+}
+
+type AskRow = AskTurn & { live?: boolean };
+
+function AskWorkspace({ query, setQuery, turns, current, answer, status, error, context, setContext, submit, stop, choose, openProjects }: {
   query: string;
   setQuery: (value: string) => void;
-  history: PortfolioChatMessage[];
-  currentQuestion: string | null;
+  turns: AskTurn[];
+  current: { projectId: string | null; question: string } | null;
   answer: string | null;
   status: AskStatus;
   error: string | null;
+  context: string | null;
+  setContext: (projectId: string | null) => void;
   submit: () => void;
   stop: () => void;
   choose: (value: string) => void;
   openProjects: () => void;
 }) {
   const active = status === "sending" || status === "streaming";
-  const hasConversation = history.length > 0 || currentQuestion !== null || answer !== null || error !== null;
+  const hasConversation = turns.length > 0 || current !== null || error !== null;
+  const rows: AskRow[] = [...turns, ...(current ? [{ ...current, answer: answer ?? "", live: true }] : [])];
+  const groups = groupTurns(rows);
   return (
     <main className={`aw-center aw-ask aw-enter ${hasConversation ? "is-conversation" : "is-empty"}`}>
       {!hasConversation ? (
@@ -899,15 +921,28 @@ function AskWorkspace({ query, setQuery, history, currentQuestion, answer, statu
           <span>{t("Ask Adjie Workspace")}</span>
           <h1>{t("What would you like to understand?")}</h1>
           <p>{t("Answers use the verified public portfolio context.")}</p>
+          <AskContextBar context={context} setContext={setContext} busy={active} />
           <Composer query={query} setQuery={setQuery} submit={submit} stop={stop} busy={active} />
           <div>{prompts.map((prompt) => <button type="button" key={prompt.label} onClick={() => choose(t(prompt.query))}>{t(prompt.label)}<Glyph name="arrow" /></button>)}</div>
         </section>
       ) : (
         <section className="aw-conversation">
-          {history.map((message, index) => <div className={"aw-message " + (message.role === "user" ? "is-user" : "")} key={message.role + index}><span>{message.role === "user" ? t("You") : t("Workspace")}</span><p>{message.content}</p></div>)}
-          {currentQuestion && <div className="aw-message is-user"><span>{t("You")}</span><p>{currentQuestion}</p></div>}
-          {(answer !== null || active || error) && <div className="aw-message"><span>{t("Workspace")}{active ? " · " + t("responding") : ""}</span><p aria-live="polite">{answer || (active ? t("Thinking…") : error)}</p></div>}
+          {groups.map((group, groupIndex) => (
+            <div className="aw-ask-group" key={groupIndex}>
+              {groupIndex > 0 && <p className="aw-ask-switch" role="separator"><span>{L(`Context switched to ${contextName(group.projectId)}`, `Konteks beralih ke ${contextName(group.projectId)}`)}</span></p>}
+              <p className="aw-ask-label">{contextName(group.projectId)}</p>
+              {group.turns.map((turn, index) => (
+                <div className="aw-ask-turn" key={index} data-project={turn.projectId ?? "general"}>
+                  <div className="aw-message is-user"><span>{t("You")}</span><p>{turn.question}</p></div>
+                  {turn.live
+                    ? (answer !== null || active || error) && <div className="aw-message"><span>{t("Workspace")}{active ? " · " + t("responding") : ""}</span><p aria-live="polite">{answer || (active ? t("Thinking…") : error)}</p></div>
+                    : <div className="aw-message"><span>{t("Workspace")}</span><p>{turn.answer}</p></div>}
+                </div>
+              ))}
+            </div>
+          ))}
           {error && <div className="aw-result-list"><button type="button" onClick={openProjects}><span><strong>{t("Explore projects")}</strong><small>{t("Browse without AI")}</small></span><Glyph name="arrow" /></button><a href={site.cv} target="_blank" rel="noopener noreferrer"><span><strong>{t("Résumé")}</strong><small>{t("Open PDF")}</small></span><Glyph name="arrow" /></a><a href={"mailto:" + site.email}><span><strong>{t("Contact")}</strong><small>{t("Email Adjie")}</small></span><Glyph name="arrow" /></a></div>}
+          <AskContextBar context={context} setContext={setContext} busy={active} />
           <Composer query={query} setQuery={setQuery} submit={submit} stop={stop} busy={active} />
         </section>
       )}
@@ -1102,8 +1137,9 @@ export function WorkspacePrototype() {
     setBaseView(next);
   }, []);
   const [query, setQuery] = useState("");
-  const [askHistory, setAskHistory] = useState<PortfolioChatMessage[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState<string | null>(null);
+  const [askTurns, setAskTurns] = useState<AskTurn[]>([]);
+  const [currentTurn, setCurrentTurn] = useState<{ projectId: string | null; question: string } | null>(null);
+  const [askContext, setAskContext] = useState<string | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
   const [askStatus, setAskStatus] = useState<AskStatus>("idle");
   const [askError, setAskError] = useState<string | null>(null);
@@ -1152,8 +1188,9 @@ export function WorkspacePrototype() {
         askAbortRef.current?.abort();
         setView("home");
         setQuery("");
-        setAskHistory([]);
-        setCurrentQuestion(null);
+        setAskTurns([]);
+        setCurrentTurn(null);
+        setAskContext(null);
         setAnswer(null);
         setAskStatus("idle");
         setAskError(null);
@@ -1202,8 +1239,9 @@ export function WorkspacePrototype() {
     askAbortRef.current?.abort();
     setView("home");
     setQuery("");
-    setAskHistory([]);
-    setCurrentQuestion(null);
+    setAskTurns([]);
+    setCurrentTurn(null);
+    setAskContext(null);
     setAnswer(null);
     setAskStatus("idle");
     setAskError(null);
@@ -1213,20 +1251,17 @@ export function WorkspacePrototype() {
     askAbortRef.current?.abort();
   }
 
-  async function runAsk(value = query, projectId?: string) {
+  // Every turn is asked in one context (a project slug, or null for General) and keeps it afterwards.
+  async function runAsk(value: string, projectId: string | null) {
     const clean = value.trim();
     if (!clean || askStatus === "sending" || askStatus === "streaming") return;
-    const priorHistory = [
-      ...askHistory,
-      ...(currentQuestion && answer ? [
-        { role: "user" as const, content: currentQuestion },
-        { role: "assistant" as const, content: answer },
-      ] : []),
-    ].slice(-6);
+    const turns = currentTurn && answer ? [...askTurns, { ...currentTurn, answer }] : askTurns;
+    const priorHistory = contextHistory(turns, projectId);
     const controller = new AbortController();
     askAbortRef.current = controller;
-    setAskHistory(priorHistory);
-    setCurrentQuestion(clean);
+    setAskTurns(turns);
+    setAskContext(projectId);
+    setCurrentTurn({ projectId, question: clean });
     setQuery("");
     setAnswer("");
     setAskError(null);
@@ -1237,7 +1272,7 @@ export function WorkspacePrototype() {
     try {
       const completed = await streamPortfolioAnswer({
         message: clean,
-        projectId,
+        projectId: projectId ?? undefined,
         locale,
         history: priorHistory,
         signal: controller.signal,
@@ -1363,13 +1398,13 @@ export function WorkspacePrototype() {
               <MusicButton className="aw-mobile-music" />
               <button type="button" className="aw-mobile-theme" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             </header>
-            {view === "home" ? <HomeWorkspace query={query} setQuery={setQuery} submit={() => void runAsk()} ask={(question) => void runAsk(question)} setView={setView} selectProject={selectProject} />
+            {view === "home" ? <HomeWorkspace query={query} setQuery={setQuery} submit={() => void runAsk(query, null)} ask={(question) => void runAsk(question, null)} setView={setView} selectProject={selectProject} />
               : view === "work" ? <WorkWorkspace selectProject={selectProject} />
                 : view === "projects" ? <ProjectDirectory projects={allProjects()} title={tk("Projects")} copy={tk("A single workspace index for featured systems and focused experiments.")} selectProject={selectProject} />
                   : view === "labs" ? <ProjectDirectory projects={labProjects()} title={tk("Labs")} copy={tk("Focused experiments in computer vision, 3D pipelines, and interactive systems.")} selectProject={selectProject} />
                     : view === "knowledge" ? <KnowledgeWorkspace selectProject={selectProject} />
                       : view === "project" ? <ProjectWorkspace key={selected.slug + "-" + projectRevision} project={selected} query={query} setQuery={setQuery} ask={(question) => void runAsk(question ?? query, selected.slug)} back={() => setView("work")} openImage={openQuickLook} />
-                        : <AskWorkspace query={query} setQuery={setQuery} history={askHistory} currentQuestion={currentQuestion} answer={answer} status={askStatus} error={askError} submit={() => void runAsk()} stop={stopAsk} choose={(question) => void runAsk(question)} openProjects={() => setView("projects")} />}
+                        : <AskWorkspace query={query} setQuery={setQuery} turns={askTurns} current={currentTurn} answer={answer} status={askStatus} error={askError} context={askContext} setContext={setAskContext} submit={() => void runAsk(query, askContext)} stop={stopAsk} choose={(question) => void runAsk(question, askContext)} openProjects={() => setView("projects")} />}
           </section>
         </div>
       </div>

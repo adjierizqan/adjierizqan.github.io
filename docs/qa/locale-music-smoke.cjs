@@ -120,9 +120,9 @@ const audioPlaying = (page) => page.evaluate(() => [...window.__audio].some((a) 
       const sample = () => page.evaluate(() => { const x = document.querySelector(".aw-padel-real video"); const c = document.createElement("canvas"); c.width = 160; c.height = 90; const g = c.getContext("2d"); g.drawImage(x, 0, 0, 160, 90); return Array.from(g.getImageData(0, 30, 160, 60).data); });
       const a = await sample(); await page.waitForTimeout(1000); const b = await sample();
       let diff = 0; for (let i = 0; i < a.length; i += 4) diff += Math.abs(a[i] - b[i]) > 24 ? 1 : 0;
-      check("analyzed clip is the source and frames change", (await page.locator(".aw-padel-real video").getAttribute("src")).includes("rn7-analyzed") && diff > 200, "changed px " + diff);
+      check("analyzed clip is the source and frames change", (await page.locator(".aw-padel-real video").getAttribute("src")).includes("pexels-analyzed") && diff > 200, "changed px " + diff);
     }
-    check(`${motion}: caption credits RN7 CC BY 3.0`, (await page.locator(".aw-padel-real figcaption").innerText()).includes("RN7, CC BY 3.0"));
+    check(`${motion}: caption credits UsaOne Ell and the Pexels License`, /UsaOne Ell, Pexels\.[\s\S]*Pexels License/.test(await page.locator(".aw-padel-real figcaption").innerText()));
     await ctx.close();
   }
   // Knowledge: Indonesian labels, whole row opens the case
