@@ -993,26 +993,6 @@
 :root[data-theme="dark"] .aw-labstock-lead aside p {
     color: #a2a7b0
 }
-:root[data-theme="dark"] .aw-labstock-canvas > header {
-    border-bottom: 1px solid rgb(46 46 46 / 0.13)
-}
-:root[data-theme="dark"] .aw-ledger-map > div {
-    border-left: 1px solid rgb(46 46 46 / 0.14)
-}
-:root[data-theme="dark"] .aw-ledger-map > div::after {
-    border-top: 1px solid #374c43;
-    border-right: 1px solid #374c43
-}
-:root[data-theme="dark"] .aw-ledger-map .aw-ledger-core i {
-    background: #00270e;
-    box-shadow: 0 0 0 4px rgb(1 71 47 / 0.12)
-}
-:root[data-theme="dark"] .aw-ledger-rules {
-    border-top: 1px solid rgb(46 46 46 / 0.13)
-}
-:root[data-theme="dark"] .aw-ledger-rules p + p {
-    border-left: 1px solid rgb(46 46 46 / 0.13)
-}
 :root[data-theme="dark"] .aw-labstock-decisions ol {
     border-bottom: 1px solid #333536
 }
@@ -1231,11 +1211,7 @@
     :root[data-theme="dark"] .aw-labstock-lead aside {
         border-top: 1px solid #343638
     }
-    :root[data-theme="dark"] .aw-ledger-map > div {
-        border-top: 1px solid rgb(46 46 46 / 0.14)
-    }
-    :root[data-theme="dark"] .aw-ledger-rules p + p,
-:root[data-theme="dark"] .aw-bdrs-map article + article,
+    :root[data-theme="dark"] .aw-bdrs-map article + article,
 :root[data-theme="dark"] .aw-padel-notes > div + div {
         border-top: 1px solid rgb(46 46 46 / 0.13)
     }
