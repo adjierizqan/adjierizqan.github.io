@@ -357,9 +357,6 @@ export const ID: Record<string, string> = {
   "Class colours": "Warna kelas",
   "Hide": "Sembunyikan",
   "Show": "Tampilkan",
-  "Real padel play": "Permainan padel asli",
-  "Real match footage: RN7, CC BY 3.0 (Padel Nations Cup, Nijmegen, 2018). Not the clip the pipeline analysed.": "Footage pertandingan asli: RN7, CC BY 3.0 (Padel Nations Cup, Nijmegen, 2018). Bukan klip yang dianalisis pipeline.",
-  "Real padel rally from an RN7 news report, CC BY 3.0": "Reli padel asli dari liputan berita RN7, CC BY 3.0",
   "Operational software": "Software operasional",
   "Closed · maintenance": "Selesai · pemeliharaan",
   "A laboratory inventory system that turns source workbooks into a traceable stock ledger, monthly and yearly reports, and template-compatible Excel exports.": "Sistem inventaris laboratorium yang mengubah workbook sumber menjadi ledger stok yang bisa ditelusuri, laporan bulanan dan tahunan, serta ekspor Excel sesuai template.",
@@ -487,4 +484,8 @@ export const ID: Record<string, string> = {
   "RWB 964 rear wing.": "Sayap belakang RWB 964.",
   "RWB 964 headlights.": "Lampu depan RWB 964.",
   "4 featured cases": "4 kasus unggulan",
+  "Padel Vision player detection, pose and IDs on a real rally from an RN7 news report, CC BY 3.0": "Deteksi pemain, pose, dan ID Padel Vision pada reli asli dari liputan berita RN7, CC BY 3.0",
+  "Padel Vision on real play": "Padel Vision pada permainan asli",
+  "Player boxes, pose and P1–P4 IDs are the pipeline's own output. Ball tracking is not shown: on this low, behind-the-glass angle it was unreliable. Footage: RN7, CC BY 3.0 (Padel Nations Cup, Nijmegen, 2018).": "Kotak pemain, pose, dan ID P1–P4 adalah output pipeline itu sendiri. Tracking bola tidak ditampilkan karena tidak andal pada sudut rendah dari balik kaca ini. Footage: RN7, CC BY 3.0 (Padel Nations Cup, Nijmegen, 2018).",
+  "Resume music": "Lanjutkan musik",
 };

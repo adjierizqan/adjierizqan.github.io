@@ -775,8 +775,8 @@ function PadelReplay({ src }: { src: string }) {
   );
 }
 
-// Real play, for people: a licensed news clip (RN7, CC BY 3.0; docs/design/padel-vision/real-footage-provenance.md).
-// The pipeline's own analysis follows it in the dark panel.
+// Pipeline output on real play: a licensed news clip (RN7, CC BY 3.0) run through Padel Vision
+// (docs/design/padel-vision/rn7_analysis.py). The broadcast-clip analytics follow in the dark panel.
 function PadelRealClip() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -791,10 +791,10 @@ function PadelRealClip() {
   return (
     <figure className="aw-padel-real">
       <div className="aw-padel-real-stage">
-        <video ref={videoRef} src="/projects/padel-vision/real/rn7-play.mp4" poster="/projects/padel-vision/real/rn7-play-poster.webp" muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onClick={toggle} aria-label={t("Real padel rally from an RN7 news report, CC BY 3.0")} />
+        <video ref={videoRef} src="/projects/padel-vision/real/rn7-analyzed.mp4" poster="/projects/padel-vision/real/rn7-analyzed-poster.webp" muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onClick={toggle} aria-label={t("Padel Vision player detection, pose and IDs on a real rally from an RN7 news report, CC BY 3.0")} />
         <button type="button" onClick={toggle} aria-pressed={playing} aria-label={playing ? t("Pause") : t("Play")}><Glyph name={playing ? "pause" : "play"} /></button>
       </div>
-      <figcaption><strong>{t("Real padel play")}</strong> {t("Real match footage: RN7, CC BY 3.0 (Padel Nations Cup, Nijmegen, 2018). Not the clip the pipeline analysed.")} <a href="https://commons.wikimedia.org/wiki/File:Padel_Nations_Cup_moet_harten_veroveren_op_Plein_%2744.webm" target="_blank" rel="noopener noreferrer">{t("Source")}</a> · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a></figcaption>
+      <figcaption><strong>{t("Padel Vision on real play")}</strong> {t("Player boxes, pose and P1–P4 IDs are the pipeline's own output. Ball tracking is not shown: on this low, behind-the-glass angle it was unreliable. Footage: RN7, CC BY 3.0 (Padel Nations Cup, Nijmegen, 2018).")} <a href="https://commons.wikimedia.org/wiki/File:Padel_Nations_Cup_moet_harten_veroveren_op_Plein_%2744.webm" target="_blank" rel="noopener noreferrer">{t("Source")}</a> · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a></figcaption>
     </figure>
   );
 }
@@ -848,7 +848,7 @@ function ProjectDirectory({ projects, title, copy, selectProject }: {
         {projects.map((project) => (
           <button type="button" key={project.slug} onClick={() => selectProject(project)}>
             {project.thumb ?? project.image ? <figure><Image src={project.thumb ?? project.image ?? ""} alt={project.title} fill sizes="(max-width: 760px) 100vw, 480px" className="object-cover object-center" /></figure> : <div className="aw-object-evidence">{project.evidence.slice(0, 2).map((item) => <dl key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></dl>)}</div>}
-            <section><span>{project.eyebrow}</span><strong>{project.title}</strong><p>{project.summary}</p><small>{t("Open context")} <Glyph name="arrow" /></small></section>
+            <section><span>{project.eyebrow}{project.status ? " · " + project.status : ""}</span><strong>{project.title}<Glyph name="arrow" /></strong><p>{project.summary}</p></section>
           </button>
         ))}
       </div>
@@ -863,9 +863,12 @@ function KnowledgeWorkspace({ selectProject }: { selectProject: (project: Worksp
       <div className="aw-knowledge-list">
         {allProjects().map((project) => (
           <button type="button" key={project.slug} onClick={() => selectProject(project)} aria-label={L(`Open ${project.title}`, `Buka ${project.title}`)}>
-            {project.thumb ?? project.image ? <figure><Image src={project.thumb ?? project.image ?? ""} alt="" fill sizes="160px" className="object-cover object-center" /></figure> : <figure />}
-            <span className="aw-knowledge-name"><strong>{project.title}</strong><small>{project.eyebrow}{project.status ? " · " + project.status : ""}</small></span>
-            <dl>{project.evidence.slice(0, 3).map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
+            {project.thumb ?? project.image ? <figure><Image src={project.thumb ?? project.image ?? ""} alt="" fill sizes="(max-width: 760px) 100vw, 320px" className="object-cover object-center" /></figure> : <figure />}
+            <div className="aw-knowledge-body">
+              <span className="aw-knowledge-name"><strong>{project.title}</strong><small>{project.eyebrow} · {project.year}{project.status ? " · " + project.status : ""}</small></span>
+              <dl>{project.evidence.slice(0, 3).map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
+              <p className="aw-knowledge-boundary"><b>{t("Public boundary")}</b> {project.publicLimitations}</p>
+            </div>
             <Glyph name="arrow" />
           </button>
         ))}
@@ -1006,31 +1009,69 @@ function writeProjectParam(slug: string | null) {
   window.dispatchEvent(new Event(URL_CHANGE_EVENT));
 }
 
-// Background music: CC0 ambient track (docs/design/audio-provenance.md). Off by default; it never
-// starts on its own, including after a reload. Only the volume is remembered.
+// Background music: CC0 ambient track (docs/design/audio-provenance.md). One player for the whole page.
+// Off until the visitor turns it on. After that the choice is remembered and, on later visits, playback
+// is attempted on load; if the browser blocks it, it resumes on the visitor's first click or key press
+// (a user gesture, as autoplay policy requires) and the button shows it is waiting.
 const MUSIC_SRC = "/audio/ambient-wilfredor-cc0.m4a";
+const MUSIC_KEY = "aw-music";
 const MUSIC_VOLUME_KEY = "aw-music-volume";
+type MusicState = "off" | "on" | "blocked";
+const music = { audio: null as HTMLAudioElement | null, state: "off" as MusicState, listeners: new Set<() => void>() };
+const emitMusic = () => music.listeners.forEach((listener) => listener());
+function musicAudio() {
+  if (!music.audio) {
+    const audio = new Audio(MUSIC_SRC);
+    audio.loop = true;
+    let volume = 0.2;
+    try { const saved = Number(localStorage.getItem(MUSIC_VOLUME_KEY)); if (saved > 0 && saved <= 1) volume = saved; else localStorage.setItem(MUSIC_VOLUME_KEY, String(volume)); } catch { /* default */ }
+    audio.volume = volume;
+    audio.onplay = () => { music.state = "on"; emitMusic(); };
+    music.audio = audio;
+  }
+  return music.audio;
+}
+function playMusic(remember: boolean) {
+  if (remember) { try { localStorage.setItem(MUSIC_KEY, "on"); } catch { /* ignore */ } }
+  return musicAudio().play().then(() => true, () => { music.state = "blocked"; emitMusic(); return false; });
+}
+function stopMusic() {
+  try { localStorage.setItem(MUSIC_KEY, "off"); } catch { /* ignore */ }
+  music.audio?.pause();
+  music.state = "off";
+  emitMusic();
+}
+const subscribeToMusic = (onChange: () => void) => { music.listeners.add(onChange); return () => { music.listeners.delete(onChange); }; };
+function useMusic() {
+  return useSyncExternalStore(subscribeToMusic, () => music.state, () => "off" as MusicState);
+}
+function useMusicResume() {
+  useEffect(() => {
+    let wanted = false;
+    try { wanted = localStorage.getItem(MUSIC_KEY) === "on"; } catch { /* ignore */ }
+    if (!wanted || music.state === "on") return;
+    let armed = false;
+    const disarm = () => {
+      if (!armed) return;
+      armed = false;
+      window.removeEventListener("pointerdown", resume);
+      window.removeEventListener("keydown", resume);
+    };
+    const resume = () => { disarm(); void playMusic(false); };
+    void playMusic(false).then((ok) => {
+      if (ok) return;
+      armed = true;
+      window.addEventListener("pointerdown", resume);
+      window.addEventListener("keydown", resume);
+    });
+    return disarm;
+  }, []);
+}
 
 function MusicButton({ className = "" }: { className?: string }) {
-  const [playing, setPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  useEffect(() => () => audioRef.current?.pause(), []);
-  function toggle() {
-    let audio = audioRef.current;
-    if (!audio) {
-      audio = new Audio(MUSIC_SRC);
-      audio.loop = true;
-      let volume = 0.2;
-      try { const saved = Number(localStorage.getItem(MUSIC_VOLUME_KEY)); if (saved > 0 && saved <= 1) volume = saved; else localStorage.setItem(MUSIC_VOLUME_KEY, String(volume)); } catch { /* keep default */ }
-      audio.volume = volume;
-      audio.onplay = () => setPlaying(true);
-      audio.onpause = () => setPlaying(false);
-      audioRef.current = audio;
-    }
-    if (audio.paused) void audio.play().catch(() => setPlaying(false));
-    else audio.pause();
-  }
-  return <button type="button" className={"aw-music " + className + (playing ? " is-playing" : "")} onClick={toggle} aria-pressed={playing} aria-label={playing ? t("Pause music") : t("Play music")} title={playing ? t("Pause music") : t("Play music")}><Glyph name="music" /></button>;
+  const state = useMusic();
+  const label = state === "on" ? t("Pause music") : state === "blocked" ? t("Resume music") : t("Play music");
+  return <button type="button" className={"aw-music " + className + (state === "on" ? " is-playing" : state === "blocked" ? " is-waiting" : "")} onClick={() => (state === "on" ? stopMusic() : void playMusic(true))} aria-pressed={state === "on"} aria-label={label} title={label}><Glyph name="music" /></button>;
 }
 
 function LanguageSwitch({ locale, className = "" }: { locale: Locale; className?: string }) {
@@ -1072,6 +1113,7 @@ export function WorkspacePrototype() {
   const locale = useSyncExternalStore(subscribeToLocale, readLocale, readLocaleOnServer);
   // Children render after this line in the same pass, so every t()/L() below reads this locale.
   setActiveLocale(locale);
+  useMusicResume();
   const [windowState, setWindowState] = useState<WindowState>("open");
   const [maximized, setMaximized] = useState(false);
   const [quickLookIndex, setQuickLookIndex] = useState<number | null>(null);

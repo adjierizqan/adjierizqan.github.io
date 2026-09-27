@@ -78,27 +78,29 @@ phone_src = Image.open(SL / "mobile/03-catat-suhu.png").convert("RGB")      # 39
 laptop_src = Image.open(SL / "desktop/05-monitoring-chart.png").convert("RGB")  # 1440x900 @2x
 
 
-def device_story(size):
+def device_story(size, laptop=None, phone=None, bg=(236, 239, 243, 255)):
+    """Real screens in a plain laptop (and optional phone) frame. Used for SuhuLog, LabStock and BDRS."""
+    laptop = laptop_src if laptop is None else laptop
+    phone = phone_src if phone is None and laptop is laptop_src else phone
     W, H = size
     k = W / 1600
-    c = Image.new("RGBA", size, (236, 239, 243, 255))
-    # laptop
-    lw = round(1180 * k); lh = round(lw * 900 / 1440)
-    lx = round(330 * k); ly = round(70 * k)
+    c = Image.new("RGBA", size, bg)
+    lw = round((1180 if phone is not None else 1300) * k); lh = round(lw * 900 / 1440)
+    lx = round(330 * k) if phone is not None else (W - lw) // 2; ly = round(70 * k)
     bez = round(14 * k)
     shadow(c, (lx - bez, ly - bez, lx + lw + bez, ly + lh + bez), round(22 * k), blur=round(30 * k))
     ImageDraw.Draw(c).rounded_rectangle((lx - bez, ly - bez, lx + lw + bez, ly + lh + bez), round(22 * k), fill=(28, 31, 38, 255))
-    c.paste(laptop_src.resize((lw, lh), Image.LANCZOS), (lx, ly))
+    c.paste(fit(laptop.convert("RGB"), (lw, lh)), (lx, ly))
     by = ly + lh + bez
     ImageDraw.Draw(c).polygon([(lx - bez - round(70 * k), by + round(26 * k)), (lx + lw + bez + round(70 * k), by + round(26 * k)),
                                (lx + lw + bez, by), (lx - bez, by)], fill=(196, 200, 207, 255))
-    # phone, in front on the left
-    ph = round(780 * k); pw = round(ph * 390 / 844)
-    px = round(110 * k); py = H - ph - round(60 * k)
-    frame = round(12 * k)
-    shadow(c, (px - frame, py - frame, px + pw + frame, py + ph + frame), round(56 * k), blur=round(26 * k), alpha=95)
-    ImageDraw.Draw(c).rounded_rectangle((px - frame, py - frame, px + pw + frame, py + ph + frame), round(56 * k), fill=(20, 22, 27, 255))
-    c.alpha_composite(rounded(phone_src.resize((pw, ph), Image.LANCZOS).convert("RGBA"), round(44 * k)), (px, py))
+    if phone is not None:
+        ph = round(780 * k); pw = round(ph * 390 / 844)
+        px = round(110 * k); py = H - ph - round(60 * k)
+        frame = round(12 * k)
+        shadow(c, (px - frame, py - frame, px + pw + frame, py + ph + frame), round(56 * k), blur=round(26 * k), alpha=95)
+        ImageDraw.Draw(c).rounded_rectangle((px - frame, py - frame, px + pw + frame, py + ph + frame), round(56 * k), fill=(20, 22, 27, 255))
+        c.alpha_composite(rounded(fit(phone.convert("RGB"), (pw, ph)).convert("RGBA"), round(44 * k)), (px, py))
     return c
 
 
@@ -130,3 +132,10 @@ save(t, tv / "thumb.webp")
 hero = Image.open(PUB / "porsche-3d/cinematic/01-rwb964-hero.webp").convert("RGB")
 w = hero.height * 1.6
 save(hero.crop((round((hero.width - w) / 2) + 60, 0, round((hero.width + w) / 2) + 60, hero.height)).resize(THUMB, Image.LANCZOS), PUB / "porsche-3d/cinematic/thumb.webp")
+
+# ---- V1.0.4: device compositions for LabStock and BDRS thumbnails (same real screens as above)
+hari = Image.open(LS / "01-hari-ini-1440.png").convert("RGB")
+amprah_m = Image.open(LS / "09-amprah-mobile-390.png").convert("RGB")
+save(device_story(THUMB, laptop=hari.crop((0, 0, 1440, 900)), phone=amprah_m.crop((0, 0, 390, 844))), ls_out / "thumb.webp")
+ws = Image.open(BD / "03-workstation-overview.png").convert("RGB")
+save(device_story(THUMB, laptop=ws.crop((SIDEBAR, 0, 1440, 755)), phone=None, bg=(240, 236, 236, 255)), bd_out / "thumb.webp")
