@@ -1,0 +1,39 @@
+{
+ "frames": 386,
+ "fps": 29.97002997002997,
+ "calibration_check_px": {
+  "centre_far_px_err": 0.7113172000557195,
+  "centre_near_px_err": 5.396127370760265
+ },
+ "registration_inliers_min": 509,
+ "line_alignment_min": 0.9,
+ "line_alignment_median": 0.9714285714285714,
+ "slot_coverage": [
+  1.0,
+  1.0,
+  1.0,
+  0.8419689119170984
+ ],
+ "ball_candidates": 3553,
+ "ball_candidates_kept": 239,
+ "ball_isolated_dropped": 13,
+ "ball_linked_frames": 160,
+ "ball_frames_after_interpolation": 187,
+ "trajectory_turns": [
+  92,
+  227,
+  279,
+  307,
+  341
+ ],
+ "hits": [
+  {
+   "frame": 92,
+   "player": "P2"
+  },
+  {
+   "frame": 341,
+   "player": "P2"
+  }
+ ]
+}
