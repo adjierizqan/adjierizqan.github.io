@@ -298,6 +298,9 @@
 :root[data-theme="dark"] .aw-project-objects section > strong {
     color: #cbced5
 }
+:root[data-theme="dark"] .aw-project-objects > button:hover section > strong svg {
+    color: #cbced5
+}
 :root[data-theme="dark"] .aw-project-objects section > p {
     color: #a6aab5
 }
@@ -841,27 +844,34 @@
     border-top: 1px solid #333435;
     color: #adb2bc
 }
-:root[data-theme="dark"] .aw-knowledge-list {
-    border-bottom: 1px solid #333435
-}
 :root[data-theme="dark"] .aw-knowledge-list > button {
-    border-top: 1px solid #333435
+    border: 1px solid #333435;
+    background: #0f0f0f
 }
 :root[data-theme="dark"] .aw-knowledge-list > button:hover {
-    background: #111112
+    border-color: #383a3c;
+    background: #101011
 }
 :root[data-theme="dark"] .aw-knowledge-list figure {
-    border: 1px solid #333435;
     background: #121314
 }
 :root[data-theme="dark"] .aw-knowledge-name strong {
-    color: #cdd0d7
+    color: #d0d3da
 }
 :root[data-theme="dark"] .aw-knowledge-name small {
-    color: #a0a5af
+    color: #a2a7b1
+}
+:root[data-theme="dark"] .aw-knowledge-list dl {
+    border-top: 1px solid #313233
 }
 :root[data-theme="dark"] .aw-knowledge-list dd {
     color: #c4c8d0
+}
+:root[data-theme="dark"] .aw-knowledge-boundary {
+    color: #a7adb7
+}
+:root[data-theme="dark"] .aw-knowledge-boundary b {
+    color: #bec3cb
 }
 :root[data-theme="dark"] .aw-ask-empty > span {
     color: #a1a5ae
@@ -1252,6 +1262,9 @@
 }
 :root[data-theme="dark"] .aw-music.is-playing {
     color: #71c59c
+}
+:root[data-theme="dark"] .aw-music.is-waiting::after {
+    background: #4d1200
 }
 :root[data-theme="dark"] .ps-eyebrow {
     color: #a6abb6

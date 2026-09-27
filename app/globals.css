@@ -611,17 +611,21 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-secondary-work h3 { margin-top: .55rem; color: #24262b; font-size: 1.05rem; font-weight: 710; letter-spacing: -.035em; }
 .aw-secondary-work p { display: -webkit-box; margin-top: .4rem; overflow: hidden; color: #737781; font-size: .54rem; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
 
-.aw-project-objects { display: grid; grid-template-columns: repeat(2,1fr); gap: .7rem; margin-top: 1rem; padding-bottom: 1.5rem; }
+.aw-project-objects { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; margin-top: 1rem; padding-bottom: 1.5rem; }
 .aw-project-objects > button { display: grid; min-height: 16rem; grid-template-rows: auto 1fr; overflow: hidden; border: 1px solid #e1e3e8; border-radius: .72rem; background: #fff; text-align: left; }
 .aw-project-objects figure { position: relative; aspect-ratio: 16 / 10; background: #eceef1; }
 .aw-object-evidence { display: grid; align-content: center; gap: .7rem; background: #f4f5f7; padding: 1rem; }
 .aw-object-evidence dl { border-top: 1px solid #dcdfe4; padding-top: .5rem; }
 .aw-object-evidence dt { color: #969aa3; font-size: .46rem; }
 .aw-object-evidence dd { margin-top: .2rem; color: #474b53; font-size: .54rem; }
-.aw-project-objects section { padding: .85rem; }
+.aw-project-objects section { padding: .7rem .85rem .8rem; }
 .aw-project-objects section > span { color: #92969f; font-size: .47rem; text-transform: uppercase; }
-.aw-project-objects section > strong { display: block; margin-top: .28rem; color: #23252a; font-size: .85rem; }
-.aw-project-objects section > p { display: -webkit-box; margin-top: .38rem; overflow: hidden; color: #737781; font-size: .53rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.aw-project-objects section > strong { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-top: .22rem; color: #23252a; font-size: .95rem; font-weight: 700; }
+.aw-project-objects section > strong svg { width: .8rem; color: #9ca0a8; transition: transform 140ms ease; }
+.aw-project-objects > button:hover section > strong svg { transform: translateX(2px); color: #23252a; }
+.aw-project-objects > button:hover figure img { transform: scale(1.015); }
+.aw-project-objects figure img { transition: transform 260ms ease; }
+.aw-project-objects section > p { display: -webkit-box; margin-top: .3rem; overflow: hidden; color: #737781; font-size: .53rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
 .aw-project-objects section > small { display: flex; align-items: center; gap: .3rem; margin-top: .65rem; color: #777c85; font-size: .49rem; }
 .aw-project-objects section > small svg { width: .62rem; }
 
@@ -1019,16 +1023,25 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-compact-record ul { margin-top: .55rem; border-bottom: 1px solid #e3e5e8; }
 .aw-compact-record li { border-top: 1px solid #e3e5e8; padding: .62rem 0; color: #5f646d; font-size: var(--aw-text-body); line-height: 1.5; }
 
-.aw-knowledge-list { margin-top: 1rem; border-bottom: 1px solid #e3e5e8; }
-.aw-knowledge-list > button { display: grid; width: 100%; grid-template-columns: 7.5rem 11rem minmax(0,1fr) 1rem; align-items: center; gap: 1.1rem; border-top: 1px solid #e3e5e8; padding: .75rem .4rem; text-align: left; transition: background 140ms ease; }
-.aw-knowledge-list > button:hover { background: #f6f7f8; }
-.aw-knowledge-list figure { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border: 1px solid #e3e5e8; border-radius: .35rem; background: #eceef1; }
-.aw-knowledge-name strong { display: block; color: #1f2126; font-size: .95rem; font-weight: 700; letter-spacing: -.01em; }
-.aw-knowledge-name small { display: block; margin-top: .2rem; color: #80858e; font-size: var(--aw-text-micro); }
-.aw-knowledge-list dl { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .9rem; }
+.aw-knowledge-list { display: grid; gap: .75rem; margin-top: 1.2rem; }
+.aw-knowledge-list > button { display: grid; width: 100%; grid-template-columns: minmax(12rem, 17rem) minmax(0, 1fr) 1.2rem; align-items: center; gap: 1.4rem; border: 1px solid #e3e5e8; border-radius: .6rem; background: #fff; padding: .75rem 1rem .75rem .75rem; text-align: left; transition: border-color 140ms ease, background 140ms ease; }
+.aw-knowledge-list > button:hover { border-color: #c9ccd2; background: #fafafb; }
+.aw-knowledge-list figure { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: .4rem; background: #eceef1; }
+.aw-knowledge-body { display: grid; gap: .7rem; min-width: 0; }
+.aw-knowledge-name strong { display: block; color: #1a1c21; font-size: 1.25rem; font-weight: 720; letter-spacing: -.02em; }
+.aw-knowledge-name small { display: block; margin-top: .15rem; color: #7b8089; font-size: var(--aw-text-micro); }
+.aw-knowledge-list dl { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .9rem; border-top: 1px solid #eceef1; padding-top: .6rem; }
 .aw-knowledge-list dt { color: #8d929a; font-size: var(--aw-text-micro); }
 .aw-knowledge-list dd { margin-top: .15rem; color: #2f3238; font-size: var(--aw-text-ui); line-height: 1.35; }
-.aw-knowledge-list > button > svg { width: .8rem; color: #9ca0a8; }
+.aw-knowledge-boundary { display: -webkit-box; overflow: hidden; color: #6d727b; font-size: var(--aw-text-micro) !important; line-height: 1.5 !important; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.aw-knowledge-boundary b { margin-right: .3rem; color: #3a3e45; font-weight: 620; }
+.aw-knowledge-list > button > svg { width: .9rem; color: #9ca0a8; }
+@media (max-width: 1180px) {
+  .aw-knowledge-list > button { grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr); gap: .9rem 1.1rem; padding: .7rem; }
+  .aw-knowledge-body { display: contents; }
+  .aw-knowledge-list dl, .aw-knowledge-boundary { grid-column: 1 / -1; }
+  .aw-knowledge-list > button > svg { display: none; }
+}
 
 .aw-ask-empty > span { color: #81858e; font-size: .57rem; font-weight: 650; letter-spacing: .09em; text-transform: uppercase; }
 .aw-ask-empty h1 { margin-top: .45rem; color: #15171c; font-size: clamp(2.4rem,5vw,4.3rem); font-weight: 760; line-height: .95; letter-spacing: -.055em; }
@@ -1535,9 +1548,9 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-project-gallery figure > button { height: 48vw; }
   .aw-project-record { gap: 1rem; }
   .aw-project-record > div + div { border-top: 1px solid #e3e5e8; border-left: 0; padding-top: 1rem; padding-left: 0; }
-  .aw-knowledge-list > button { grid-template-columns: 5.5rem minmax(0,1fr) 1rem; gap: .8rem; }
-  .aw-knowledge-list dl { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: .5rem .9rem; }
-  .aw-knowledge-list > button > svg { grid-row: 1; grid-column: 3; }
+  .aw-knowledge-list > button { grid-template-columns: minmax(0,1fr); gap: .8rem; padding: .6rem; }
+  .aw-knowledge-list > button > svg { display: none; }
+  .aw-knowledge-list dl { grid-template-columns: 1fr 1fr; gap: .5rem .9rem; }
   .aw-quicklook-layer { position: fixed; padding: .5rem; }
   .aw-quicklook { width: 100%; height: min(92vh, 48rem); }
   .aw-quicklook-nav.is-previous { left: .6rem; }
@@ -1652,3 +1665,5 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   .aw-mobile-lang button { min-width: 2.2rem; height: 2.2rem; font-size: .72rem; }
   .aw-mobile-header .aw-mobile-lang button { width: auto; }
 }
+.aw-music.is-waiting { position: relative; }
+.aw-music.is-waiting::after { position: absolute; top: .2rem; right: .2rem; width: .38rem; height: .38rem; border-radius: 50%; background: #d97706; content: ""; }
