@@ -621,18 +621,40 @@ function ProjectMetaLine({ project }: { project: WorkspaceProject }) {
   return <dl className="aw-project-meta-line" aria-label={project.title + " project metadata"}><div><dt>{t("Role")}</dt><dd>{project.role}</dd></div>{project.stack.length > 0 && <div><dt>{t("Built with")}</dt><dd>{project.stack.join(" · ")}</dd></div>}<div><dt>{t("Record")}</dt><dd>{project.year}{project.status ? " · " + project.status : ""}</dd></div></dl>;
 }
 
+// Workbook -> validate -> ledger -> report, with corrections and stock counts as a branch into the ledger.
+// The hospital workbook is private, so its step is a diagram; the report end is a crop of the demo Laporan
+// screen (docs/design/v106/labstock_trace_media.py). Movement names are the ledger's own movement types.
 function LabStockSystemCanvas() {
   return (
     <section className="aw-labstock-canvas" id="labstock-data-flow" aria-label={t("LabStock source to export system map")}>
-      <header><span>{t("One traceable path")}</span><h2>{t("Workbook evidence enters once. Every report leaves from the same ledger.")}</h2></header>
-      <div className="aw-ledger-map">
-        <div className="aw-ledger-source"><small>{t("Source")}</small><strong>{t("Monthly workbook")}</strong><span>{t("file · sheet · row · period")}</span></div>
-        <div className="aw-ledger-gate"><small>{t("Validate")}</small><strong>{t("Identity + unit + overlap")}</strong><span>{t("conflicts stop before posting")}</span></div>
-        <div className="aw-ledger-core"><i /><small>{t("Canonical record")}</small><strong>{t("Stock ledger")}</strong><span>{t("one effective item identity")}</span></div>
-        <div className="aw-ledger-output"><small>{t("Read")}</small><strong>{t("Monthly / yearly report")}</strong><span>{t("same stored movements")}</span></div>
-        <div className="aw-ledger-export"><small>{t("Deliver")}</small><strong>{t("Detail + recap Excel")}</strong><span>{t("template-compatible output")}</span></div>
-      </div>
-      <div className="aw-ledger-rules"><p><b>{t("Same source returns")}</b><span>{t("Recognized before posting")}</span><strong>{t("No duplicate movement")}</strong></p><p><b>{t("A correction is needed")}</b><span>{t("Prior record stays traceable")}</span><strong>{t("Auditable supersession")}</strong></p><p><b>{t("A report is exported")}</b><span>{t("Website and workbook read one ledger")}</span><strong>{t("Consistent balance")}</strong></p></div>
+      <header>
+        <h2>{t("One traceable path")}</h2>
+        <p>{t("Workbook rows are checked once and posted to a single stock ledger; every report and Excel export is read from that ledger.")}</p>
+      </header>
+      <ol className="aw-trace">
+        <li>
+          <div className="aw-trace-visual aw-trace-sheet" aria-hidden="true">{Array.from({ length: 30 }, (_, index) => <i key={index} />)}</div>
+          <strong>{t("Monthly workbook")}</strong>
+          <p>{t("Each row keeps its file, sheet and period.")}</p>
+        </li>
+        <li>
+          <div className="aw-trace-visual aw-trace-checks"><span>{t("Item identity")}</span><span>{t("Unit")}</span><span>{t("Period overlap")}</span></div>
+          <strong>{t("Validate")}</strong>
+          <p>{t("Conflicts and repeats stop before posting.")}</p>
+        </li>
+        <li className="is-ledger">
+          <div className="aw-trace-visual aw-trace-ledger">{["OPENING", "IN", "OUT", "OPNAME", "ADJUSTMENT", "REVERSAL"].map((type) => <span key={type}>{type}</span>)}</div>
+          <strong>{t("Stock ledger")}</strong>
+          <p>{t("Stock is derived from movements, never edited in place.")}</p>
+          <div className="aw-trace-branch"><strong>{t("Corrections and stock counts")}</strong><p>{t("Enter as new movements; earlier ones stay.")}</p></div>
+        </li>
+        <li>
+          <figure className="aw-trace-visual aw-trace-report"><Image src="/projects/labstock/trace-report.webp" alt={t("LabStock monthly report with the Excel download and the correction column, demo data")} width={422} height={290} sizes="(max-width: 760px) 90vw, 320px" /></figure>
+          <strong>{t("Reports and Excel export")}</strong>
+          <p>{t("Monthly and yearly, from the same movements.")}</p>
+        </li>
+      </ol>
+      <p className="aw-trace-note">{t("The hospital workbook is drawn as a diagram and not published. Report screen: demo data.")}</p>
     </section>
   );
 }
