@@ -12,6 +12,10 @@ export const identity = {
   "name": "Adjie Rizqan",
   "legalName": "Muhammad Rizqan Nur Adjie Adzani",
   "positioning": "Adjie builds operational software and applied AI systems.",
+  // Display line under the name. `positioning` is third person because the
+  // assistant speaks about Adjie; the page header needs a role, not a sentence
+  // about him placed directly under his own name.
+  "headline": "Software engineer building operational software and applied AI systems.",
   "focusAreas": [
     "Software engineering",
     "Applied AI and computer vision research",
@@ -25,16 +29,34 @@ export const identity = {
   }
 } as const;
 
-export const education = [
+/**
+ * Display fields, from which the AI context sentence is composed
+ * (lib/ai-context.ts). `status` is set only where the record states one; with
+ * no status the assistant is told the completion date is not stated, so it can
+ * never claim a degree was completed.
+ */
+export type EducationRecord = {
+  institution: string;
+  degree: string;
+  field: string;
+  detail?: string;
+  status?: string;
+};
+
+export const education: readonly EducationRecord[] = [
   {
-    "institution": "Tamkang University",
-    "program": "Computer Science and Information Engineering, master's program; thesis research on TomatoVision. Completion date is not stated in the public record."
+    institution: "Tamkang University",
+    degree: "Master's program",
+    field: "Computer Science and Information Engineering",
+    detail: "Thesis research on TomatoVision",
   },
   {
-    "institution": "Telkom University",
-    "program": "S1 Rekayasa Perangkat Lunak (Software Engineering); alumnus"
-  }
-] as const;
+    institution: "Telkom University",
+    degree: "S1 (bachelor's)",
+    field: "Software Engineering (Rekayasa Perangkat Lunak)",
+    status: "Alumnus",
+  },
+];
 
 export const coreCapabilities = [
   "Operational software and workflow design",

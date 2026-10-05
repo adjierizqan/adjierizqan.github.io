@@ -1,5 +1,5 @@
 import { allWorkspaceProjects, type WorkspaceProject } from "@/data/workspace";
-import { coreCapabilities, education, identity } from "@/data/profile";
+import { coreCapabilities, education, identity, type EducationRecord } from "@/data/profile";
 
 /**
  * The one mapping from canonical portfolio data to what the Ask worker reads.
@@ -33,10 +33,22 @@ export function aiProjectRecord(project: WorkspaceProject) {
   };
 }
 
+/**
+ * One sentence per education record for the assistant. The completion guard is
+ * derived, not hand-written: absent a recorded status, the assistant is told
+ * the date is not stated.
+ */
+export function aiEducationRecord(record: EducationRecord) {
+  const parts = [`${record.field}, ${record.degree}`];
+  if (record.detail) parts.push(record.detail.charAt(0).toLowerCase() + record.detail.slice(1));
+  const tail = record.status ? `${record.status}.` : "Completion date is not stated in the public record.";
+  return { institution: record.institution, program: `${parts.join("; ")}. ${tail}` };
+}
+
 export function buildAiContext() {
   return {
     identity,
-    education,
+    education: education.map(aiEducationRecord),
     coreCapabilities,
     projects: allWorkspaceProjects.map(aiProjectRecord),
   };

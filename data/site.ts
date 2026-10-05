@@ -1,7 +1,16 @@
+import { identity } from "./profile";
+
+/**
+ * Site-wide links, derived from the canonical profile.
+ *
+ * This used to repeat the email, GitHub, LinkedIn and CV values that
+ * data/profile.ts (and the AI context generated from it) also held — two
+ * places to update one fact. It keeps its shape for existing consumers.
+ */
 export const site = {
-  name: "Adjie Rizqan",
-  email: "adjierizqan@gmail.com",
-  github: "https://github.com/adjierizqan",
-  linkedin: "https://www.linkedin.com/in/muhammadrizqan/",
-  cv: "/muhammad-rizqan-nur-adjie-cv-2026.pdf",
+  name: identity.name,
+  email: identity.contact.email,
+  github: identity.contact.github,
+  linkedin: identity.contact.linkedin,
+  cv: identity.contact.resumeTarget,
 } as const;

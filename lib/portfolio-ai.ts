@@ -1,5 +1,5 @@
 export type PortfolioChatMessage = { role: "user" | "assistant"; content: string };
-const MAX_CHAT_MESSAGE_LENGTH = 800;
+export const MAX_CHAT_MESSAGE_LENGTH = 800;
 
 export class PortfolioAiError extends Error {
   status?: number;

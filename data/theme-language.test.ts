@@ -21,7 +21,10 @@ describe("language", () => {
   // terms shown in screenshots (Amprah, Stok, Hari Ini, Pagi, Sore) are allowed as names.
   const INDONESIAN = /\b(yang|dan|untuk|dengan|ini|itu|apa|bagaimana|sudah|masih|secara|dapat|adalah|tidak|akan|atau|dari|pada|sekarang|jelaskan)\b/i;
   const files = ["components/WorkspacePrototype.tsx", "components/tomatovision/TomatoVisionStory.tsx", "components/padel/PadelAnalytics.tsx",
-    "components/evidence/ProductEvidence.tsx", "components/project-story/ProjectStory.tsx", "data/workspace.ts", "data/tomatovision.ts"];
+    "components/evidence/ProductEvidence.tsx", "components/project-story/ProjectStory.tsx", "data/workspace.ts", "data/tomatovision.ts",
+    // V2 shell: English-only until the i18n rework restores Indonesian.
+    "app/page.tsx", "components/home/AskPanel.tsx", "components/home/ProjectCard.tsx", "components/site/SiteHeader.tsx",
+    "components/site/SiteFooter.tsx", "components/case-study/CaseStudy.tsx"];
   test("English source strings contain no Indonesian", () => {
     const offenders: string[] = [];
     for (const file of files) {

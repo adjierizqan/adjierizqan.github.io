@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { WorkspaceProject } from "@/data/workspace";
 import { allWorkspaceProjects } from "@/data/workspace";
-import { identity } from "@/data/profile";
 import { projectPath } from "@/lib/projects";
 import "./case-study.css";
 
@@ -27,10 +26,10 @@ export function CaseStudy({ project, children }: { project: WorkspaceProject; ch
 
   return (
     <article className="cs" aria-labelledby="cs-title">
+      {/* The site header carries the name now; a breadcrumb repeating it, with
+          a "Projects" step that went nowhere, is replaced by one real link. */}
       <nav className="cs-crumbs" aria-label="Breadcrumb">
-        <Link href="/">{identity.name}</Link>
-        <span aria-hidden="true">/</span>
-        <span>Projects</span>
+        <Link href="/#work"><span aria-hidden="true">←</span> All projects</Link>
       </nav>
 
       <header className="cs-head">
