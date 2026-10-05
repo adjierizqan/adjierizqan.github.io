@@ -2,32 +2,12 @@ import { describe, expect, test } from "bun:test";
 import { existsSync, readdirSync } from "node:fs";
 import aiContext from "./portfolio-ai-context.json";
 import { allWorkspaceProjects, featuredWork } from "./workspace";
-import { projects as legacyProjects } from "./projects";
+import { buildAiContext } from "../lib/ai-context";
 import annotationMaps from "./tomatovision-annotation-maps.json";
 import { tomatoConfigurations, tomatoDataset, tomatoMatchedScene, tomatoStatus } from "./tomatovision";
 
 const primarySlugs = ["labstock", "bdrs", "suhulog", "tomato-ripeness"];
 const forbiddenMarketing = /\b(innovative|cutting-edge|seamless|revolutionary|game-changing|world-class)\b/i;
-
-function aiRecord(project: (typeof allWorkspaceProjects)[number]) {
-  return {
-    id: project.slug,
-    name: project.title,
-    workspaceTarget: project.slug,
-    category: project.eyebrow,
-    ...(project.status ? { publicStatus: project.status } : {}),
-    summary: project.summary,
-    problem: project.problem,
-    solution: project.solution,
-    howItWorks: project.howItWorks,
-    role: project.role,
-    stack: project.stack,
-    verifiedEvidence: project.evidence,
-    whyItMatters: project.whyItMatters,
-    publicLimitations: project.publicLimitations,
-    askSuggestion: project.askSuggestion,
-  };
-}
 
 describe("portfolio content integrity", () => {
   test("every primary project has the required professional content fields", () => {
@@ -55,8 +35,11 @@ describe("portfolio content integrity", () => {
     }
   });
 
-  test("AI project context exactly mirrors canonical Workspace content", () => {
-    expect(aiContext.projects).toEqual(allWorkspaceProjects.map(aiRecord));
+  test("AI context file is exactly the generated output of the canonical sources", () => {
+    // Whole file, not just projects: identity, education and capabilities used
+    // to be hand-edited in the JSON with nothing checking them. Fix drift with
+    // `npm run ai-context`, never by editing the JSON.
+    expect(aiContext).toEqual(JSON.parse(JSON.stringify(buildAiContext())));
   });
 
   test("conservative projects expose their public evidence boundaries", () => {
@@ -142,11 +125,12 @@ describe("TomatoVision public media", () => {
 });
 
 describe("Portfolio V1 scope", () => {
-  test("parked projects are absent from the workspace, legacy pages and AI context", () => {
+  test("parked projects are absent from the canonical data and AI context", () => {
+    // The legacy data/projects.ts list is gone; routes now derive from the
+    // canonical workspace data, so it no longer needs its own check.
     for (const slug of ["objecttwin", "think-it"]) {
       expect(allWorkspaceProjects.some((project) => project.slug === slug)).toBe(false);
       expect(aiContext.projects.some((project) => project.id === slug)).toBe(false);
-      expect(legacyProjects.some((project) => project.slug === slug)).toBe(false);
     }
   });
 });

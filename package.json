@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "bun test data/ lib/ && cd cloudflare/ask-worker && bun test",
+    "ai-context": "bun run scripts/build-ai-context.ts"
   },
   "dependencies": {
     "next": "16.2.10",
