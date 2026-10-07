@@ -3,6 +3,7 @@
 import Image from "next/image";
 import dimensions from "@/data/media-dimensions.json";
 import dynamic from "next/dynamic";
+import { ProjectOpener, requestProjectIntro } from "@/components/workspace/ProjectOpener";
 import { WorkspaceHome } from "@/components/workspace/WorkspaceHome";
 const LabStockCaseStudy = dynamic(() => import("@/components/labstock/LabStockCaseStudy").then(m => m.LabStockCaseStudy));
 const SuhuLogStudy = dynamic(() => import("@/components/studies/SuhuLogStudy"));
@@ -341,7 +342,10 @@ function ProjectWorkspace({project, openImage, back, ask}: ProjectViewProps) {
  const props = {project,openImage};
  return <main className={"aw-center aw-project-detail aw-labstock-v2 aw-enter"}>
   <button type="button" className="aw-project-back" onClick={back}>← Work</button>
+  <ProjectOpener project={project} />
+  <div className="project-story">
   {project.slug === "labstock" ? <LabStockCaseStudy {...props}/> : project.slug === "suhulog" ? <SuhuLogStudy {...props}/> : project.slug === "bdrs" ? <BdrsStudy {...props}/> : project.slug === "tomato-ripeness" ? <TomatoStudy {...props}/> : <LabsStudy {...props}/>}
+  </div>
   <footer className="ls-ask"><span>Want to go deeper?</span><button type="button" onClick={()=>ask(project.askSuggestion)}>Ask AI about {project.title} ↗</button></footer>
  </main>;
 }
@@ -714,6 +718,7 @@ export function WorkspacePrototype({ initialProject = null }: { initialProject?:
 
   const selectProject = useCallback((project: WorkspaceProject) => {
     playUISound("open");
+    requestProjectIntro(project.slug);
     withViewTransition(() => {
       writeProjectParam(project.slug);
       setQuickLookIndex(null);
@@ -902,7 +907,7 @@ export function WorkspacePrototype({ initialProject = null }: { initialProject?:
               <MusicButton className="aw-mobile-music" />
               <button type="button" className="aw-mobile-theme" onClick={() => { playUISound("tap"); setTheme(theme === "dark" ? "light" : "dark"); }} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             </header>
-            {view === "home" ? <WorkspaceHome selectProject={selectProject} openAsk={() => setView("ask")} />
+            {view === "home" ? <WorkspaceHome selectProject={selectProject} openAsk={() => setView("ask")} askQuestion={(question) => void runAsk(question, null)} composer={<Composer query={query} setQuery={setQuery} submit={() => void runAsk(query, null)} />} />
               : view === "work" ? <WorkWorkspace selectProject={selectProject} />
                 : view === "projects" ? <ProjectDirectory projects={allProjects()} title={tk("Projects")} copy={tk("A single workspace index for featured systems and focused experiments.")} selectProject={selectProject} />
                   : view === "labs" ? <ProjectDirectory projects={labProjects()} title={tk("Labs")} copy={tk("Focused experiments in computer vision, 3D pipelines, and interactive systems.")} selectProject={selectProject} />

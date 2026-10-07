@@ -16,7 +16,10 @@ for (const p of allWorkspaceProjects) {
     html.includes(`https://adjierizqan.github.io/projects/${p.slug}/`),
     p.slug + " canonical",
   );
-  assert(!html.includes("Replay Demo"), p.slug + " fake presentation");
+  assert(!html.includes("Replay Demo"), p.slug + " obsolete presentation");
+  assert(html.includes(p.opener.prompt), p.slug + " missing initial prompt");
+  assert(html.includes(p.opener.response), p.slug + " missing initial response");
+  assert(html.includes("Scripted introduction"), p.slug + " missing transparent framing");
   assert(p.socialImage?.match(/\.(jpg|png)$/));
   for (const src of [
     p.image,

@@ -1,5 +1,7 @@
 # Personal opening and disciplined curation
 
+> Home composition is superseded by [AI start screen and project prompts](../project-intros/DESIGN.md). The inventory decisions remain unchanged.
+
 7 October 2026. Baseline `39dee07`; branch `feat/workspace-personal-opening`.
 
 ## Diagnosis and decision

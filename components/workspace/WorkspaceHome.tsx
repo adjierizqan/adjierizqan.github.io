@@ -1,4 +1,5 @@
 "use client";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { featuredWork, labWork, type WorkspaceProject } from "@/data/workspace";
 import { identity, education } from "@/data/profile";
@@ -7,9 +8,13 @@ import "./home.css";
 export function WorkspaceHome({
   selectProject,
   openAsk,
+  composer,
+  askQuestion,
 }: {
   selectProject: (p: WorkspaceProject) => void;
   openAsk: () => void;
+  composer: ReactNode;
+  askQuestion: (question: string) => void;
 }) {
   return (
     <main className="aw-center workspace-home aw-enter">
@@ -18,18 +23,30 @@ export function WorkspaceHome({
           <div><h1>{identity.name}</h1><p>Software / full-stack engineer</p></div>
           <a href={site.cv} target="_blank" rel="noreferrer">Résumé ↗</a>
         </div>
-        <section className="home-conversation" aria-label="Example conversation">
-          <p className="home-example-label">Example conversation <span aria-hidden="true">↙</span></p>
-          <div className="home-prompt"><span>Visitor</span><p>{identity.introduction.question}</p></div>
-          <div className="home-reply"><span>Adjie AI</span><div>
-            <h2>{identity.introduction.lead}</h2>
-            <p>{identity.introduction.answer}</p>
-          </div></div>
+        <section className="home-start" aria-label="Ask Adjie AI">
+          <p className="home-greeting">Welcome to my workspace.</p>
+          <h2>What would you like to explore?</h2>
+          <p className="home-positioning">Operational software, traceable data, and a researcher’s eye for computer vision.</p>
+          {composer}
+          <div className="home-starters" aria-label="Suggested questions">
+            {[
+              ["Start with the work", "Which of Adjie's projects should I look at first?"],
+              ["How I build", "How does Adjie approach data correctness and traceability?"],
+              ["Beyond full-stack", "What does TomatoVision show about Adjie's computer vision research?"],
+            ].map(([label, question]) => <button key={label} type="button" onClick={() => askQuestion(question)}>{label} <span aria-hidden="true">↗</span></button>)}
+          </div>
           <nav className="home-intro-actions" aria-label="Introduction actions">
             <a href="#home-work">Explore the work ↓</a>
             <button type="button" onClick={openAsk}>Ask your own question ↗</button>
           </nav>
         </section>
+        <details className="home-example">
+          <summary>Example conversation</summary>
+          <section className="home-conversation" aria-label="Example conversation">
+            <div className="home-prompt"><span>Example prompt</span><p>{identity.introduction.question}</p></div>
+            <div className="home-reply"><span>Adjie AI</span><div><h3>{identity.introduction.lead}</h3><p>{identity.introduction.answer}</p></div></div>
+          </section>
+        </details>
       </header>
       <section className="home-selected" aria-labelledby="home-work">
         <header>

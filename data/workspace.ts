@@ -5,6 +5,7 @@ export type WorkspaceProject = {
   year: string;
   status?: string;
   summary: string;
+  opener: { prompt: string; response: string };
   problem: string;
   solution: string;
   howItWorks: string[];
@@ -36,6 +37,10 @@ export type WorkspaceProject = {
 export const featuredWork: WorkspaceProject[] = [
   {
     slug: "labstock",
+    opener: {
+      prompt: "How do you keep inventory traceable from spreadsheet import to final report?",
+      response: "The workbook is the entry point. LabStock carries source identity into a stock ledger, preserves corrections instead of overwriting history, and builds reports and Excel exports from that same record.",
+    },
     title: "LabStock",
     eyebrow: "Operational software",
     year: "2026",
@@ -95,6 +100,10 @@ export const featuredWork: WorkspaceProject[] = [
   },
   {
     slug: "bdrs",
+    opener: {
+      prompt: "How do you model a blood-bank workflow without collapsing different events into one status?",
+      response: "Issuing a bag does not mean it was used. BDRS keeps service, per-bag crossmatch, physical outcome and transfusion events distinct, then brings them together in one case workspace.",
+    },
     title: "BDRS",
     eyebrow: "Operational software",
     year: "2026",
@@ -142,6 +151,10 @@ export const featuredWork: WorkspaceProject[] = [
   },
   {
     slug: "suhulog",
+    opener: {
+      prompt: "How do you simplify daily temperature logging without losing correction history?",
+      response: "A QR label opens the exact monitoring point. Staff record the reading and its Pagi or Sore slot; corrections preserve the previous value, while monitoring and monthly exports share the same effective records.",
+    },
     title: "SuhuLog",
     eyebrow: "Operational software",
     year: "2026",
@@ -179,6 +192,10 @@ export const featuredWork: WorkspaceProject[] = [
   },
   {
     slug: "tomato-ripeness",
+    opener: {
+      prompt: "What improved tomato detection: the architecture changes or the ensemble?",
+      response: "The study evaluates both, separately: a YOLOv11 baseline, modified single models, then three-model Weighted Boxes Fusion. The comparison keeps architectural gains distinct from gains that require ensemble inference.",
+    },
     title: "TomatoVision",
     eyebrow: "Applied AI",
     year: "2026",
@@ -212,6 +229,10 @@ export const featuredWork: WorkspaceProject[] = [
 export const labWork: WorkspaceProject[] = [
   {
     slug: "padel-vision",
+    opener: {
+      prompt: "Can one camera become an inspectable match-analysis pipeline?",
+      response: "Padel Vision connects player and ball tracking to court homography and annotated video. It is an experiment in making the pipeline visible—from detections in the frame to positions on the court.",
+    },
     title: "Padel Vision",
     eyebrow: "Computer vision experiment",
     year: "2026",
@@ -233,6 +254,10 @@ export const labWork: WorkspaceProject[] = [
   },
   {
     slug: "porsche-3d",
+    opener: {
+      prompt: "How far can a lightweight web stack go for an interactive 3D experience?",
+      response: "Plain HTML and ES modules host a real-time Three.js scene: six models, orbit controls, live paint changes and controlled camera transitions. The interaction is my work; the car models retain their original creator credits.",
+    },
     title: "Porsche 3D",
     eyebrow: "Interactive web experiment",
     year: "2026",
