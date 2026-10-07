@@ -200,7 +200,7 @@ function Composer({ query, setQuery, submit, stop, busy = false, placeholder }: 
           <button type="button" onClick={() => setQuery(t("What evidence is available for Adjie’s work?"))}><Glyph name="book" /> {t("Evidence")}</button>
           <button type="button" onClick={() => setQuery(t("How does Adjie approach reliability?"))}><Glyph name="spark" /> {t("Build notes")}</button>
         </div>
-        <div className="aw-composer-submit"><span>{t("Adjie AI · Preview")}</span><button className="aw-send" type="button" onClick={busy ? stop : submit} disabled={busy ? !stop : !query.trim()} aria-label={busy ? t("Stop response") : t("Send query")}><Glyph name={busy ? "close" : "send"} /></button></div>
+        <div className="aw-composer-submit"><span>{t("Adjie AI")}</span><button className="aw-send" type="button" onClick={busy ? stop : submit} disabled={busy ? !stop : !query.trim()} aria-label={busy ? t("Stop response") : t("Send query")}><Glyph name={busy ? "close" : "send"} /></button></div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 name: Portfolio release gates and Pages
 on:
   push:
-    branches: [main, feat/workspace-v2-labstock]
+    branches: [main, feat/workspace-v2-labstock, feat/workspace-personal-opening]
   pull_request:
   workflow_dispatch:
 permissions:
