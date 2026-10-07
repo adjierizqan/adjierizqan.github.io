@@ -440,7 +440,7 @@ function AskWorkspace({ query, setQuery, turns, current, answer, status, error, 
           {groups.map((group, groupIndex) => (
             <div className="aw-ask-group" key={groupIndex}>
               {groupIndex > 0 && <p className="aw-ask-switch" role="separator"><span>{L(`Context switched to ${contextName(group.projectId)}`, `Konteks beralih ke ${contextName(group.projectId)}`)}</span></p>}
-              <p className="aw-ask-label">{contextName(group.projectId)}</p>
+              <p className="aw-ask-label">{contextName(group.projectId)}{group.projectId && rawAll.some(p => p.slug === group.projectId) && <> · <a href={`/projects/${group.projectId}/`}>Open case study ↗</a></>}</p>
               {group.turns.map((turn, index) => (
                 <div className="aw-ask-turn" key={index} data-project={turn.projectId ?? "general"}>
                   <div className="aw-message is-user"><span>{t("You")}</span><p>{turn.question}</p></div>

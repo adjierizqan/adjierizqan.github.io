@@ -31,7 +31,7 @@ Removed fake presentation timers and five unused component families. WorkspacePr
 - Public text scan: 103 exported text/JavaScript files, no forbidden patterns or database/key files. OCR: 77 retained public images, no review hits. Synthetic BDRS originals inspected visually. No hospital production system accessed.
 - CI now requires install → tests (including Worker) → lint → typecheck → build → static/privacy → Chromium/WebKit → shell checks before Pages deployment.
 
-Machine evidence: [browser](browser-results.json), [shell](shell-results.json), [OCR](privacy-ocr.json), [resource measurements](performance.json). Local initial Home measured 576,183 uncompressed JavaScript bytes across nine script resources and zero video requests before the final minor cleanup; this is not a Lighthouse score or mobile-network claim.
+Machine evidence: [browser](browser-results.json), [shell](shell-results.json), [OCR](privacy-ocr.json), [resource measurements](performance.json). Local initial Home measured 580,857 uncompressed JavaScript bytes across nine script resources and zero video requests on the final local build; this is not a Lighthouse score or mobile-network claim.
 
 ## Screenshots
 
@@ -53,4 +53,4 @@ Physical-device listening remains unverified; Chromium/WebKit emulation is not p
 
 QR audit removed the legacy scannable-label image: eight encoded URLs were not verified demo destinations. No payload was visited or reproduced. A non-scannable workflow diagram replaces it.
 
-Deployment and production smoke results will be appended after the release runs.
+Production verification is emitted to `production-smoke.json` by `scripts/production-smoke.cjs` and reported separately after deployment.

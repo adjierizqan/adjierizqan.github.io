@@ -44,3 +44,6 @@ next-env.d.ts
 /docs/release/screenshots/
 /docs/release/shell-screenshots/
 /docs/release/production-screenshots/
+
+/docs/release/production-smoke.json
+/docs/release/DEPLOYED.md

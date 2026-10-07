@@ -154,5 +154,6 @@ describe("reconciled release context", () => {
     expect(bdrs.verifiedEvidence[1].value).toContain("74 skipped · 3 incomplete");
     expect(bdrs.publicLimitations).toContain("record-empty database");
     expect(readFileSync("src/core.ts", "utf8")).not.toContain('Never use "graduated"');
+    expect(readFileSync("src/core.ts", "utf8")).toContain("Do not output URLs");
   });
 });

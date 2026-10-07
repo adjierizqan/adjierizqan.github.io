@@ -2,40 +2,40 @@
   "method": "Local production build, Chromium 1440px, HTTP uncompressed. Transfer sizes are not Lighthouse scores.",
   "scripts": [
     {
-      "file": "turbopack-42nwqpd6gymof.js",
-      "bytes": 10580
-    },
-    {
-      "file": "05-c3ty_6dwfk.js",
-      "bytes": 3377
+      "file": "2kqrbujyxigm8.js",
+      "bytes": 50234
     },
     {
       "file": "0mr0fnckbkr54.js",
       "bytes": 145085
     },
     {
-      "file": "14mrh2-p_w84d.js",
-      "bytes": 54646
+      "file": "05-c3ty_6dwfk.js",
+      "bytes": 3377
     },
     {
-      "file": "2kqrbujyxigm8.js",
-      "bytes": 50234
-    },
-    {
-      "file": "0iec5q4ack_04.js",
-      "bytes": 227315
+      "file": "turbopack-42nwqpd6gymof.js",
+      "bytes": 10580
     },
     {
       "file": "3xyt402c62511.js",
       "bytes": 5828
     },
     {
-      "file": "0t174lwglr5m2.js",
-      "bytes": 19354
+      "file": "14mrh2-p_w84d.js",
+      "bytes": 54646
     },
     {
-      "file": "0hzyahpp984lu.js",
-      "bytes": 59764
+      "file": "0iec5q4ack_04.js",
+      "bytes": 227315
+    },
+    {
+      "file": "2874ya_t_-ahz.js",
+      "bytes": 24575
+    },
+    {
+      "file": "07h4u1q1zah--.js",
+      "bytes": 59217
     }
   ],
   "images": [
@@ -45,15 +45,15 @@
     },
     {
       "file": "cover-final.webp",
-      "bytes": 143276
-    },
-    {
-      "file": "cover-final.webp",
       "bytes": 56798
     },
     {
       "file": "cover-final.webp",
       "bytes": 155266
+    },
+    {
+      "file": "cover-final.webp",
+      "bytes": 143276
     },
     {
       "file": "cover-final.webp",
