@@ -39,8 +39,14 @@ const slugs = [
         expect(r.status()).toBe(200);
         await expect(p.locator("h1")).toHaveCount(1);
         if (!slug) {
-          await expect(p.getByRole("region", { name: "Example conversation" })).toBeVisible();
+          await expect(p.getByRole("region", { name: "Ask Adjie AI", exact: true })).toBeVisible();
+          await expect(p.locator(".home-start textarea")).toBeVisible();
           await expect(p.locator(".home-reply")).toContainText("computer vision research");
+          expect(await p.evaluate(() => window.__audioContexts)).toBe(0);
+        }
+        if (slug) {
+          await expect(p.locator(".project-intro-answer p")).toBeVisible();
+          await expect(p.locator(".project-intro")).not.toHaveAttribute("data-playing", "true");
           expect(await p.evaluate(() => window.__audioContexts)).toBe(0);
         }
         await expect(p.locator("link[rel=canonical]")).toHaveAttribute(

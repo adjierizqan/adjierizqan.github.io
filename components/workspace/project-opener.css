@@ -1,0 +1,26 @@
+.project-intro { color: var(--ls-ink, inherit); margin: 22px 0 38px; padding-bottom: 28px; border-bottom: 1px solid var(--ls-line, #d8ddda); }
+.project-intro-meta { display: flex; justify-content: space-between; gap: 16px; color: var(--ls-muted, #727b78); font-size: .68rem; }
+.project-intro-meta > span > span { margin: 0 7px; opacity: .5; }
+.project-intro-controls { flex-shrink: 0; }
+.project-intro-controls button { padding: 2px 0; min-height: 24px; }
+.project-intro-controls button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.intro-skip { display: none; }
+.project-intro[data-playing="true"] .intro-skip { display: inline; }
+.project-intro[data-playing="true"] .intro-replay { display: none; }
+.project-intro .project-intro-prompt { max-width: 950px; text-wrap: balance; font-size: clamp(1.45rem, 2.3vw, 2rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.22; margin: 18px 0 22px; }
+.intro-word { display: inline-block; white-space: pre; }
+.project-intro-answer { display: grid; grid-template-columns: 115px minmax(0, 1fr); gap: 22px; max-width: 950px; }
+.project-intro-answer > span { font-size: .78rem; font-weight: 550; padding-top: 3px; }
+.project-intro-answer small { display: block; font-size: .62rem; font-weight: 400; color: var(--ls-muted, #727b78); margin-top: 4px; }
+.project-intro-answer p { font-size: .87rem; line-height: 1.7; color: var(--ls-muted, #727b78); max-width: 720px; }
+:root[data-theme="dark"] .project-intro { --ls-ink: #e2e6e5; --ls-muted: #a5afac; --ls-line: #343e3b; }
+@media(max-width:760px) {
+ .project-intro { margin: 20px 0 26px; padding-bottom: 24px; }
+ .project-intro-meta { font-size: .6rem; gap: 8px; }
+ .project-intro-meta > span { max-width: 150px; }
+ .project-intro .project-intro-prompt { font-size: 1.32rem; margin: 15px 0 20px; }
+ .project-intro-answer { grid-template-columns: 1fr; gap: 7px; }
+ .project-intro-answer small { display: inline; margin-left: 8px; }
+ .project-intro-answer p { font-size: .8rem; line-height: 1.6; }
+}
+@media(prefers-reduced-motion:reduce), (scripting:none) { .project-intro-controls { display:none; } }

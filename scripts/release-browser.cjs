@@ -52,6 +52,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
         });
         for (const slug of slugs) {
           const url = slug ? `/projects/${slug}/` : "/";
+          const requestsBeforeEntry = askRequests;
           const response = await page.goto(base + url, {
             waitUntil: "networkidle",
           });
@@ -64,16 +65,26 @@ const report = { base, browsers: [], checks: [], errors: [] };
           expect(await page.evaluate(() => window.__audio)).toBe(0);
           if (!slug) {
             expect(askRequests).toBe(0);
+            await expect(page.getByRole("region", { name: "Ask Adjie AI", exact: true })).toBeVisible();
+            await expect(page.locator(".home-start textarea")).toBeVisible();
+            await page.locator(".home-example summary").click();
             await expect(page.getByRole("region", { name: "Example conversation" })).toBeVisible();
             await expect(page.locator(".home-reply")).toContainText("computer vision research");
+            await page.locator(".home-example summary").click();
             const proof = await page.locator(".home-project img").first().boundingBox();
             // The recruiter sees actual product evidence before scrolling, not just a chat.
             expect(proof.y).toBeLessThan(width === 834 ? 900 : 760);
             await page.emulateMedia({ reducedMotion: "reduce" });
             expect(await page.locator(".home-reply").evaluate(e => e.getAnimations({ subtree: true }).length)).toBe(0);
-            await expect(page.locator(".home-reply h2")).toBeVisible();
+            await expect(page.locator(".home-start h2")).toBeVisible();
             await page.emulateMedia({ reducedMotion: "no-preference" });
             await page.locator(".aw-center").evaluate(e => Promise.all(e.getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))));
+          }
+          if (slug) {
+            expect(askRequests).toBe(requestsBeforeEntry);
+            await expect(page.locator(".project-intro")).toContainText("Scripted introduction");
+            await expect(page.locator(".project-intro-answer p")).not.toBeEmpty();
+            await expect(page.locator(".project-intro")).not.toHaveAttribute("data-playing", "true");
           }
           await page.locator("main img").evaluateAll(async (imgs) => {
             imgs.forEach((i) => (i.loading = "eager"));
@@ -186,6 +197,8 @@ const report = { base, browsers: [], checks: [], errors: [] };
       const nojs = await browser.newContext({ javaScriptEnabled: false });
       const p = await nojs.newPage();
       await p.goto(base + "/");
+      await p.locator(".home-example summary").focus();
+      await p.keyboard.press("Enter");
       await expect(p.getByRole("region", { name: "Example conversation" })).toBeVisible();
       await expect(p.locator(".home-reply")).toContainText("Stock movements in LabStock");
       await expect(p.locator(".home-project")).toHaveCount(4);
@@ -193,6 +206,8 @@ const report = { base, browsers: [], checks: [], errors: [] };
         await p.goto(base + `/projects/${slug}/`);
         await expect(p.locator("h1")).toHaveCount(1);
         await expect(p.locator("article")).not.toHaveCount(0);
+        await expect(p.locator(".project-intro-prompt")).toBeVisible();
+        await expect(p.locator(".project-intro-answer p")).toBeVisible();
         expect(await p.locator("body").innerText()).toContain(
           "About the evidence",
         );
