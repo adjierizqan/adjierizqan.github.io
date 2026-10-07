@@ -61,6 +61,23 @@ Full public contribution and scope are in the canonical data and [release eviden
 - **Media / safety:** no owner-specific demonstrable result or cleared media package established.
 - **Value / decision:** potentially useful progression evidence only after contribution attribution. Do not present an upstream/team fork as a solo project. Not published or modernized.
 
+### Capstone Cafeasy — C, earlier-work candidate; not added
+
+- **Source:** the owner's previously public résumé, preserved at portfolio commit `9e36707:public/cv.pdf`. The same document dates the undergraduate program September 2019–September 2023.
+- **Timeframe / contribution:** résumé records frontend contribution on Capstone Cafeasy, September 2022–September 2023: frontend features and interface architecture/design. This is a documented owner attribution, stronger than inferring authorship from a fork.
+- **Current state / media:** no matching repository or working/demo capture was identified in the bounded accessible-source search. The résumé is not a runtime or visual proof.
+- **Public safety:** the résumé statement was already public; application assets, team attribution and any user data still require review.
+- **Value / decision:** the clearest identified undergraduate candidate for a future Earlier Work row, once a source/demo and precise team contribution can accompany it. No modernization performed and no new employment claim added to the site.
+
+### Other résumé leads — D, insufficient independent project evidence
+
+- **Tourist Behavior Prediction:** the historical résumé describes survey-based ML research and a conference-paper draft. The inspected portfolio sources do not establish its evaluation package, current paper status, data consent or a licensed public demonstration. Potentially differentiated tabular research; do not copy its numerical claims into the public case-study data without corroboration.
+- **Interactive Web Showcases / resort:** historical résumé describes frontend showcases. Do not conflate its Porsche image-sequence version with the current credited WebGL case. The resort source, media rights and precise contribution are not mapped; no extra project added.
+- **FGA data-analysis assessments:** résumé establishes training participation in 2022, but no separately identified assessment artifact or contribution/demo package was found. Training is not automatically a portfolio project.
+- **Internship work:** not used as a new project candidate. Employer work needs specific permission, scope and sanitized evidence; no employer records or internal work were inspected or imported.
+
+These are leads from an existing owner record, not independently revalidated completion, employment, research-publication or impact claims. They remain outside canonical project data and AI context.
+
 ### Xiapi Commerce — C, learning archive candidate; not added
 
 - **Source:** public [adjierizqan/xiapi](https://github.com/adjierizqan/xiapi), README and metadata; non-fork repository created October 2025.

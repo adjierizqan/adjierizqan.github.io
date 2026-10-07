@@ -20,6 +20,8 @@ All six study components, their CSS, canonical project facts, media and thumbnai
 
 No Earlier Work category was created. [Project inventory](PROJECT_INVENTORY.md) records current work, additional candidates, contribution uncertainty, provenance and publication decisions. ObjectTwin remains intentionally excluded. ELAB is distinct from the unresolved E-Library reference; its README understates milestones found in its detailed truth record, but release closure/public-safe presentation are not assumed. The undergraduate Perpus.id fork lacks individual attribution. Old portfolio template entries linking other authors were rejected as owner evidence. No additional work was published or modernized.
 
+The historical public résumé identifies Capstone Cafeasy (2022–2023) as a stronger undergraduate lead with an explicit frontend contribution. It remains an Earlier Work candidate because no matching repository/demo and cleared media package were identified. Additional résumé research/showcase leads are recorded without promoting uncorroborated metrics or private employer work.
+
 ## Interaction and sound
 
 The full question, lead, answer and project links exist in original HTML. A single 360ms opacity/5px translation presents the answer; even its starting frame is readable. No typing timers, loading state, replay loop, sound call or AI request belongs to the intro. Reduced motion removes the effect entirely. There is no Replay control because the sequence is brief and does not contain information that needs replaying.
