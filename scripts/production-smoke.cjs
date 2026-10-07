@@ -45,7 +45,7 @@ const slugs = [
           expect(await p.evaluate(() => window.__audioContexts)).toBe(0);
         }
         if (slug) {
-          await expect(p.locator(".project-intro-answer p")).toBeVisible();
+          await expect(p.locator(".project-answer-lead")).toBeVisible();
           await expect(p.locator(".project-intro")).not.toHaveAttribute("data-playing", "true");
           expect(await p.evaluate(() => window.__audioContexts)).toBe(0);
         }

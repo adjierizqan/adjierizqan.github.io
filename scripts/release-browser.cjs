@@ -71,7 +71,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
             await expect(page.locator(".home-start textarea")).toBeVisible();
             await expect(page.locator(".home-start .aw-send")).toBeVisible();
             await page.locator(".home-example summary").click();
-            await expect(page.getByRole("region", { name: "Example conversation" })).toBeVisible();
+            await expect(page.getByRole("region", { name: "Scripted introduction" })).toBeVisible();
             await expect(page.locator(".home-reply")).toContainText("computer vision research");
             await page.locator(".home-example summary").click();
             const proof = await page.locator(".home-proof img").first().boundingBox();
@@ -85,8 +85,10 @@ const report = { base, browsers: [], checks: [], errors: [] };
           }
           if (slug) {
             expect(askRequests).toBe(requestsBeforeEntry);
+            await expect(page.locator(".project-intro-answer > .project-story > article")).toHaveCount(1);
+            await expect(page.locator(".project-ai-identity")).toHaveCount(1);
             await expect(page.locator(".project-intro")).toContainText("Scripted introduction");
-            await expect(page.locator(".project-intro-answer p")).not.toBeEmpty();
+            await expect(page.locator(".project-answer-lead")).not.toBeEmpty();
             await expect(page.locator(".project-intro")).not.toHaveAttribute("data-playing", "true");
           }
           await page.locator("main img").evaluateAll(async (imgs) => {
@@ -184,7 +186,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
             await page.locator("textarea").fill("How does LabStock preserve history?");
             await page.locator("textarea").press("Enter");
             await expect(page.locator(".aw-message").last()).toContainText("Fixture: a real visitor request");
-            await expect(page.getByRole("region", { name: "Example conversation" })).toHaveCount(0);
+            await expect(page.getByRole("region", { name: "Scripted introduction" })).toHaveCount(0);
             expect(askRequests).toBe(1);
             await page.locator(".aw-desktop").evaluate(e => Promise.all(e.getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))));
             await page.screenshot({ path: `${dir}/${name}-${width}-ask.png` });
@@ -205,7 +207,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
       await p.goto(base + "/");
       await p.locator(".home-example summary").focus();
       await p.keyboard.press("Enter");
-      await expect(p.getByRole("region", { name: "Example conversation" })).toBeVisible();
+      await expect(p.getByRole("region", { name: "Scripted introduction" })).toBeVisible();
       await expect(p.locator(".home-reply")).toContainText("Stock movements in LabStock");
       await expect(p.locator(".home-project")).toHaveCount(4);
       for (const slug of slugs.slice(1)) {
@@ -213,7 +215,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
         await expect(p.locator("h1")).toHaveCount(1);
         await expect(p.locator("article")).not.toHaveCount(0);
         await expect(p.locator(".project-intro-prompt")).toBeVisible();
-        await expect(p.locator(".project-intro-answer p")).toBeVisible();
+        await expect(p.locator(".project-answer-lead")).toBeVisible();
         expect(await p.locator("body").innerText()).toContain(
           "About the evidence",
         );

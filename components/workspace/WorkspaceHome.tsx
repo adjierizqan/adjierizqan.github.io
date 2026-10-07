@@ -5,6 +5,7 @@ import { featuredWork, labWork, type WorkspaceProject } from "@/data/workspace";
 import { identity, education } from "@/data/profile";
 import { site } from "@/data/site";
 import "./home.css";
+import { navigateToSection } from "@/lib/section-navigation";
 export function WorkspaceHome({
   selectProject,
   openAsk,
@@ -43,14 +44,14 @@ export function WorkspaceHome({
             </a>)}
           </nav>
           <nav className="home-intro-actions" aria-label="Introduction actions">
-            <a href="#home-work">Explore the work ↓</a>
+            <a href="#home-work" onClick={navigateToSection}>Explore the work ↓</a>
 
           </nav>
         </section>
         <details className="home-example">
-          <summary>Example conversation</summary>
-          <section className="home-conversation" aria-label="Example conversation">
-            <div className="home-prompt"><span>Example prompt</span><p>{identity.introduction.question}</p></div>
+          <summary>A quick introduction</summary>
+          <section className="home-conversation" aria-label="Scripted introduction">
+            <div className="home-prompt"><span className="sr-only">Scripted prompt</span><p>{identity.introduction.question}</p></div>
             <div className="home-reply"><span>Adjie AI</span><div><h3>{identity.introduction.lead}</h3><p>{identity.introduction.answer}</p></div></div>
           </section>
         </details>

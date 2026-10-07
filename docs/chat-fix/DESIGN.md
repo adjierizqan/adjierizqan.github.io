@@ -1,5 +1,7 @@
 # Chat first, then the result
 
+Historical direction: the later [continuous project answer](../continuous-answer/DESIGN.md) supersedes the separate result and visibility-gating rules below.
+
 Owner correction, 7 October 2026. The prior release was rejected: an oversized editorial question above an already visible case study is not a chat-first experience. Passing tests did not establish the requested visual behavior.
 
 ## Observable acceptance

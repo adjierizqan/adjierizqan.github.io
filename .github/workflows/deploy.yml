@@ -35,6 +35,7 @@ jobs:
           python3 -m http.server 4182 --bind 127.0.0.1 --directory out > /tmp/portfolio-http.log 2>&1 &
           QA_WEBKIT=1 npm run test:browser
           npm run test:intros
+          npm run test:integration
           npm run test:shell
           QA_ENGINE=webkit npm run test:shell
       - uses: actions/upload-artifact@v4

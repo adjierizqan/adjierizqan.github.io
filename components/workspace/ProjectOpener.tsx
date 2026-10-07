@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import type { WorkspaceProject } from "@/data/workspace";
 import { playUISound } from "./UISound";
 import "./project-opener.css";
@@ -12,7 +12,7 @@ let historyNavigation = false;
 export function requestProjectIntro(slug: string) { intentionalEntry = slug; historyNavigation = false; }
 export function markProjectHistoryNavigation() { historyNavigation = true; intentionalEntry = null; }
 
-export function ProjectOpener({ project }: { project: WorkspaceProject }) {
+export function ProjectOpener({ project, children }: { project: WorkspaceProject; children?: ReactNode }) {
   const root = useRef<HTMLElement>(null);
   const animations = useRef<Animation[]>([]);
   const eligible = useRef<boolean | null>(null);
@@ -23,7 +23,6 @@ export function ProjectOpener({ project }: { project: WorkspaceProject }) {
     animations.current = [];
     if (root.current) {
       root.current.dataset.playing = "false";
-      root.current.parentElement!.dataset.introReady = "true";
     }
   }
 
@@ -33,29 +32,18 @@ export function ProjectOpener({ project }: { project: WorkspaceProject }) {
     if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     el.dataset.playing = "true";
     const characters = [...el.querySelectorAll<HTMLElement>("[data-character]")];
-    const typing = Math.min(prompt.length * 25, 1350);
+    const typing = Math.min(prompt.length * 18, 900);
     const sequence = characters.map((character, index) => character.animate(
       [{ opacity: 0 }, { opacity: 1 }],
-      { duration: 1, delay: 180 + index * typing / characters.length, fill: "both" },
+      { duration: 1, delay: 100 + index * typing / characters.length, fill: "both" },
     ));
-    const answer = el.querySelector(".project-intro-answer")!;
-    sequence.push(answer.animate(
-      [{ opacity: 0, visibility: "hidden", transform: "translateY(6px)" }, { opacity: 1, visibility: "visible", transform: "none" }],
-      { duration: 280, delay: 180 + typing + 160, easing: "cubic-bezier(.2,.8,.2,1)", fill: "both" },
-    ));
-    // Keep the full result in HTML, but do not show it before the conversational answer.
-    // Visibility avoids compositing a layer spanning the entire long article.
-    const story = el.nextElementSibling;
-    const resultAt = 180 + typing + 160 + 320;
-    if (story) sequence.push(story.animate(
-      [{ visibility: "hidden" }, { visibility: "visible" }],
-      { duration: 1, delay: resultAt, fill: "both" },
-    ));
-    const hero = story?.querySelector("article > header");
-    if (hero) sequence.push(hero.animate(
-      [{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }],
-      { duration: 300, delay: resultAt, easing: "cubic-bezier(.2,.8,.2,1)", fill: "both" },
-    ));
+    // Only the opening elements unfold. The answer container and the long study
+    // never become hidden/inert; readers can inspect any section immediately.
+    const opening = el.querySelectorAll(".project-ai-identity, .project-answer-lead, .project-story > article > header");
+    opening.forEach((element, index) => sequence.push(element.animate(
+      [{ opacity: 0, transform: "translateY(4px)" }, { opacity: 1, transform: "none" }],
+      { duration: 240, delay: 100 + typing + 100 + index * 70, easing: "cubic-bezier(.2,.8,.2,1)", fill: "both" },
+    )));
     animations.current = sequence;
     void Promise.all(sequence.map(a => a.finished)).then(() => {
       if (animations.current === sequence) finish();
@@ -78,8 +66,13 @@ export function ProjectOpener({ project }: { project: WorkspaceProject }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.slug]);
 
-  return <section ref={root} className="project-intro" aria-label={`${project.title} project prompt`}>
-    <div className="project-intro-meta"><span>Example conversation <span className="sr-only">— Scripted introduction</span></span>
+  return <section ref={root} className="project-intro" aria-label={`${project.title} project conversation`} aria-describedby={`${project.slug}-intro-note`}>
+    <p id={`${project.slug}-intro-note`} className="sr-only">Scripted introduction. The project study is Adjie AI’s prepared answer; use Ask AI for your own questions.</p>
+    <div className="project-question">
+      <p className="project-intro-prompt">
+        <span className="sr-only">{prompt}</span>
+        {prompt.split(" ").map((word, i) => <span className="intro-word" aria-hidden="true" key={i}>{[...word].map((letter, j) => <span data-character key={j}>{letter}</span>)}{" "}</span>)}
+      </p>
       <div className="project-intro-controls">
         <button type="button" onClick={() => {
           if (root.current?.dataset.playing === "true") finish();
@@ -87,10 +80,10 @@ export function ProjectOpener({ project }: { project: WorkspaceProject }) {
         }}><span className="intro-skip">Skip animation</span><span className="intro-replay">Replay intro ↺</span></button>
       </div>
     </div>
-    <p className="project-intro-prompt">
-      <span className="sr-only">{prompt}</span>
-      {prompt.split(" ").map((word, i) => <span className="intro-word" aria-hidden="true" key={i}>{[...word].map((letter, j) => <span data-character key={j}>{letter}</span>)}{" "}</span>)}
-    </p>
-    <div className="project-intro-answer"><div className="project-ai-identity"><span aria-hidden="true">a.</span><strong>Adjie AI</strong></div><p>{response}</p></div>
+    <section className="project-intro-answer" aria-labelledby={`${project.slug}-answer-label`}>
+      <div className="project-ai-identity"><span aria-hidden="true">a.</span><strong id={`${project.slug}-answer-label`}>Adjie AI</strong></div>
+      <p className="project-answer-lead">{response}</p>
+      <div className="project-story">{children}</div>
+    </section>
   </section>;
 }

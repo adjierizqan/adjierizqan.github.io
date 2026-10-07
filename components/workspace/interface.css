@@ -59,3 +59,9 @@
   .aw-message.is-user { max-width: 94%; }
   .aw-mobile-header > strong { white-space: nowrap; max-width: none; font-size: 12px; }
 }
+
+/* Same-view section destinations clear the sticky mobile toolbar. */
+:root #home-work, :root .study [id], :root .ls-study [id] { scroll-margin-top: 24px; }
+@media(max-width:760px) {
+  :root #home-work, :root .study [id], :root .ls-study [id] { scroll-margin-top: 76px; }
+}

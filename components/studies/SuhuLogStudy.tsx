@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { navigateToSection } from "@/lib/section-navigation";
 import {
   Boundary,
   Brief,
@@ -25,7 +26,7 @@ export default function SuhuLogStudy(props: StudyProps) {
             <em>In the monthly record.</em>
           </h2>
           <p>{p.summary}</p>
-          <a href="#suhu-loop">Follow a reading ↓</a>
+          <a href="#suhu-loop" onClick={navigateToSection}>Follow a reading ↓</a>
         </div>
         <Media {...props} index={1} priority className="suhu-phone" />
       </header>

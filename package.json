@@ -13,7 +13,8 @@
     "test:static": "bun scripts/release-static.ts",
     "test:browser": "node scripts/release-browser.cjs",
     "test:shell": "node scripts/release-shell.cjs",
-    "test:intros": "node scripts/release-intros.cjs"
+    "test:intros": "node scripts/release-intros.cjs",
+    "test:integration": "node scripts/release-integration.cjs"
   },
   "dependencies": {
     "next": "16.2.10",

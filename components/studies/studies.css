@@ -85,7 +85,8 @@
   font-size: 12px;
 }
 .study-media figcaption,
-.study-video figcaption {
+.study-video figcaption,
+.study-recording figcaption {
   font-size: 0.72rem;
   color: var(--study-muted);
   margin-top: 12px;
@@ -195,10 +196,7 @@
 .study-recording {
   margin-top: 30px;
 }
-.study-recording summary {
-  padding: 16px 0;
-  cursor: pointer;
-}
+.study-recording video { aspect-ratio: 16 / 9; object-fit: contain; background: #111; }
 .suhu-opener {
   display: grid;
   grid-template-columns: 1.3fr 0.65fr;
@@ -653,3 +651,5 @@
   font-weight: 400;
   color: var(--study-accent);
 }
+
+.study [id] { scroll-margin-top: 24px; }

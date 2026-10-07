@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { VisibilityVideo } from "./VisibilityVideo";
 import {
   Boundary,
   Brief,
@@ -91,12 +92,10 @@ export default function LabsStudy(props: StudyProps) {
             setActive={setFinish}
           />
           <Media {...props} index={finish + 3} />
-          <details className="study-recording">
-            <summary>Watch the original configurator recording</summary>
-            <video controls playsInline preload="none" poster={p.image}>
-              <source src={p.video} type="video/mp4" />
-            </video>
-          </details>
+          <figure className="study-recording">
+            <VisibilityVideo src={p.video!} poster={p.image} />
+            <figcaption>Original configurator recording · material and camera transitions</figcaption>
+          </figure>
         </section>
       ) : (
         <section className="study-section padel-observation">

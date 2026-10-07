@@ -7,6 +7,7 @@ import { identity } from "@/data/profile";
 import { L, t } from "@/lib/i18n";
 import { playUISound } from "@/components/workspace/UISound";
 import "./labstock.css";
+import { navigateToSection } from "@/lib/section-navigation";
 
 type Props = { project: WorkspaceProject; openImage: (index: number, trigger: HTMLElement) => void };
 
@@ -91,7 +92,7 @@ export function LabStockCaseStudy({ project, openImage }: Props) {
     <section className="ls-product" id="ls-product">
       <header className="ls-section-heading"><div><p className="ls-eyebrow">04 / {L("Inside the product", "Di dalam produk")}</p><h2>{L("From daily work", "Dari pekerjaan harian")}<br /><em>{L("to the final workbook.", "hingga workbook akhir.")}</em></h2></div><p className="ls-product-note">{L("A closer look at the software. Every screen below uses synthetic demo data.", "Melihat perangkat lunaknya lebih dekat. Setiap layar menggunakan data demo sintetis.")}</p></header>
       <article className="ls-scene ls-scene-today" id="ls-today">
-        <div className="ls-scene-copy"><span className="ls-scene-number">01 / {L("Daily overview", "Ringkasan harian")}</span><h3>{t(presentation.walkthrough[0].title)}</h3><p>{t(presentation.walkthrough[0].detail)}</p><a href="#ls-stock">{L("Inspect the stock view", "Lihat tampilan stok")} ↓</a></div>
+        <div className="ls-scene-copy"><span className="ls-scene-number">01 / {L("Daily overview", "Ringkasan harian")}</span><h3>{t(presentation.walkthrough[0].title)}</h3><p>{t(presentation.walkthrough[0].detail)}</p><a href="#ls-stock" onClick={navigateToSection}>{L("Inspect the stock view", "Lihat tampilan stok")} ↓</a></div>
         <figure className="ls-product-plate">{screen("/projects/labstock/today-detail.webp", today.caption, 1, "", 1136, 888)}<figcaption>{L("Hari Ini · content detail", "Hari Ini · detail konten")}<span>{L("Full screen in Quick Look ↗", "Layar lengkap di Quick Look ↗")}</span></figcaption></figure>
       </article>
       <article className="ls-scene ls-scene-request" id="ls-request">
@@ -105,7 +106,7 @@ export function LabStockCaseStudy({ project, openImage }: Props) {
       <div className="ls-stock-strip" id="ls-stock"><div><span className="ls-scene-number">{L("Supporting view", "Tampilan pendukung")}</span><h3>{L("The stock behind the work.", "Stok di balik pekerjaan.")}</h3><p>{t(presentation.stockCaption)}</p></div>{project.image && screen(project.image, t(presentation.stockCaption), 0)}</div>
     </section>
 
-    <section className="ls-evidence-section" id="ls-evidence"><div className="ls-margin-label"><span>05</span>{L("Evidence", "Bukti")}</div><div><h2>{L("A product you can inspect.", "Produk yang bisa diperiksa.")}</h2><p className="ls-evidence-intro">{L("The public record, and where to look.", "Catatan publik, dan tempat memeriksanya.")}</p><dl className="ls-evidence">{project.evidence.map((item, index) => <div key={item.label}><dt><span aria-hidden="true">0{index + 1}</span>{item.label}</dt><dd>{item.value}</dd><a href={index === 3 ? "#ls-report" : index === 0 ? "#ls-system" : "#ls-decisions"}>{index === 3 ? L("View report", "Lihat laporan") : index === 0 ? L("View system", "Lihat sistem") : L("View decision", "Lihat keputusan")} ↗</a></div>)}</dl><p className="ls-evidence-limit">{L("Screens show the interface. They are not an independent test of import safety or correction logic.", "Layar menunjukkan antarmuka, bukan pengujian independen keamanan impor atau logika koreksi.")}</p></div></section>
+    <section className="ls-evidence-section" id="ls-evidence"><div className="ls-margin-label"><span>05</span>{L("Evidence", "Bukti")}</div><div><h2>{L("A product you can inspect.", "Produk yang bisa diperiksa.")}</h2><p className="ls-evidence-intro">{L("The public record, and where to look.", "Catatan publik, dan tempat memeriksanya.")}</p><dl className="ls-evidence">{project.evidence.map((item, index) => <div key={item.label}><dt><span aria-hidden="true">0{index + 1}</span>{item.label}</dt><dd>{item.value}</dd><a onClick={navigateToSection} href={index === 3 ? "#ls-report" : index === 0 ? "#ls-system" : "#ls-decisions"}>{index === 3 ? L("View report", "Lihat laporan") : index === 0 ? L("View system", "Lihat sistem") : L("View decision", "Lihat keputusan")} ↗</a></div>)}</dl><p className="ls-evidence-limit">{L("Screens show the interface. They are not an independent test of import safety or correction logic.", "Layar menunjukkan antarmuka, bukan pengujian independen keamanan impor atau logika koreksi.")}</p></div></section>
     <section className="ls-takeaway" id="ls-demonstrates"><p className="ls-eyebrow">{L("What this demonstrates", "Yang ditunjukkan proyek ini")}</p><h2>{L("The interface is the visible part.", "Antarmuka adalah bagian yang terlihat.")}<br /><em>{L("The record is what holds it together.", "Catatanlah yang menyatukannya.")}</em></h2><p>{project.whyItMatters}</p></section>
     <aside className="ls-boundary" id="ls-boundary"><h2>{L("About the evidence", "Tentang bukti")}</h2><div><p>{project.publicLimitations}</p><p>{t(project.assetNote ?? "")}</p></div></aside>
   </article>;

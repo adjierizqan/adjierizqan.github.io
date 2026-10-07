@@ -346,11 +346,10 @@ function ProjectWorkspace({project, openImage, back, ask}: ProjectViewProps) {
  const props = {project,openImage};
  return <main className={"aw-center aw-project-detail aw-labstock-v2 aw-enter"}>
   <button type="button" className="aw-project-back" onClick={back}>← Work</button>
-  <ProjectOpener project={project} />
-  <div className="project-story">
+  <ProjectOpener project={project}>
   {project.slug === "labstock" ? <LabStockCaseStudy {...props}/> : project.slug === "suhulog" ? <SuhuLogStudy {...props}/> : project.slug === "bdrs" ? <BdrsStudy {...props}/> : project.slug === "tomato-ripeness" ? <TomatoStudy {...props}/> : <LabsStudy {...props}/>}
   <footer className="ls-ask"><span>Want to go deeper?</span><button type="button" onClick={()=>ask(project.askSuggestion)}>Ask AI about {project.title} ↗</button></footer>
-  </div>
+  </ProjectOpener>
  </main>;
 }
 
