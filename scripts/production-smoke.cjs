@@ -41,7 +41,7 @@ const slugs = [
         if (!slug) {
           await expect(p.getByRole("region", { name: "Ask Adjie AI", exact: true })).toBeVisible();
           await expect(p.locator(".home-start textarea")).toBeVisible();
-          await expect(p.locator(".home-reply")).toContainText("computer vision research");
+          await expect(p.locator(".home-example")).toHaveCount(0);
           expect(await p.evaluate(() => window.__audioContexts)).toBe(0);
         }
         if (slug) {

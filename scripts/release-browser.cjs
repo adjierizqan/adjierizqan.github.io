@@ -70,15 +70,11 @@ const report = { base, browsers: [], checks: [], errors: [] };
             await expect(page.getByRole("region", { name: "Ask Adjie AI", exact: true })).toBeVisible();
             await expect(page.locator(".home-start textarea")).toBeVisible();
             await expect(page.locator(".home-start .aw-send")).toBeVisible();
-            await page.locator(".home-example summary").click();
-            await expect(page.getByRole("region", { name: "Scripted introduction" })).toBeVisible();
-            await expect(page.locator(".home-reply")).toContainText("computer vision research");
-            await page.locator(".home-example summary").click();
+            await expect(page.locator(".home-example")).toHaveCount(0);
             const proof = await page.locator(".home-proof img").first().boundingBox();
             // The recruiter sees actual product evidence before scrolling, not just a chat.
             expect(proof.y).toBeLessThan(width === 834 ? 900 : 760);
             await page.emulateMedia({ reducedMotion: "reduce" });
-            expect(await page.locator(".home-reply").evaluate(e => e.getAnimations({ subtree: true }).length)).toBe(0);
             await expect(page.locator(".home-start h2")).toBeVisible();
             await page.emulateMedia({ reducedMotion: "no-preference" });
             await page.locator(".aw-center").evaluate(e => Promise.all(e.getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))));
@@ -205,10 +201,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
       const nojs = await browser.newContext({ javaScriptEnabled: false });
       const p = await nojs.newPage();
       await p.goto(base + "/");
-      await p.locator(".home-example summary").focus();
-      await p.keyboard.press("Enter");
-      await expect(p.getByRole("region", { name: "Scripted introduction" })).toBeVisible();
-      await expect(p.locator(".home-reply")).toContainText("Stock movements in LabStock");
+      await expect(p.locator(".home-example")).toHaveCount(0);
       await expect(p.locator(".home-project")).toHaveCount(4);
       for (const slug of slugs.slice(1)) {
         await p.goto(base + `/projects/${slug}/`);

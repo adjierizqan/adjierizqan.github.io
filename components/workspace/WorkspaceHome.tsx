@@ -48,13 +48,6 @@ export function WorkspaceHome({
 
           </nav>
         </section>
-        <details className="home-example">
-          <summary>A quick introduction</summary>
-          <section className="home-conversation" aria-label="Scripted introduction">
-            <div className="home-prompt"><span className="sr-only">Scripted prompt</span><p>{identity.introduction.question}</p></div>
-            <div className="home-reply"><span>Adjie AI</span><div><h3>{identity.introduction.lead}</h3><p>{identity.introduction.answer}</p></div></div>
-          </section>
-        </details>
       </header>
       <section className="home-selected" aria-labelledby="home-work">
         <header>

@@ -25,15 +25,6 @@
 .home-proof span { font-size: .8rem; }
 .home-proof small { display: block; font-size: .7rem; color: var(--home-muted); margin-top: 3px; }
 .home-intro-actions { display: flex; justify-content: center; margin-top: 23px; font-size: .78rem; color: var(--home-muted); }
-.home-example { max-width: 760px; margin: 18px auto 0; font-size: .75rem; color: var(--home-muted); }
-.home-example summary { cursor: pointer; width: fit-content; margin: auto; padding: 5px; }
-.home-conversation { padding: 20px 0 0; }
-.home-prompt, .home-reply { display: grid; grid-template-columns: 100px minmax(0,1fr); gap: 16px; }
-.home-prompt > span, .home-reply > span { font-size: .67rem; }
-.home-prompt > p { color: var(--home-ink); font-size: .83rem; }
-.home-reply { margin-top: 14px; }
-.home-reply h3 { font-size: 1rem; color: var(--home-ink); font-weight: 500; }
-.home-reply > div > p { margin-top: 6px; font-size: .8rem; line-height: 1.6; }
 .home-selected { margin-top: 32px; }
 .home-selected > header {
   display: flex;
@@ -229,10 +220,8 @@
   .home-starters { gap: 8px; margin-top: 12px; }
   .home-starters button { font-size: .75rem; min-height: 40px; }
   .home-intro-actions { gap: 12px; font-size: .69rem; margin-top: 10px; }
-  .home-example { margin-top: 12px; }
   .home-selected { margin-top: 24px; }
   .home-selected > header { padding-top: 16px; margin-bottom: 20px; }
-  .home-prompt, .home-reply { grid-template-columns: 1fr; gap: 5px; }
   .home-ask {
     display: block;
   }
@@ -241,7 +230,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .home-reply > div { animation: none; }
   .home-project:hover figure img {
     transform: none;
   }
@@ -262,5 +250,3 @@
 }
 
 #home-work { scroll-margin-top: 24px; }
-.home-prompt > p { grid-column: 2; }
-@media(max-width:760px) { .home-prompt > p { grid-column: 1; } }
