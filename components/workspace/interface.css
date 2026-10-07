@@ -1,0 +1,61 @@
+/* Shared interactive surfaces. Explicit semantic colors avoid deriving control
+   contrast from the legacy automatic dark-theme color conversion. */
+:root {
+  --ui-ink: #272b2a;
+  --ui-muted: #69716e;
+  --ui-surface: #fafbf9;
+  --ui-hover: #eef0ed;
+  --ui-line: #dce1dc;
+  --ui-focus: #8b9b91;
+  --ui-action: #2d3932;
+  --ui-on-action: #fff;
+}
+:root[data-theme="dark"] {
+  --ui-ink: #e1e5e2;
+  --ui-muted: #a5ada7;
+  --ui-surface: #1b1e1c;
+  --ui-hover: #282e29;
+  --ui-line: #363e37;
+  --ui-focus: #82958a;
+  --ui-action: #dce5dd;
+  --ui-on-action: #202820;
+}
+:root[data-theme] .aw-desktop .aw-composer {
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-line);
+  border-radius: 18px;
+  box-shadow: 0 3px 12px #00000004;
+  transition: border-color var(--aw-motion-fast), box-shadow var(--aw-motion-fast);
+}
+:root[data-theme] .aw-desktop .aw-composer:focus-within {
+  border-color: var(--ui-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ui-focus) 12%, transparent);
+}
+:root[data-theme] .aw-desktop .aw-composer textarea { color: var(--ui-ink); padding: 18px 20px 8px; }
+:root[data-theme] .aw-desktop .aw-composer textarea::placeholder { color: var(--ui-muted); }
+:root[data-theme] .aw-desktop .aw-composer-tools { border-top: 0; padding: 6px 12px 12px; }
+:root[data-theme] .aw-desktop .aw-composer-tools button { background: transparent; color: var(--ui-muted); border-color: transparent; }
+:root[data-theme] .aw-desktop .aw-composer-tools button:hover { background: var(--ui-hover); color: var(--ui-ink); }
+:root[data-theme] .aw-desktop .aw-composer-tools .aw-send { width: 34px; height: 34px; background: var(--ui-action); color: var(--ui-on-action); border: 0; }
+:root[data-theme] .aw-desktop .aw-composer-tools .aw-send:disabled { opacity: 1; background: var(--ui-hover); color: var(--ui-muted); cursor: default; }
+.aw-composer-tools .aw-send svg { width: 16px; height: 16px; }
+:root[data-theme] .aw-desktop .aw-composer-submit > span { color: var(--ui-muted); font-weight: 450; font-size: 12px; }
+:root[data-theme] .aw-desktop .aw-primary-nav button.is-active,
+:root[data-theme] .aw-desktop .aw-project-shortcuts button.is-selected { background: var(--ui-hover); color: var(--ui-ink); }
+:root[data-theme] .aw-desktop .aw-title-actions > button.aw-audio-trigger,
+:root[data-theme] .aw-desktop .aw-title-actions > button.aw-appearance { background: transparent; border-color: transparent; color: var(--ui-muted); }
+:root[data-theme] .aw-desktop .aw-title-actions > button:hover { background: var(--ui-hover); color: var(--ui-ink); }
+.aw-title-actions button:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 3px; }
+/* Real Ask and scripted project openers share reading scale and bubble geometry. */
+:root[data-theme] .aw-desktop .aw-message p { color: var(--ui-ink); font-size: 15px; line-height: 1.8; white-space: pre-wrap; }
+.aw-message { margin-top: 28px; }
+.aw-message.is-user { display: block; margin-left: auto; max-width: 85%; }
+.aw-message.is-user > span { display: block; text-align: right; margin-bottom: 6px; }
+:root[data-theme] .aw-desktop .aw-message.is-user p { background: var(--ui-hover); border-radius: 18px 18px 4px 18px; padding: 14px 18px; margin-left: auto; line-height: 1.65; }
+:root[data-theme] .aw-desktop .aw-message > span { color: var(--ui-muted); font-size: 12px; font-weight: 500; }
+.aw-ask-group + .aw-ask-group { margin-top: 32px; }
+@media (max-width:760px) {
+  :root[data-theme] .aw-desktop .aw-composer textarea { font-size: 16px; }
+  .aw-message.is-user { max-width: 94%; }
+  .aw-mobile-header > strong { white-space: nowrap; max-width: none; font-size: 12px; }
+}

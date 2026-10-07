@@ -58,6 +58,8 @@ const report = { base, browsers: [], checks: [], errors: [] };
           });
           expect(response.status()).toBe(200);
           await expect(page.locator("h1")).toHaveCount(1);
+          await expect(page.locator(".aw-sidebar [aria-current=page]")).toHaveCount(1);
+          await expect(page.locator(".aw-project-shortcuts .is-selected")).toHaveCount(slug ? 1 : 0);
           await expect(page.locator("link[rel=canonical]")).toHaveAttribute(
             "href",
             "https://adjierizqan.github.io" + url,
@@ -157,6 +159,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
             .filter({ visible: true })
             .click();
           await page.locator(".aw-center").evaluate((e) => (e.scrollTop = 0));
+          await page.locator(".aw-desktop").evaluate(e => Promise.all(e.getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))));
           await page.screenshot({
             path: `${dir}/${name}-${width}-${slug || "home"}-dark.png`,
           });
@@ -167,6 +170,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
           if (!slug) {
             await page.getByRole("link", { name: "Explore the work ↓", exact: true }).click();
             await expect(page.locator("#home-work")).toBeInViewport();
+            await page.locator(".aw-desktop").evaluate(e => Promise.all(e.getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))));
             await page.screenshot({ path: `${dir}/${name}-${width}-selected-work.png` });
             await page.route("https://adjie-workspace-ask.adjierizqan.workers.dev/ask", async route => {
               expect(route.request().postDataJSON().message).toBe("How does LabStock preserve history?");
@@ -182,6 +186,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
             await expect(page.locator(".aw-message").last()).toContainText("Fixture: a real visitor request");
             await expect(page.getByRole("region", { name: "Example conversation" })).toHaveCount(0);
             expect(askRequests).toBe(1);
+            await page.locator(".aw-desktop").evaluate(e => Promise.all(e.getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))));
             await page.screenshot({ path: `${dir}/${name}-${width}-ask.png` });
           }
           console.log(`${name} ${width}px ${slug || "home"}: PASS`);

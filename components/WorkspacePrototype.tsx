@@ -249,6 +249,7 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
                 type="button"
                 key={item.label}
                 className={view === item.view ? "is-active" : ""}
+                aria-current={view === item.view ? "page" : undefined}
                 onClick={() => { setView(item.view); close(); }}
               >
                 <Glyph name={item.icon} /><span>{t(item.label)}</span>
@@ -263,7 +264,8 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
               <button
                 type="button"
                 key={project.slug}
-                className={selected.slug === project.slug ? "is-selected" : ""}
+                className={view === "project" && selected.slug === project.slug ? "is-selected" : ""}
+                aria-current={view === "project" && selected.slug === project.slug ? "page" : undefined}
                 onClick={() => { selectProject(project); close(); }}
               >
                 <i style={{ backgroundColor: projectTones[project.slug] ?? "#94a3b8" }} />
