@@ -40,9 +40,9 @@
       "workspaceTarget": "labstock",
       "category": "Operational software",
       "publicStatus": "Closed · maintenance",
-      "summary": "A laboratory inventory system that turns source workbooks into a traceable stock ledger, monthly and yearly reports, and template-compatible Excel exports.",
-      "problem": "Spreadsheet inventory data had to move through import, stock ledger, website reporting, and export without losing source traceability or turning corrections into silent rewrites.",
-      "solution": "Adjie built a source-aware import and reporting workflow that preserves workbook provenance, supports idempotent re-import, and keeps corrections auditable across the ledger, website reports, and exported workbooks.",
+      "summary": "Laboratory inventory, from the source workbook to the final report. One ledger connects stock movements, corrections and Excel exports.",
+      "problem": "Moving inventory out of spreadsheets is only half the problem. The source of each balance still needs to be identifiable when data is imported again, corrected, or exported.",
+      "solution": "I built LabStock around a stock movement ledger. Source-aware validation and repeat-import checks protect the input; history-preserving corrections keep reports and exported workbooks connected to that record.",
       "howItWorks": [
         "Maps imported records to workbook, sheet, and source row evidence.",
         "Maps source records to the effective item identities used by reports and exports.",
@@ -75,7 +75,7 @@
           "value": "Detail + recap workbook"
         }
       ],
-      "whyItMatters": "The system keeps inventory movements and familiar reporting outputs connected to the evidence they came from.",
+      "whyItMatters": "A usable operational product and a traceable data model, designed together—from source identity to the workbook people need at the end.",
       "publicLimitations": "Screens shown come from a demo database with synthetic items, rooms, requesters, and users. Production infrastructure, hospital data, URLs, and unsanitized screenshots are withheld.",
       "askSuggestion": "How does LabStock keep imports and reports traceable?"
     },

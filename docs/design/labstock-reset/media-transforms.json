@@ -1,0 +1,95 @@
+{
+  "plans": [
+    {
+      "id": "a",
+      "name": "Desktop + field entry",
+      "bg": "#e5e4df",
+      "desktop": "hari-ini",
+      "x": 80,
+      "y": 66,
+      "w": 1200,
+      "phone": {
+        "x": 1160,
+        "y": 240,
+        "w": 310
+      }
+    },
+    {
+      "id": "b",
+      "name": "Graphite product studio",
+      "bg": "#252a2d",
+      "desktop": "stok",
+      "x": 170,
+      "y": 66,
+      "w": 1160,
+      "phone": {
+        "x": 1150,
+        "y": 400,
+        "w": 224
+      }
+    },
+    {
+      "id": "c",
+      "name": "Reporting + requisition",
+      "bg": "#efefec",
+      "desktop": "laporan",
+      "x": 330,
+      "y": 70,
+      "w": 1170,
+      "phone": {
+        "x": 90,
+        "y": 335,
+        "w": 248
+      }
+    }
+  ],
+  "crops": [
+    [
+      "phone-detail",
+      "amprah-mobile",
+      {
+        "left": 0,
+        "top": 0,
+        "width": 390,
+        "height": 844
+      }
+    ],
+    [
+      "today-detail",
+      "hari-ini",
+      {
+        "left": 280,
+        "top": 80,
+        "width": 1136,
+        "height": 888
+      }
+    ],
+    [
+      "request-detail",
+      "amprah",
+      {
+        "left": 280,
+        "top": 80,
+        "width": 1136,
+        "height": 704
+      }
+    ],
+    [
+      "report-detail",
+      "laporan",
+      {
+        "left": 280,
+        "top": 80,
+        "width": 1136,
+        "height": 920
+      }
+    ]
+  ],
+  "phoneCrop": {
+    "left": 0,
+    "top": 0,
+    "width": 390,
+    "height": 844
+  },
+  "source": "Existing public/projects/labstock/*.webp; synthetic demo captures; no upscaling"
+}

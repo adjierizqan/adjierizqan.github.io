@@ -24,14 +24,9 @@ export function projectTitle(project: WorkspaceProject): string {
   return `${project.title} — ${identity.name}`;
 }
 
-/**
- * Card image for link previews. `thumb` is the curated, public-safe card image
- * every project already has (content tests check it exists). It is WebP;
- * some networks, notably LinkedIn, do not render WebP previews, so a dedicated
- * JPG/PNG preview image is left to the identity/OG work.
- */
+/** Prefer the project’s JPEG/PNG social derivative when supplied. */
 function previewImage(project: WorkspaceProject): string | undefined {
-  return project.thumb ?? project.image;
+  return project.socialImage ?? project.thumb ?? project.image;
 }
 
 export function projectMetadata(project: WorkspaceProject): Metadata {

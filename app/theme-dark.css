@@ -969,47 +969,15 @@
 :root[data-theme="dark"] .aw-project-meta-line dd {
     color: #b8bec7
 }
-:root[data-theme="dark"] .aw-labstock-lead > div > span,
 :root[data-theme="dark"] .aw-bdrs-lead span,
 :root[data-theme="dark"] .aw-suhulog-lead span,
 :root[data-theme="dark"] .aw-padel-lead > div > span {
     color: #a1a7af
 }
-:root[data-theme="dark"] .aw-labstock-lead h1,
 :root[data-theme="dark"] .aw-bdrs-lead h1,
 :root[data-theme="dark"] .aw-suhulog-lead h1,
 :root[data-theme="dark"] .aw-padel-lead h1 {
     color: #d0d4db
-}
-:root[data-theme="dark"] .aw-labstock-lead > div > p {
-    color: #b0b7c0
-}
-:root[data-theme="dark"] .aw-labstock-lead aside {
-    border-left: 1px solid #343638
-}
-:root[data-theme="dark"] .aw-labstock-lead aside strong {
-    color: #c2cdca
-}
-:root[data-theme="dark"] .aw-labstock-lead aside p {
-    color: #a2a7b0
-}
-:root[data-theme="dark"] .aw-labstock-decisions ol {
-    border-bottom: 1px solid #333536
-}
-:root[data-theme="dark"] .aw-labstock-decisions li {
-    border-top: 1px solid #333536
-}
-:root[data-theme="dark"] .aw-labstock-decisions b {
-    color: #c2c7d0
-}
-:root[data-theme="dark"] .aw-labstock-decisions p {
-    color: #aab1bc
-}
-:root[data-theme="dark"] .aw-labstock-proof {
-    border-top: 1px solid #333536
-}
-:root[data-theme="dark"] .aw-labstock-proof > div > p {
-    color: #a6afb9
 }
 :root[data-theme="dark"] .aw-bdrs-lead > p {
     color: #b0b7c1
@@ -1207,9 +1175,6 @@
 @media (max-width: 760px) {
     :root[data-theme="dark"] .aw-project-meta-line > div + div {
         border-top: 1px solid #333435
-    }
-    :root[data-theme="dark"] .aw-labstock-lead aside {
-        border-top: 1px solid #343638
     }
     :root[data-theme="dark"] .aw-bdrs-map article + article,
 :root[data-theme="dark"] .aw-padel-notes > div + div {

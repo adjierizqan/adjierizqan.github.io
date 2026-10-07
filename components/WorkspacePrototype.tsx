@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { LabStockCaseStudy } from "@/components/labstock/LabStockCaseStudy";
+import { SoundButton, playUISound } from "@/components/workspace/UISound";
 import { createPortal, flushSync } from "react-dom";
 import {
   KeyboardEvent,
@@ -103,7 +105,7 @@ function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" 
     play: <path d="m7 4 9 6-9 6Z" fill="currentColor" stroke="none" />,
     pause: <><path d="M7 5v10M13 5v10" strokeWidth="2.4" /></>,
   };
-  return <svg viewBox="0 0 20 20" aria-hidden="true">{paths[name]}</svg>;
+  return <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 
 function PronunciationButton({ className = "" }: { className?: string }) {
@@ -133,6 +135,8 @@ function QuickLook({ images, index, close, navigate }: {
   navigate: (direction: number) => void;
 }) {
   const image = images[index];
+  const [zoomed, setZoomed] = useState(false);
+  const allowZoom = image?.src.startsWith("/projects/labstock/");
   const dialogRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -144,10 +148,10 @@ function QuickLook({ images, index, close, navigate }: {
 
     function onKeyDown(event: globalThis.KeyboardEvent) {
       if (event.key === "Escape") close();
-      if (index > 0 && event.key === "ArrowLeft") navigate(-1);
-      if (index < images.length - 1 && event.key === "ArrowRight") navigate(1);
+      if (!(event.target as HTMLElement).closest(".is-actual-size") && index > 0 && event.key === "ArrowLeft") navigate(-1);
+      if (!(event.target as HTMLElement).closest(".is-actual-size") && index < images.length - 1 && event.key === "ArrowRight") navigate(1);
       if (event.key === "Tab") {
-        const controls = [...(dialogRef.current?.querySelectorAll<HTMLButtonElement>("button:not(:disabled)") ?? [])];
+        const controls = [...(dialogRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled), [tabindex='0']") ?? [])];
         if (!controls.length) return;
         const first = controls[0];
         const last = controls[controls.length - 1];
@@ -167,9 +171,11 @@ function QuickLook({ images, index, close, navigate }: {
 
   return createPortal(
     <div className="aw-quicklook-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-      <section ref={dialogRef} className="aw-quicklook" role="dialog" aria-modal="true" aria-label={t("Project image viewer")}>
-        <header><span>{index + 1} / {images.length}</span><p>{image.caption}</p><button type="button" autoFocus onClick={close} aria-label={t("Close image viewer")}><Glyph name="close" /></button></header>
-        <div className="aw-quicklook-image" key={image.src}><Image src={image.src} alt={image.caption} fill sizes="100vw" quality={95} className="object-contain" priority /></div>
+      <section ref={dialogRef} className={"aw-quicklook" + (allowZoom ? " aw-quicklook-inspectable" : "")} role="dialog" aria-modal="true" aria-label={t("Project image viewer")}>
+        <header><span>{index + 1} / {images.length}</span><p>{image.caption}</p>{allowZoom && <button type="button" className="aw-zoom-button" aria-pressed={zoomed} onClick={() => { playUISound("tap"); setZoomed(!zoomed); }}>{zoomed ? L("Fit image", "Sesuaikan") : L("Actual size", "Ukuran asli")}</button>}<button type="button" autoFocus onClick={close} aria-label={t("Close image viewer")}><Glyph name="close" /></button></header>
+        <div className={"aw-quicklook-image" + (allowZoom && zoomed ? " is-actual-size" : "")} key={image.src} tabIndex={allowZoom && zoomed ? 0 : undefined} role={allowZoom && zoomed ? "region" : undefined} aria-label={allowZoom && zoomed ? L("Full resolution image; scroll to inspect", "Gambar resolusi penuh; gulir untuk memeriksa") : undefined}>
+          {allowZoom && zoomed ? <Image src={image.src} alt={image.caption} width={image.src.includes("mobile") ? 390 : 1440} height={image.src.includes("mobile") ? 1543 : 1024} priority /> : <Image src={image.src} alt={image.caption} fill sizes="100vw" quality={95} className="object-contain" priority />}
+        </div>
         {index > 0 && <button type="button" className="aw-quicklook-nav is-previous" onClick={() => navigate(-1)} aria-label={t("Previous image")}><Glyph name="arrow" /></button>}
         {index < images.length - 1 && <button type="button" className="aw-quicklook-nav is-next" onClick={() => navigate(1)} aria-label={t("Next image")}><Glyph name="arrow" /></button>}
       </section>
@@ -368,7 +374,7 @@ function WorkspaceHeader({ eyebrow, title, copy, meta }: { eyebrow: string; titl
 // Work media: one readable, project-specific visual per case (crops from docs/design/v105/work_media.py or the
 // project's own outputs). Projects uses the device thumbnails; Work shows the product itself, larger.
 const WORK_MEDIA: Record<string, { src: string; alt: string }> = {
-  labstock: { src: "/projects/labstock/work.webp", alt: tk("LabStock Today screen: items needing action and today's stock movements, demo data") },
+  labstock: { src: "/projects/labstock/thumb-reset-a.webp", alt: tk("LabStock Today screen: items needing action, demo data") },
   bdrs: { src: "/projects/bdrs/work.webp", alt: tk("BDRS patient workstation: blood request, cross-match step and service workflow, demo data") },
   suhulog: { src: "/projects/suhulog/device-story.webp", alt: tk("SuhuLog on phone for entry and on desktop for monitoring, demo data") },
   "tomato-ripeness": { src: "/projects/tomato-ripeness/research/thumb.webp", alt: tk("The same tomato plant: YOLOv11 baseline next to three-model WBF detections") },
@@ -418,7 +424,6 @@ type ProjectViewProps = {
 };
 
 const PROJECT_DEMO_PROMPTS: Record<string, string> = {
-  labstock: tk("Give me a short overview of LabStock: the problem, the solution, the main features, and where it stands now."),
   bdrs: tk("What has been built in BDRS, and what is still in development or planning?"),
   suhulog: tk("How does SuhuLog turn temperature logging into a fast workflow that stays auditable?"),
   "tomato-ripeness": tk("What did TomatoVision test, and what do the evaluation results actually show?"),
@@ -621,44 +626,6 @@ function ProjectMetaLine({ project }: { project: WorkspaceProject }) {
   return <dl className="aw-project-meta-line" aria-label={project.title + " project metadata"}><div><dt>{t("Role")}</dt><dd>{project.role}</dd></div>{project.stack.length > 0 && <div><dt>{t("Built with")}</dt><dd>{project.stack.join(" · ")}</dd></div>}<div><dt>{t("Record")}</dt><dd>{project.year}{project.status ? " · " + project.status : ""}</dd></div></dl>;
 }
 
-// Workbook -> validate -> ledger -> report, with corrections and stock counts as a branch into the ledger.
-// The hospital workbook is private, so its step is a diagram; the report end is a crop of the demo Laporan
-// screen (docs/design/v106/labstock_trace_media.py). Movement names are the ledger's own movement types.
-function LabStockSystemCanvas() {
-  return (
-    <section className="aw-labstock-canvas" id="labstock-data-flow" aria-label={t("LabStock source to export system map")}>
-      <header>
-        <h2>{t("One traceable path")}</h2>
-        <p>{t("Workbook rows are checked once and posted to a single stock ledger; every report and Excel export is read from that ledger.")}</p>
-      </header>
-      <ol className="aw-trace">
-        <li>
-          <div className="aw-trace-visual aw-trace-sheet" aria-hidden="true">{Array.from({ length: 30 }, (_, index) => <i key={index} />)}</div>
-          <strong>{t("Monthly workbook")}</strong>
-          <p>{t("Each row keeps its file, sheet and period.")}</p>
-        </li>
-        <li>
-          <div className="aw-trace-visual aw-trace-checks"><span>{t("Item identity")}</span><span>{t("Unit")}</span><span>{t("Period overlap")}</span></div>
-          <strong>{t("Validate")}</strong>
-          <p>{t("Conflicts and repeats stop before posting.")}</p>
-        </li>
-        <li className="is-ledger">
-          <div className="aw-trace-visual aw-trace-ledger">{["OPENING", "IN", "OUT", "OPNAME", "ADJUSTMENT", "REVERSAL"].map((type) => <span key={type}>{type}</span>)}</div>
-          <strong>{t("Stock ledger")}</strong>
-          <p>{t("Stock is derived from movements, never edited in place.")}</p>
-          <div className="aw-trace-branch"><strong>{t("Corrections and stock counts")}</strong><p>{t("Enter as new movements; earlier ones stay.")}</p></div>
-        </li>
-        <li>
-          <figure className="aw-trace-visual aw-trace-report"><Image src="/projects/labstock/trace-report.webp" alt={t("LabStock monthly report with the Excel download and the correction column, demo data")} width={422} height={290} sizes="(max-width: 760px) 90vw, 320px" /></figure>
-          <strong>{t("Reports and Excel export")}</strong>
-          <p>{t("Monthly and yearly, from the same movements.")}</p>
-        </li>
-      </ol>
-      <p className="aw-trace-note">{t("The hospital workbook is drawn as a diagram and not published. Report screen: demo data.")}</p>
-    </section>
-  );
-}
-
 function BdrsOperationalMap({ project }: { project: WorkspaceProject }) {
   const lanes = [
     { state: tk("Implemented"), title: project.evidence[0]?.value ?? "Workflow structure", detail: tk("Operational work is organized around the domain flow.") },
@@ -692,7 +659,6 @@ function SuhuLogShowcase({ project, openImage }: Pick<ProjectViewProps, "project
 }
 
 const EVIDENCE_LABELS: Record<string, string[]> = {
-  labstock: [tk("Stock"), tk("Today"), tk("Requisitions"), tk("Requisitions on a phone"), tk("Monthly report")],
   bdrs: [tk("Service workstation"), tk("Dashboard"), tk("Issue register"), tk("Inventory"), tk("Transfusion episodes"), tk("Reports")],
 };
 
@@ -700,30 +666,23 @@ function evidenceFrames(project: WorkspaceProject): EvidenceFrame[] {
   const labels = EVIDENCE_LABELS[project.slug] ?? [];
   const items = [...(project.image ? [{ src: project.image, caption: labels[0] ?? project.title }] : []), ...(project.gallery ?? [])];
   const first: Record<string, string> = {
-    labstock: tk("The Stok screen: usable stock per item with expiry and condition, derived from the ledger."),
     bdrs: tk("Service workstation: one patient's request, crossmatch, bags and finalisation checklist."),
   };
   return items.map((item, index) => ({
     src: item.src,
     label: t(labels[index] ?? "Screen"),
-    caption: (index === 0 ? t(first[project.slug] ?? item.caption) : item.caption).replace(/^[^:]{2,30}:\s*/, (prefix) => (labels[index] && prefix.toLowerCase().startsWith(labels[index].toLowerCase()) ? "" : prefix)).replace(/^./, (c) => c.toUpperCase()),
+    caption: (index === 0 ? t(project.presentation?.stockCaption ?? first[project.slug] ?? item.caption) : item.caption).replace(/^[^:]{2,30}:\s*/, (prefix) => (labels[index] && prefix.toLowerCase().startsWith(labels[index].toLowerCase()) ? "" : prefix)).replace(/^./, (c) => c.toUpperCase()),
     quickIndex: index,
     portrait: item.src.includes("mobile"),
   }));
 }
 
-function LabStockDossier({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
-  const prompt = PROJECT_DEMO_PROMPTS.labstock;
-  const { projectViewportRef, typedPrompt, responseVisible, responseProgress, runPresentation } = useProjectPresentation(prompt);
-  return <main ref={projectViewportRef} className="aw-center aw-project-detail aw-flagship aw-labstock-dossier aw-enter"><button type="button" className="aw-project-back" onClick={back}>{t("← Work")}</button><ProjectSession title={project.title} prompt={prompt} typedPrompt={typedPrompt} replay={()=>runPresentation(true)} />{responseVisible&&<article className={"aw-dossier-response aw-streamed-response"+(responseProgress<1?" is-streaming":"")} aria-busy={responseProgress<1}><div className="aw-dossier-response-label"><i/><span>{t("Workspace response")}</span></div>
-    <header className="aw-labstock-lead"><div><span>{project.eyebrow}</span><h1><StreamingText text={project.title} progress={responseProgress} start={0} end={.05}/></h1><p><StreamingText text={project.summary} progress={responseProgress} start={.05} end={.16}/></p></div><aside><small>{t("Current record")}</small><strong>{project.status}</strong><p>{t("Screens from a demo database")}</p></aside></header>
-    {responseProgress>=.14&&<div className="aw-stream-structure"><ProjectMetaLine project={project}/></div>}
-    {responseProgress>=.22&&<div className="aw-stream-structure"><LabStockSystemCanvas/></div>}
-    {responseProgress>=.4&&<div className="aw-stream-structure"><ProductEvidence title={t("The final product")} heading="Stock, requests and reports on one ledger." source="Captured from the final release running against a demo database: synthetic items, rooms, requesters and users." frames={evidenceFrames(project)} openImage={openImage}/></div>}
-    {responseProgress>=.55&&<section className="aw-labstock-decisions aw-stream-structure"><header><span>{t("Three constraints shaped the build")}</span><h2>{t("The source stays identifiable, re-import stays safe, and corrections do not erase history.")}</h2></header><ol><li><b>{t("Source-aware import")}</b><p>{t("Workbook, sheet, row, item identity, unit, and period travel together.")}</p></li><li><b>{t("Idempotent posting")}</b><p>{t("A repeated source is recognized before it can create another stock movement.")}</p></li><li><b>{t("History-preserving correction")}</b><p>{t("Supersession records the change while retaining the earlier ledger evidence.")}</p></li></ol></section>}
-    {responseProgress>=.78&&<section className="aw-labstock-proof aw-stream-structure"><div><span>{t("What can be checked")}</span><h2>{t("Behavior over screenshots.")}</h2><p>{project.whyItMatters}</p></div><EvidenceTable project={project}/></section>}
-    {responseProgress>=.92&&<footer className="aw-project-boundary aw-stream-structure"><div><span>{t("Public boundary")}</span><strong>{project.status}</strong></div><p>{project.publicLimitations}</p></footer>}
-    {responseProgress>=.96&&<ProjectAsk project={project} query={query} setQuery={setQuery} ask={ask}/>}</article>}</main>;
+function LabStockDossier({ project, ask, back, openImage }: ProjectViewProps) {
+  return <main className="aw-center aw-project-detail aw-labstock-v2 aw-enter">
+    <button type="button" className="aw-project-back" onClick={back}>← {t("Work")}</button>
+    <LabStockCaseStudy project={project} openImage={openImage} />
+    <footer className="ls-ask"><span>{L("Want to go deeper?", "Ingin membahas lebih lanjut?")}</span><button type="button" onClick={() => ask(project.askSuggestion)}>{L("Ask AI about LabStock", "Tanya AI tentang LabStock")} ↗</button></footer>
+  </main>;
 }
 
 function BdrsDossier({ project, query, setQuery, ask, back, openImage }: ProjectViewProps) {
@@ -1016,12 +975,19 @@ function CommandPalette({ open, close, setView, selectProject }: {
 
   return createPortal(
     <div className="aw-palette-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-      <section ref={paletteRef} className="aw-palette" role="dialog" aria-modal="true" aria-label={t("Command palette")}>
+      <section ref={paletteRef} className="aw-palette" role="dialog" aria-modal="true" aria-label={t("Command palette")} onKeyDown={(event) => {
+        if (event.key === "Escape") { event.stopPropagation(); close(); }
+        if (event.key !== "Tab") return;
+        const controls = [...(paletteRef.current?.querySelectorAll<HTMLElement>("input, button") ?? [])];
+        const first = controls[0], last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }}>
         <label><Glyph name="search" /><input autoFocus value={filter} onChange={(event) => { setFilter(event.target.value); setActiveIndex(0); }} onKeyDown={(event) => {
           if (event.key === "ArrowDown") { event.preventDefault(); setActiveIndex((value) => Math.min(value + 1, commands.length - 1)); }
           if (event.key === "ArrowUp") { event.preventDefault(); setActiveIndex((value) => Math.max(value - 1, 0)); }
           if (event.key === "Enter") { event.preventDefault(); run(activeIndex); }
-          if (event.key === "Escape") close();
+          if (event.key === "Escape") { event.stopPropagation(); close(); }
         }} placeholder={t("Search projects and actions…")} /></label>
         <div>{commands.map((command, index) => <button type="button" className={index === activeIndex ? "is-active" : ""} aria-current={index === activeIndex ? "true" : undefined} key={command.label} onMouseEnter={() => setActiveIndex(index)} onClick={() => run(index)}>{command.label}<span>↵</span></button>)}</div>
       </section>
@@ -1045,7 +1011,7 @@ function setTheme(theme: Theme) {
   try { localStorage.setItem(THEME_KEY, theme); } catch { /* private mode: the choice lasts for this page */ }
 }
 
-// Project deep links: ?project=<slug> in the URL is the source of truth for which dossier is open.
+// LabStock uses its canonical path; legacy workspace query links remain readable.
 const URL_CHANGE_EVENT = "aw:urlchange";
 function subscribeToUrl(onChange: () => void) {
   window.addEventListener("popstate", onChange);
@@ -1055,21 +1021,23 @@ function subscribeToUrl(onChange: () => void) {
     window.removeEventListener(URL_CHANGE_EVENT, onChange);
   };
 }
-const readProjectParam = () => new URLSearchParams(window.location.search).get("project");
-const readProjectParamOnServer = () => null;
+const readProjectParam = () => window.location.pathname === "/projects/labstock/" ? "labstock" : new URLSearchParams(window.location.search).get("project");
 function writeProjectParam(slug: string | null) {
   const url = new URL(window.location.href);
-  if (slug) url.searchParams.set("project", slug);
-  else url.searchParams.delete("project");
+  url.searchParams.delete("project");
+  if (slug === "labstock") url.pathname = "/projects/labstock/";
+  else {
+    if (url.pathname.startsWith("/projects/")) url.pathname = "/";
+    if (slug) url.searchParams.set("project", slug);
+  }
+  url.hash = "";
   if (url.href === window.location.href) return;
   window.history.pushState(null, "", url);
   window.dispatchEvent(new Event(URL_CHANGE_EVENT));
 }
 
 // Background music: CC0 ambient track (docs/design/audio-provenance.md). One player for the whole page.
-// Off until the visitor turns it on. After that the choice is remembered and, on later visits, playback
-// is attempted on load; if the browser blocks it, it resumes on the visitor's first click or key press
-// (a user gesture, as autoplay policy requires) and the button shows it is waiting.
+// Playback starts only from the music button, including on return visits.
 const MUSIC_SRC = "/audio/ambient-wilfredor-cc0.m4a";
 const MUSIC_KEY = "aw-music";
 const MUSIC_VOLUME_KEY = "aw-music-volume";
@@ -1102,29 +1070,6 @@ const subscribeToMusic = (onChange: () => void) => { music.listeners.add(onChang
 function useMusic() {
   return useSyncExternalStore(subscribeToMusic, () => music.state, () => "off" as MusicState);
 }
-function useMusicResume() {
-  useEffect(() => {
-    let wanted = false;
-    try { wanted = localStorage.getItem(MUSIC_KEY) === "on"; } catch { /* ignore */ }
-    if (!wanted || music.state === "on") return;
-    let armed = false;
-    const disarm = () => {
-      if (!armed) return;
-      armed = false;
-      window.removeEventListener("pointerdown", resume);
-      window.removeEventListener("keydown", resume);
-    };
-    const resume = () => { disarm(); void playMusic(false); };
-    void playMusic(false).then((ok) => {
-      if (ok) return;
-      armed = true;
-      window.addEventListener("pointerdown", resume);
-      window.addEventListener("keydown", resume);
-    });
-    return disarm;
-  }, []);
-}
-
 function MusicButton({ className = "" }: { className?: string }) {
   const state = useMusic();
   const label = state === "on" ? t("Pause music") : state === "blocked" ? t("Resume music") : t("Play music");
@@ -1139,7 +1084,7 @@ function LanguageSwitch({ locale, className = "" }: { locale: Locale; className?
   );
 }
 
-export function WorkspacePrototype() {
+export function WorkspacePrototype({ initialProject = null }: { initialProject?: string | null }) {
   const windowRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; start: Point; origin: Point } | null>(null);
   const restorePositionRef = useRef<Point>({ x: 0, y: 0 });
@@ -1149,12 +1094,13 @@ export function WorkspacePrototype() {
   const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [baseView, setBaseView] = useState<Exclude<WorkspaceView, "project">>("home");
-  const urlProject = useSyncExternalStore(subscribeToUrl, readProjectParam, readProjectParamOnServer);
+  const urlProject = useSyncExternalStore(subscribeToUrl, readProjectParam, () => initialProject);
   const urlProjectValid = allProjects().some((project) => project.slug === urlProject);
   const view: WorkspaceView = urlProjectValid ? "project" : baseView;
   const selectedSlug = urlProjectValid && urlProject ? urlProject : "labstock";
   const setView = useCallback((next: WorkspaceView) => {
     if (next === "project") return;
+    playUISound("tap");
     writeProjectParam(null);
     setBaseView(next);
   }, []);
@@ -1171,7 +1117,6 @@ export function WorkspacePrototype() {
   const locale = useSyncExternalStore(subscribeToLocale, readLocale, readLocaleOnServer);
   // Children render after this line in the same pass, so every t()/L() below reads this locale.
   setActiveLocale(locale);
-  useMusicResume();
   const [windowState, setWindowState] = useState<WindowState>("open");
   const [maximized, setMaximized] = useState(false);
   const [quickLookIndex, setQuickLookIndex] = useState<number | null>(null);
@@ -1185,10 +1130,12 @@ export function WorkspacePrototype() {
 
   const openPalette = useCallback(() => {
     paletteReturnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    playUISound("open");
     setPaletteOpen(true);
   }, []);
 
   const closePalette = useCallback(() => {
+    playUISound("close");
     setPaletteOpen(false);
     window.requestAnimationFrame(() => paletteReturnFocusRef.current?.focus());
   }, []);
@@ -1235,6 +1182,7 @@ export function WorkspacePrototype() {
   }, []);
 
   const selectProject = useCallback((project: WorkspaceProject) => {
+    playUISound("open");
     withViewTransition(() => {
       writeProjectParam(project.slug);
       setQuickLookIndex(null);
@@ -1244,11 +1192,13 @@ export function WorkspacePrototype() {
 
   function openQuickLook(index: number, trigger: HTMLElement) {
     if (!quickLookImages[index]) return;
+    playUISound("open");
     quickLookReturnFocusRef.current = trigger;
     setQuickLookIndex(index);
   }
 
   const closeQuickLook = useCallback(() => {
+    playUISound("close");
     setQuickLookIndex(null);
     window.requestAnimationFrame(() => quickLookReturnFocusRef.current?.focus());
   }, []);
@@ -1403,8 +1353,9 @@ export function WorkspacePrototype() {
             <span>{t("Build · Solve · Improve")}</span>
             <button type="button" onClick={openPalette}><kbd>⌘ K</kbd></button>
             <LanguageSwitch locale={locale} />
+            <SoundButton />
             <MusicButton />
-            <button type="button" className="aw-appearance" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")} title={theme === "dark" ? t("Light mode") : t("Dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
+            <button type="button" className="aw-appearance" onClick={() => { playUISound("tap"); setTheme(theme === "dark" ? "light" : "dark"); }} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")} title={theme === "dark" ? t("Light mode") : t("Dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             <span className="aw-avatar">AR</span>
           </div>
         </header>
@@ -1417,8 +1368,9 @@ export function WorkspacePrototype() {
               <button type="button" onClick={() => setSidebarOpen(true)} aria-label={t("Open navigation")}><Glyph name="menu" /></button>
               <strong>{t("Adjie Workspace")}</strong>
               <LanguageSwitch locale={locale} className="aw-mobile-lang" />
+              <SoundButton />
               <MusicButton className="aw-mobile-music" />
-              <button type="button" className="aw-mobile-theme" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
+              <button type="button" className="aw-mobile-theme" onClick={() => { playUISound("tap"); setTheme(theme === "dark" ? "light" : "dark"); }} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             </header>
             {view === "home" ? <HomeWorkspace query={query} setQuery={setQuery} submit={() => void runAsk(query, null)} ask={(question) => void runAsk(question, null)} setView={setView} selectProject={selectProject} />
               : view === "work" ? <WorkWorkspace selectProject={selectProject} />

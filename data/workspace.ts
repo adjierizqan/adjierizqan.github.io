@@ -16,6 +16,16 @@ export type WorkspaceProject = {
   askSuggestion: string;
   image?: string;
   thumb?: string;
+  socialImage?: string;
+  presentation?: {
+    flow: { title: string; items: string[] }[];
+    decisions: { title: string; detail: string }[];
+    stockCaption: string;
+    headline: string;
+    category: string;
+    hero: { src: string; caption: string };
+    walkthrough: { title: string; detail: string }[];
+  };
   video?: string;
   gallery?: { src: string; caption: string }[];
   href?: string;
@@ -29,9 +39,9 @@ export const featuredWork: WorkspaceProject[] = [
     eyebrow: "Operational software",
     year: "2026",
     status: "Closed · maintenance",
-    summary: "A laboratory inventory system that turns source workbooks into a traceable stock ledger, monthly and yearly reports, and template-compatible Excel exports.",
-    problem: "Spreadsheet inventory data had to move through import, stock ledger, website reporting, and export without losing source traceability or turning corrections into silent rewrites.",
-    solution: "Adjie built a source-aware import and reporting workflow that preserves workbook provenance, supports idempotent re-import, and keeps corrections auditable across the ledger, website reports, and exported workbooks.",
+    summary: "Laboratory inventory, from the source workbook to the final report. One ledger connects stock movements, corrections and Excel exports.",
+    problem: "Moving inventory out of spreadsheets is only half the problem. The source of each balance still needs to be identifiable when data is imported again, corrected, or exported.",
+    solution: "I built LabStock around a stock movement ledger. Source-aware validation and repeat-import checks protect the input; history-preserving corrections keep reports and exported workbooks connected to that record.",
     howItWorks: [
       "Maps imported records to workbook, sheet, and source row evidence.",
       "Maps source records to the effective item identities used by reports and exports.",
@@ -46,12 +56,35 @@ export const featuredWork: WorkspaceProject[] = [
       { label: "Corrections", value: "Auditable · history-preserving" },
       { label: "Monthly output", value: "Detail + recap workbook" },
     ],
-    whyItMatters: "The system keeps inventory movements and familiar reporting outputs connected to the evidence they came from.",
+    whyItMatters: "A usable operational product and a traceable data model, designed together—from source identity to the workbook people need at the end.",
     publicLimitations: "Screens shown come from a demo database with synthetic items, rooms, requesters, and users. Production infrastructure, hospital data, URLs, and unsanitized screenshots are withheld.",
     askSuggestion: "How does LabStock keep imports and reports traceable?",
     assetNote: "Screens were captured from the final release running against the labstock_pk_demo database: demo users, 22 generic items, rooms and requesters marked demo, no migrated hospital rows.",
     image: "/projects/labstock/stok.webp",
-    thumb: "/projects/labstock/thumb.webp",
+    thumb: "/projects/labstock/thumb-reset-a.webp",
+    socialImage: "/projects/labstock/thumb-reset-a.jpg",
+    presentation: {
+      headline: "Every movement has a source.",
+      category: "Laboratory inventory",
+      hero: { src: "/projects/labstock/thumb-reset-a.webp", caption: "LabStock on desktop and phone. Existing demo screens; mobile view cropped for the cover." },
+      walkthrough: [
+        { title: "Know what needs attention.", detail: "Today brings low stock, expiry, recent requisitions and recorded movements into one operational view." },
+        { title: "One request. Every item recorded.", detail: "Amprah collects the items in a single requisition. The phone view keeps room and requester alongside items leaving the lab." },
+        { title: "Close the loop in Excel.", detail: "Monthly and yearly reporting reads from the ledger. The monthly screen exposes corrections alongside the closing balance and Excel export." },
+      ],
+      stockCaption: "The Stok screen: usable stock per item with expiry and condition, derived from the ledger.",
+      flow: [
+        { title: "Source", items: ["Workbook", "Sheet", "Source row"] },
+        { title: "Validate", items: ["Item identity", "Unit", "Period", "Source mapping"] },
+        { title: "Ledger", items: ["OPENING", "IN", "OUT", "ADJUSTMENT", "REVERSAL"] },
+        { title: "Output", items: ["Monthly report", "Yearly report", "Excel export"] },
+      ],
+      decisions: [
+        { title: "Source identity", detail: "Workbook, sheet, row, item identity, unit, and period travel together." },
+        { title: "Repeat import", detail: "A repeated source is recognized before it can create another stock movement." },
+        { title: "Correction", detail: "Supersession records the change while retaining the earlier ledger evidence." },
+      ],
+    },
     gallery: [
       { src: "/projects/labstock/hari-ini.webp", caption: "The Hari Ini (Today) screen: what needs action, recent requisitions and movements." },
       { src: "/projects/labstock/amprah.webp", caption: "Amprah, the lab's requisition form: one request posts every item to the stock ledger in one step." },

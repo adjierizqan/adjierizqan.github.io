@@ -60,7 +60,7 @@ describe("project metadata", () => {
       const og = m.openGraph as { url?: string; title?: string; images?: { url: string }[] };
       expect(og.url).toBe(projectPath(project.slug));
       expect(og.title).toBe(m.title as string);
-      expect(og.images?.[0]?.url).toBe(project.thumb);
+      expect(og.images?.[0]?.url).toBe(project.socialImage ?? project.thumb);
       expect((m.twitter as { card?: string }).card).toBe("summary_large_image");
     }
   });
