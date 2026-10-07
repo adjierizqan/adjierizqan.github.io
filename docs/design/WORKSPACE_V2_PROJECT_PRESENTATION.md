@@ -22,7 +22,7 @@ Shared CSS tokens: fast 120ms, normal 220ms, slow 360ms; easing cubic-bezier(.2,
 
 One signature interaction: the user can trace source → validation → ledger → output. Stages receive sequential emphasis and connectors progress. Everything is already visible before activation. No looping or autoplay. Reduced motion hides the optional trigger, skips View Transitions and removes shared animation. Complete labels, movement types and correction/repeat-import branches remain visible.
 
-Owner correction, 7 October 2026: all six projects intentionally use a transparent scripted prompt → answer opener. See [AI start screen and project prompts](../project-intros/DESIGN.md), which supersedes the earlier blanket removal of project conversations. Do not remove this interaction identity as “fake conversation.” Simulated visitor authorship, artificial inference, timer-created facts and the old Replay Demo architecture remain prohibited. The full prompt, answer and study exist in initial HTML; automatic presentation is silent, skippable, and disabled for reduced motion. Real Ask AI remains a separate user-initiated action.
+Owner correction, 7 October 2026: all six projects intentionally use a transparent scripted prompt → answer opener. See [chat-first presentation](../chat-fix/DESIGN.md), which supersedes the earlier blanket removal of project conversations. Do not remove this interaction identity as “fake conversation.” Simulated visitor authorship, artificial inference, timer-created facts and the old Replay Demo architecture remain prohibited. The full prompt, answer and study exist in initial HTML; automatic presentation is silent, skippable, and disabled for reduced motion. Real Ask AI remains a separate user-initiated action.
 
 ## Sound
 

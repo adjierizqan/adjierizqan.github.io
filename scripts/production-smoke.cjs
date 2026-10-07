@@ -108,7 +108,7 @@ const slugs = [
     expect(
       (await p.request.get(base + "/projects/suhulog-label-qr.jpg")).status(),
     ).toBe(404);
-    await p.getByRole("button", { name: "Ask your own question ↗", exact: true }).click();
+    await expect(p.locator(".home-start textarea")).toBeVisible();
     await expect(p.getByText("Adjie AI · Preview", { exact: true })).toHaveCount(0);
     await p
       .locator("textarea")

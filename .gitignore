@@ -52,3 +52,5 @@ next-env.d.ts
 
 # Full local project-opener QA captures; selected review images are committed explicitly.
 docs/project-intros/screenshots/
+
+docs/chat-fix/screenshots/

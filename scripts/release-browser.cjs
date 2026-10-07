@@ -67,11 +67,12 @@ const report = { base, browsers: [], checks: [], errors: [] };
             expect(askRequests).toBe(0);
             await expect(page.getByRole("region", { name: "Ask Adjie AI", exact: true })).toBeVisible();
             await expect(page.locator(".home-start textarea")).toBeVisible();
+            await expect(page.locator(".home-start .aw-send")).toBeVisible();
             await page.locator(".home-example summary").click();
             await expect(page.getByRole("region", { name: "Example conversation" })).toBeVisible();
             await expect(page.locator(".home-reply")).toContainText("computer vision research");
             await page.locator(".home-example summary").click();
-            const proof = await page.locator(".home-project img").first().boundingBox();
+            const proof = await page.locator(".home-proof img").first().boundingBox();
             // The recruiter sees actual product evidence before scrolling, not just a chat.
             expect(proof.y).toBeLessThan(width === 834 ? 900 : 760);
             await page.emulateMedia({ reducedMotion: "reduce" });
@@ -171,8 +172,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
               expect(route.request().postDataJSON().message).toBe("How does LabStock preserve history?");
               await route.fulfill({ contentType: "text/event-stream", body: 'data: {"response":"Fixture: a real visitor request reached the Ask transport."}\n\ndata: [DONE]\n\n' });
             });
-            await page.getByRole("button", { name: "Ask your own question ↗", exact: true }).click();
-            await expect(page.getByRole("region", { name: "Example conversation" })).toHaveCount(0);
+            await page.locator(".aw-center").evaluate(e => e.scrollTop = 0);
             await expect(page.getByText("Adjie AI · Preview", { exact: true })).toHaveCount(0);
             for (const button of await page.locator(".aw-composer-tools button").filter({ visible: true }).all()) {
               expect(await button.evaluate(e => e.scrollWidth - e.clientWidth), "Composer label must fit its button").toBe(0);
@@ -180,6 +180,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
             await page.locator("textarea").fill("How does LabStock preserve history?");
             await page.locator("textarea").press("Enter");
             await expect(page.locator(".aw-message").last()).toContainText("Fixture: a real visitor request");
+            await expect(page.getByRole("region", { name: "Example conversation" })).toHaveCount(0);
             expect(askRequests).toBe(1);
             await page.screenshot({ path: `${dir}/${name}-${width}-ask.png` });
           }

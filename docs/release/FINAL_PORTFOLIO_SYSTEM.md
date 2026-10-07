@@ -1,6 +1,6 @@
 # Adjie Workspace — final portfolio system
 
-Current interaction direction: [AI start screen and project prompts](../project-intros/DESIGN.md). The owner explicitly restored transparent project storytelling; this supersedes the earlier prohibition on scripted project questions. The [earlier Home refinement](../portfolio/REFINEMENT.md) remains historical context.
+Current interaction direction: [chat-first presentation](../chat-fix/DESIGN.md). The owner explicitly restored transparent project storytelling; this supersedes the earlier prohibition on scripted project questions. The [earlier Home refinement](../portfolio/REFINEMENT.md) remains historical context.
 
 Owner authority: the final end-to-end brief approved the LabStock reset and authorized all projects, checkpoints, merge and deployment after release gates. It supersedes the earlier LabStock-only stop condition. The macOS Workspace shell contract remains authoritative.
 

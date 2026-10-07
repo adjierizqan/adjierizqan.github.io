@@ -3,7 +3,7 @@
 import Image from "next/image";
 import dimensions from "@/data/media-dimensions.json";
 import dynamic from "next/dynamic";
-import { ProjectOpener, requestProjectIntro } from "@/components/workspace/ProjectOpener";
+import { ProjectOpener, requestProjectIntro, markProjectHistoryNavigation } from "@/components/workspace/ProjectOpener";
 import { WorkspaceHome } from "@/components/workspace/WorkspaceHome";
 const LabStockCaseStudy = dynamic(() => import("@/components/labstock/LabStockCaseStudy").then(m => m.LabStockCaseStudy));
 const SuhuLogStudy = dynamic(() => import("@/components/studies/SuhuLogStudy"));
@@ -19,6 +19,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useId,
   useState,
   useSyncExternalStore,
 } from "react";
@@ -168,13 +169,14 @@ function QuickLook({ images, index, close, navigate }: {
   );
 }
 
-function Composer({ query, setQuery, submit, stop, busy = false, placeholder }: {
+function Composer({ query, setQuery, submit, stop, busy = false, placeholder, suggestions = true }: {
   query: string;
   setQuery: (value: string) => void;
   submit: () => void;
   stop?: () => void;
   busy?: boolean;
   placeholder?: string;
+  suggestions?: boolean;
 }) {
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -196,11 +198,11 @@ function Composer({ query, setQuery, submit, stop, busy = false, placeholder }: 
         disabled={busy}
       />
       <div className="aw-composer-tools">
-        <div>
+        {suggestions && <div>
           <button type="button" onClick={() => setQuery(t("Show me Adjie’s operational systems."))}><Glyph name="search" /> {t("Projects")}</button>
           <button type="button" onClick={() => setQuery(t("What evidence is available for Adjie’s work?"))}><Glyph name="book" /> {t("Evidence")}</button>
           <button type="button" onClick={() => setQuery(t("How does Adjie approach reliability?"))}><Glyph name="spark" /> {t("Build notes")}</button>
-        </div>
+        </div>}
         <div className="aw-composer-submit"><span>{t("Adjie AI")}</span><button className="aw-send" type="button" onClick={busy ? stop : submit} disabled={busy ? !stop : !query.trim()} aria-label={busy ? t("Stop response") : t("Send query")}><Glyph name={busy ? "close" : "send"} /></button></div>
       </div>
     </div>
@@ -345,8 +347,8 @@ function ProjectWorkspace({project, openImage, back, ask}: ProjectViewProps) {
   <ProjectOpener project={project} />
   <div className="project-story">
   {project.slug === "labstock" ? <LabStockCaseStudy {...props}/> : project.slug === "suhulog" ? <SuhuLogStudy {...props}/> : project.slug === "bdrs" ? <BdrsStudy {...props}/> : project.slug === "tomato-ripeness" ? <TomatoStudy {...props}/> : <LabsStudy {...props}/>}
-  </div>
   <footer className="ls-ask"><span>Want to go deeper?</span><button type="button" onClick={()=>ask(project.askSuggestion)}>Ask AI about {project.title} ↗</button></footer>
+  </div>
  </main>;
 }
 
@@ -547,10 +549,11 @@ function setTheme(theme: Theme) {
 // LabStock uses its canonical path; legacy workspace query links remain readable.
 const URL_CHANGE_EVENT = "aw:urlchange";
 function subscribeToUrl(onChange: () => void) {
-  window.addEventListener("popstate", onChange);
+  const historyChange = () => { markProjectHistoryNavigation(); onChange(); };
+  window.addEventListener("popstate", historyChange);
   window.addEventListener(URL_CHANGE_EVENT, onChange);
   return () => {
-    window.removeEventListener("popstate", onChange);
+    window.removeEventListener("popstate", historyChange);
     window.removeEventListener(URL_CHANGE_EVENT, onChange);
   };
 }
@@ -603,6 +606,24 @@ function MusicButton({ className = "" }: { className?: string }) {
   const state = useMusic();
   const label = state === "on" ? t("Pause music") : state === "blocked" ? t("Resume music") : t("Play music");
   return <button type="button" className={"aw-music " + className + (state === "on" ? " is-playing" : state === "blocked" ? " is-waiting" : "")} onClick={() => (state === "on" ? stopMusic() : void playMusic(true))} aria-pressed={state === "on"} aria-label={label} title={label}><Glyph name="music" /></button>;
+}
+
+function AudioControls() {
+  const id = useId();
+  const panel = useRef<HTMLDivElement>(null);
+  return <>
+    <button type="button" className="aw-audio-trigger" aria-label="Audio settings" title="Audio settings" popoverTarget={id} onClick={event => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      if (panel.current) {
+        panel.current.style.top = `${rect.bottom + 8}px`;
+        panel.current.style.left = `${Math.max(8, Math.min(innerWidth - 232, rect.right - 224))}px`;
+      }
+    }}><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M3 8h3l4-3v10l-4-3H3Z M13 7a5 5 0 0 1 0 6m3-8a8 8 0 0 1 0 10" /></svg></button>
+    <div ref={panel} id={id} popover="auto" className="aw-audio-panel" role="group" aria-label="Audio settings">
+      <div><span>Interface sounds</span><SoundButton /></div>
+      <div><span>Ambient music</span><MusicButton /></div>
+    </div>
+  </>;
 }
 
 export function WorkspacePrototype({ initialProject = null }: { initialProject?: string | null }) {
@@ -888,8 +909,7 @@ export function WorkspacePrototype({ initialProject = null }: { initialProject?:
             <span>{t("Software · Systems · Research")}</span>
             <button type="button" onClick={openPalette}><kbd>⌘ K</kbd></button>
 
-            <SoundButton />
-            <MusicButton />
+            <AudioControls />
             <button type="button" className="aw-appearance" onClick={() => { playUISound("tap"); setTheme(theme === "dark" ? "light" : "dark"); }} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")} title={theme === "dark" ? t("Light mode") : t("Dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             <span className="aw-avatar">a.</span>
           </div>
@@ -903,11 +923,10 @@ export function WorkspacePrototype({ initialProject = null }: { initialProject?:
               <button type="button" onClick={() => setSidebarOpen(true)} aria-label={t("Open navigation")}><Glyph name="menu" /></button>
               <strong>{t("Adjie Workspace")}</strong>
 
-              <SoundButton />
-              <MusicButton className="aw-mobile-music" />
+              <AudioControls />
               <button type="button" className="aw-mobile-theme" onClick={() => { playUISound("tap"); setTheme(theme === "dark" ? "light" : "dark"); }} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             </header>
-            {view === "home" ? <WorkspaceHome selectProject={selectProject} openAsk={() => setView("ask")} busy={askStatus === "sending" || askStatus === "streaming"} askQuestion={(question) => void runAsk(question, null)} composer={<Composer query={query} setQuery={setQuery} submit={() => void runAsk(query, null)} busy={askStatus === "sending" || askStatus === "streaming"} stop={stopAsk} />} />
+            {view === "home" ? <WorkspaceHome selectProject={selectProject} openAsk={() => setView("ask")} busy={askStatus === "sending" || askStatus === "streaming"} askQuestion={(question) => void runAsk(question, null)} composer={<Composer suggestions={false} query={query} setQuery={setQuery} submit={() => void runAsk(query, null)} busy={askStatus === "sending" || askStatus === "streaming"} stop={stopAsk} />} />
               : view === "work" ? <WorkWorkspace selectProject={selectProject} />
                 : view === "projects" ? <ProjectDirectory projects={allProjects()} title={tk("Projects")} copy={tk("A single workspace index for featured systems and focused experiments.")} selectProject={selectProject} />
                   : view === "labs" ? <ProjectDirectory projects={labProjects()} title={tk("Labs")} copy={tk("Focused experiments in computer vision, 3D pipelines, and interactive systems.")} selectProject={selectProject} />

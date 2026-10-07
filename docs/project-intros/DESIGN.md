@@ -1,5 +1,7 @@
 # AI start screen and project prompts
 
+> Superseded presentation: the owner rejected this editorial opener. [Chat-first correction](../chat-fix/DESIGN.md) is authoritative for sequencing, Home and audio controls.
+
 Owner decision, 7 October 2026: restore conversational **presentation** for all six projects. Earlier prohibitions on fake conversations were too broad. Honest scripted introductions are intentional; fabricated visitor turns, artificial inference, and timer-created content remain prohibited. Home should feel like an AI start screen inside the existing Workspace.
 
 ## Acceptance

@@ -23,12 +23,11 @@ export function WorkspaceHome({
       <header className="home-intro">
         <div className="home-identity">
           <div><h1>{identity.name}</h1><p>Software / full-stack engineer</p></div>
-          <a href={site.cv} target="_blank" rel="noreferrer">Résumé ↗</a>
+
         </div>
         <section className="home-start" aria-label="Ask Adjie AI">
-          <p className="home-greeting">Welcome to my workspace.</p>
-          <h2>What would you like to explore?</h2>
-          <p className="home-positioning">Operational software, traceable data, and a researcher’s eye for computer vision.</p>
+          <h2>What would you like to know?</h2>
+          <p className="home-positioning">Ask about my work, or open a project to see how it was built.</p>
           {composer}
           <div className="home-starters" aria-label="Suggested questions">
             {[
@@ -37,9 +36,15 @@ export function WorkspaceHome({
               ["Beyond full-stack", "What does TomatoVision show about Adjie's computer vision research?"],
             ].map(([label, question]) => <button key={label} type="button" disabled={busy} onClick={() => askQuestion(question)}>{label} <span aria-hidden="true">↗</span></button>)}
           </div>
+          <nav className="home-proof" aria-label="Open a project">
+            {featuredWork.slice(0,3).map(project => <a key={project.slug} href={`/projects/${project.slug}/`} onClick={event => { event.preventDefault(); selectProject(project); }}>
+              <Image src={project.thumb!} alt={project.title + " product preview"} width={160} height={100} sizes="100px" />
+              <span>{project.title}<small>{project.eyebrow}</small></span>
+            </a>)}
+          </nav>
           <nav className="home-intro-actions" aria-label="Introduction actions">
             <a href="#home-work">Explore the work ↓</a>
-            <button type="button" onClick={openAsk}>Ask your own question ↗</button>
+
           </nav>
         </section>
         <details className="home-example">

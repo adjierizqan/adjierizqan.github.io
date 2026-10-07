@@ -76,8 +76,10 @@ async function main() {
       await expect(page.getByRole('dialog')).toHaveCount(0);
       await expect(trigger).toBeFocused();
       expect(await page.evaluate(() => window.__audio.starts)).toBe(3);
+      await page.getByRole('button', { name: 'Audio settings', exact: true }).filter({ visible: true }).click();
       const mute = page.getByRole('button', { name: 'Mute UI sounds', exact: true }).filter({ visible: true });
       await mute.click();
+      await page.keyboard.press('Escape');
       await trigger.click();
       await page.getByRole('button', { name: 'Actual size', exact: true }).click();
       expect(await page.locator('.is-actual-size img').evaluate(el => el.clientWidth)).toBe(1440);
@@ -90,8 +92,10 @@ async function main() {
       await page.keyboard.press('Escape');
       expect(await page.evaluate(() => window.__audio.starts)).toBe(3);
       await page.reload({ waitUntil: 'networkidle' });
+      await page.getByRole('button', { name: 'Audio settings', exact: true }).filter({ visible: true }).click();
       await expect(page.getByRole('button', { name: 'Unmute UI sounds', exact: true }).filter({ visible: true })).toBeVisible();
       expect(await page.evaluate(() => window.__audio)).toEqual({ starts: 0, plays: 0, contexts: 0 });
+      await page.keyboard.press('Escape');
       await page.getByRole('button', { name: 'Switch to dark mode', exact: true }).filter({ visible: true }).click();
       await page.screenshot({ path: path.join(OUT, `${width}-dark.png`) });
       await section(page, '#ls-system', `${width}-dark-flow.png`);
