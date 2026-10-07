@@ -907,7 +907,7 @@ export function WorkspacePrototype({ initialProject = null }: { initialProject?:
               <MusicButton className="aw-mobile-music" />
               <button type="button" className="aw-mobile-theme" onClick={() => { playUISound("tap"); setTheme(theme === "dark" ? "light" : "dark"); }} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
             </header>
-            {view === "home" ? <WorkspaceHome selectProject={selectProject} openAsk={() => setView("ask")} askQuestion={(question) => void runAsk(question, null)} composer={<Composer query={query} setQuery={setQuery} submit={() => void runAsk(query, null)} />} />
+            {view === "home" ? <WorkspaceHome selectProject={selectProject} openAsk={() => setView("ask")} busy={askStatus === "sending" || askStatus === "streaming"} askQuestion={(question) => void runAsk(question, null)} composer={<Composer query={query} setQuery={setQuery} submit={() => void runAsk(query, null)} busy={askStatus === "sending" || askStatus === "streaming"} stop={stopAsk} />} />
               : view === "work" ? <WorkWorkspace selectProject={selectProject} />
                 : view === "projects" ? <ProjectDirectory projects={allProjects()} title={tk("Projects")} copy={tk("A single workspace index for featured systems and focused experiments.")} selectProject={selectProject} />
                   : view === "labs" ? <ProjectDirectory projects={labProjects()} title={tk("Labs")} copy={tk("Focused experiments in computer vision, 3D pipelines, and interactive systems.")} selectProject={selectProject} />

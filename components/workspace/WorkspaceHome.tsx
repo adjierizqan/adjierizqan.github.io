@@ -10,10 +10,12 @@ export function WorkspaceHome({
   openAsk,
   composer,
   askQuestion,
+  busy = false,
 }: {
   selectProject: (p: WorkspaceProject) => void;
   openAsk: () => void;
   composer: ReactNode;
+  busy?: boolean;
   askQuestion: (question: string) => void;
 }) {
   return (
@@ -33,7 +35,7 @@ export function WorkspaceHome({
               ["Start with the work", "Which of Adjie's projects should I look at first?"],
               ["How I build", "How does Adjie approach data correctness and traceability?"],
               ["Beyond full-stack", "What does TomatoVision show about Adjie's computer vision research?"],
-            ].map(([label, question]) => <button key={label} type="button" onClick={() => askQuestion(question)}>{label} <span aria-hidden="true">↗</span></button>)}
+            ].map(([label, question]) => <button key={label} type="button" disabled={busy} onClick={() => askQuestion(question)}>{label} <span aria-hidden="true">↗</span></button>)}
           </div>
           <nav className="home-intro-actions" aria-label="Introduction actions">
             <a href="#home-work">Explore the work ↓</a>
