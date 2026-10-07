@@ -228,14 +228,16 @@
   .home-intro h1 {
     font-size: 1.35rem;
   }
-  .home-start { margin-top: 28px; }
+  .home-start { margin-top: 20px; }
   .home-start h2 { font-size: 1.85rem; }
-  .home-positioning { font-size: .76rem; margin-bottom: 18px; }
+  .home-positioning { font-size: .76rem; margin-bottom: 14px; }
   .home-start .aw-composer-tools > div:first-child { display: none; }
   .home-starters { gap: 2px 13px; margin-top: 12px; }
   .home-starters button { font-size: .68rem; }
   .home-intro-actions { gap: 12px; font-size: .69rem; margin-top: 10px; }
   .home-example { margin-top: 12px; }
+  .home-selected { margin-top: 24px; }
+  .home-selected > header { padding-top: 16px; margin-bottom: 20px; }
   .home-prompt, .home-reply { grid-template-columns: 1fr; gap: 5px; }
   .home-ask {
     display: block;

@@ -39,3 +39,5 @@ Screenshots are under `docs/project-intros/screenshots/`. Full matrices are loca
 Local results: 37 portfolio tests + 12 Worker tests passed; lint, TypeScript, build and six-route static checks passed. The public text scan covered 103 files. The responsive matrix covered 56 route/viewport/browser combinations with zero overflow, broken images or console/page errors. Existing shell suites passed in both engines. No public media changed, and the generated AI context is byte-identical to the baseline.
 
 Visual review covered the four primary project openings, desktop/tablet/phone Home, 320 px layouts, dark Home, the typing midpoint and reduced-motion state. The question has balanced line wrapping; product heroes retain their existing composition. Only the opening header participates in the evidence transition, avoiding animation of the entire long case study.
+
+CI caught the first project image 2 px beyond the 760 px Home evidence threshold in Linux WebKit at 320 px. Mobile spacing was reduced by 32 px; the assertion was retained unchanged. The older presentation addendum now explicitly records the owner’s restored project-conversation decision.
