@@ -72,6 +72,17 @@ fs.mkdirSync(dir,{recursive:true});
    await expect(page.locator('.aw-message').last()).toContainText('Home starter reached the real Ask transport.');
    expect(requests).toBe(2);
    expect(submissions).toEqual(["Which of Adjie's projects should I look at first?", 'How does LabStock preserve source identity?']);
+   // A visitor can return Home while inference is pending. Keep the shared busy/Stop state.
+   await page.goto(base+'/');
+   await page.unroute('**/ask');
+   await page.route('**/ask',()=>{});
+   await page.getByRole('button',{name:'Start with the work'}).click();
+   await page.getByRole('button',{name:'Home',exact:true}).click();
+   await expect(page.locator('.home-start textarea')).toBeDisabled();
+   await expect(page.getByRole('button',{name:'Start with the work'})).toBeDisabled();
+   await page.getByRole('button',{name:'Stop response',exact:true}).click();
+   await expect(page.locator('.home-start textarea')).toBeEnabled();
+   await expect(page.getByRole('button',{name:'Start with the work'})).toBeEnabled();
    await context.close();
    console.log(`${name}: silent automatic intro, semantic HTML, skip/replay focus, gesture sound, refresh/history, intentional entry, reduced motion, Home starter PASS`);
   } finally {await browser.close();}

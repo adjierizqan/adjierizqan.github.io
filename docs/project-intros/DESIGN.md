@@ -41,3 +41,5 @@ Local results: 37 portfolio tests + 12 Worker tests passed; lint, TypeScript, bu
 Visual review covered the four primary project openings, desktop/tablet/phone Home, 320 px layouts, dark Home, the typing midpoint and reduced-motion state. The question has balanced line wrapping; product heroes retain their existing composition. Only the opening header participates in the evidence transition, avoiding animation of the entire long case study.
 
 CI caught the first project image 2 px beyond the 760 px Home evidence threshold in Linux WebKit at 320 px. Mobile spacing was reduced by 32 px; the assertion was retained unchanged. The older presentation addendum now explicitly records the owner’s restored project-conversation decision.
+
+A runtime check also caught Home allowing input while an existing Ask request was pending. Home now receives the same busy/Stop state as Ask, and its starter buttons disable until completion or cancellation. The browser gate covers returning Home during a pending request and stopping it there.
