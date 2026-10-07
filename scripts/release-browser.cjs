@@ -163,6 +163,9 @@ const report = { base, browsers: [], checks: [], errors: [] };
             await page.getByRole("button", { name: "Ask your own question ↗", exact: true }).click();
             await expect(page.getByRole("region", { name: "Example conversation" })).toHaveCount(0);
             await expect(page.getByText("Adjie AI · Preview", { exact: true })).toHaveCount(0);
+            for (const button of await page.locator(".aw-composer-tools button").filter({ visible: true }).all()) {
+              expect(await button.evaluate(e => e.scrollWidth - e.clientWidth), "Composer label must fit its button").toBe(0);
+            }
             await page.locator("textarea").fill("How does LabStock preserve history?");
             await page.locator("textarea").press("Enter");
             await expect(page.locator(".aw-message").last()).toContainText("Fixture: a real visitor request");

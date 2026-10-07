@@ -446,6 +446,8 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
 .aw-composer textarea::placeholder { color: #989ca5; }
 .aw-composer-tools {
   display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
   min-height: 3.25rem;
   align-items: center;
   justify-content: space-between;
@@ -465,8 +467,8 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   color: #626771;
   font-size: .64rem;
   font-weight: 570;
+  white-space: nowrap;
 }
-.aw-composer-tools button:first-child { width: 1.75rem; justify-content: center; border: 0; background: #f0f1f3; padding: 0; }
 .aw-composer-tools svg { width: .72rem; }
 .aw-composer-tools .aw-send {
   width: 2.05rem;
@@ -478,7 +480,7 @@ body:has(.aw-desktop) .site-main { min-height: 0; height: 100vh; }
   color: #fff;
 }
 .aw-composer-tools .aw-send:disabled { opacity: .28; }
-.aw-composer-submit { display: flex; align-items: center; gap: .65rem; }
+.aw-composer-submit { display: flex; align-items: center; gap: .65rem; margin-left: auto; }
 .aw-composer-submit > span { color: #676c75; font-size: .63rem; font-weight: 600; white-space: nowrap; }
 
 .aw-suggestions { margin-top: 1.65rem; }
