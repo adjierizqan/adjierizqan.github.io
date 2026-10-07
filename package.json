@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "bun test data/ lib/ && cd cloudflare/ask-worker && bun test",
+    "ai-context": "bun run scripts/build-ai-context.ts",
+    "typecheck": "tsc --noEmit",
+    "test:static": "bun scripts/release-static.ts",
+    "test:browser": "node scripts/release-browser.cjs",
+    "test:shell": "node scripts/release-shell.cjs"
   },
   "dependencies": {
     "next": "16.2.10",
@@ -14,6 +20,7 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@playwright/test": "1.62.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

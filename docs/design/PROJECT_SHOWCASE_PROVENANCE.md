@@ -1,3 +1,5 @@
+> Historical presentation record. Final active-project provenance and scope: [final portfolio system](../release/FINAL_PORTFOLIO_SYSTEM.md). ObjectTwin is not published. Old media-gap/presentation statements below are superseded.
+
 # Project showcase provenance
 
 The final showcase images are editorial compositions built from repository-owned project evidence. Each `source-captures/` directory preserves the real input used to produce the 1440 × 1020 source PNG and optimized WebP derivative in `showcase/`.

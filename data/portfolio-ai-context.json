@@ -2,7 +2,7 @@
   "identity": {
     "name": "Adjie Rizqan",
     "legalName": "Muhammad Rizqan Nur Adjie Adzani",
-    "positioning": "Adjie builds operational software and applied AI systems.",
+    "positioning": "Software and full-stack engineering for operational and data-heavy applications, with applied AI and computer vision research.",
     "focusAreas": [
       "Software engineering",
       "Applied AI and computer vision research",
@@ -18,11 +18,11 @@
   "education": [
     {
       "institution": "Tamkang University",
-      "program": "Computer Science and Information Engineering, master's program; thesis research on TomatoVision. Completion date is not stated in the public record."
+      "program": "Master’s in Computer Science and Information Engineering · completed 2026 · thesis research: TomatoVision"
     },
     {
       "institution": "Telkom University",
-      "program": "S1 Rekayasa Perangkat Lunak (Software Engineering); alumnus"
+      "program": "Bachelor’s / S1 Software Engineering · completed 2023"
     }
   ],
   "coreCapabilities": [
@@ -40,9 +40,9 @@
       "workspaceTarget": "labstock",
       "category": "Operational software",
       "publicStatus": "Closed · maintenance",
-      "summary": "A laboratory inventory system that turns source workbooks into a traceable stock ledger, monthly and yearly reports, and template-compatible Excel exports.",
-      "problem": "Spreadsheet inventory data had to move through import, stock ledger, website reporting, and export without losing source traceability or turning corrections into silent rewrites.",
-      "solution": "Adjie built a source-aware import and reporting workflow that preserves workbook provenance, supports idempotent re-import, and keeps corrections auditable across the ledger, website reports, and exported workbooks.",
+      "summary": "Laboratory inventory, from the source workbook to the final report. One ledger connects stock movements, corrections and Excel exports.",
+      "problem": "Moving inventory out of spreadsheets is only half the problem. The source of each balance still needs to be identifiable when data is imported again, corrected, or exported.",
+      "solution": "I built LabStock around a stock movement ledger. Source-aware validation and repeat-import checks protect the input; history-preserving corrections keep reports and exported workbooks connected to that record.",
       "howItWorks": [
         "Maps imported records to workbook, sheet, and source row evidence.",
         "Maps source records to the effective item identities used by reports and exports.",
@@ -75,41 +75,9 @@
           "value": "Detail + recap workbook"
         }
       ],
-      "whyItMatters": "The system keeps inventory movements and familiar reporting outputs connected to the evidence they came from.",
+      "whyItMatters": "A usable operational product and a traceable data model, designed together—from source identity to the workbook people need at the end.",
       "publicLimitations": "Screens shown come from a demo database with synthetic items, rooms, requesters, and users. Production infrastructure, hospital data, URLs, and unsanitized screenshots are withheld.",
       "askSuggestion": "How does LabStock keep imports and reports traceable?"
-    },
-    {
-      "id": "bdrs",
-      "name": "BDRS",
-      "workspaceTarget": "bdrs",
-      "category": "Operational software",
-      "summary": "A blood-bank operations system designed around domain workflows; its public technical and release evidence is still being reconciled.",
-      "problem": "Blood-bank operations require workflow-specific software rather than a generic administration dashboard, but the current public record is not complete enough for detailed operational claims.",
-      "solution": "Adjie designed and implemented a workflow-oriented system while keeping patient data, production details, and unverified release claims outside the public case study.",
-      "howItWorks": [
-        "Organizes the application around operational workflows rather than generic dashboard modules.",
-        "Keeps the public case-study boundary separate from private operational data."
-      ],
-      "role": "Product engineering · workflow design",
-      "stack": [],
-      "verifiedEvidence": [
-        {
-          "label": "Implemented",
-          "value": "Workflow-oriented system structure"
-        },
-        {
-          "label": "Under review",
-          "value": "Technical and release evidence"
-        },
-        {
-          "label": "Withheld",
-          "value": "Patient and production data"
-        }
-      ],
-      "whyItMatters": "The project demonstrates domain-first product thinking while preserving a strict public evidence boundary.",
-      "publicLimitations": "No production, deployment, user, compliance, or release claim is published until the latest evidence is reconciled; screens come from a seeded demo environment with synthetic patients, bags, and staff.",
-      "askSuggestion": "What is currently verified about BDRS?"
     },
     {
       "id": "suhulog",
@@ -121,7 +89,7 @@
       "solution": "Adjie designed, built, and released a focused web application that opens the correct monitoring point from a QR label and produces charts, Excel, PDF, and ZIP reports from the same effective records.",
       "howItWorks": [
         "A QR label opens the entry form for one exact monitoring point.",
-        "Server time assigns the Pagi or Sore slot; each slot has one effective record.",
+        "Staff select Pagi or Sore; the server stamps the recording time. Each point, date and period has one effective ordinary record.",
         "Configured ranges flag out-of-range readings without blocking or clamping them.",
         "Corrections append a new record and supersede the prior value instead of overwriting history.",
         "Monthly views, charts, Excel, PDF, and ZIP exports read the same stored records."
@@ -201,6 +169,53 @@
       "whyItMatters": "The study shows which gains come from a single architecture and which require ensemble inference, rather than merging them into one headline result.",
       "publicLimitations": "The portfolio reports evaluated research results and public project media; it does not claim a deployed agricultural product.",
       "askSuggestion": "How were the TomatoVision models evaluated?"
+    },
+    {
+      "id": "bdrs",
+      "name": "BDRS",
+      "workspaceTarget": "bdrs",
+      "category": "Operational software",
+      "publicStatus": "Closed · maintenance",
+      "summary": "A blood-bank system of record: requests, per-bag crossmatch, issue and outcomes connected in one case workspace.",
+      "problem": "The original process spanned 12 Excel workbooks and a Word document. Producing the monthly report meant manually transcribing between files; the lifecycle of a request and each blood unit needed a shared record.",
+      "solution": "I designed and built a domain-led system with one case workstation, separate state machines for service, crossmatch and transfusion, and controlled finalisation. Product decisions, full-stack implementation, testing and release were my responsibility, with AI-assisted implementation.",
+      "howItWorks": [
+        "Receipt confirmation brings units into inventory; unconfirmed deliveries are not stock.",
+        "Crossmatch belongs to a specific bag–patient pairing. An incompatible bag cannot be issued.",
+        "Issue, physical outcome, transfusion episode and reaction remain separate recorded events.",
+        "Finalisation evaluates seven blockers and two warnings; the open-episode check runs again inside the transaction.",
+        "Corrections and controlled reopening preserve history with a recorded reason."
+      ],
+      "role": "Product owner · sole developer · QA and release",
+      "stack": [
+        "Laravel 13",
+        "PHP 8.4",
+        "Inertia 3",
+        "React 19",
+        "Tailwind 4",
+        "SQLite"
+      ],
+      "verifiedEvidence": [
+        {
+          "label": "Recorded release",
+          "value": "19 September 2026 · owner UAT passed"
+        },
+        {
+          "label": "Unit / feature suite",
+          "value": "2,672 passed · 74 skipped · 3 incomplete"
+        },
+        {
+          "label": "End-to-end suite",
+          "value": "44 passed"
+        },
+        {
+          "label": "Handover",
+          "value": "Operator manual + technical maintenance package"
+        }
+      ],
+      "whyItMatters": "Domain modelling, traceable corrections and release discipline are part of the product—not work left behind the interface.",
+      "publicLimitations": "Release figures are the recorded September 2026 gate, not a fresh backend audit. No compliance, penetration-test, efficiency or cost claim is made. Restore rehearsal used a schema-complete, record-empty database. Public screens contain synthetic fixtures only; patient records, hospital identity and infrastructure remain private.",
+      "askSuggestion": "Why does BDRS separate issue, physical outcome and transfusion?"
     },
     {
       "id": "padel-vision",

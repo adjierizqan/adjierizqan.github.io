@@ -13,13 +13,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import postcss from "postcss";
 
-export const SOURCES = [
-  "app/globals.css",
-  "components/project-story/project-story.css",
-  "components/tomatovision/tomatovision.css",
-  "components/padel/padel.css",
-  "components/evidence/product-evidence.css",
-];
+export const SOURCES = ["app/globals.css"];
 export const OUTPUT = "app/theme-dark.css";
 const PREFIX = ':root[data-theme="dark"]';
 

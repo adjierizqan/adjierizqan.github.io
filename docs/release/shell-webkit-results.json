@@ -1,0 +1,68 @@
+{
+  "widths": [
+    {
+      "width": 1440,
+      "docOverflow": 0,
+      "mainOverflow": 0,
+      "mediaWidth": 1048,
+      "brokenImages": 0,
+      "audioOnLoad": {
+        "starts": 0,
+        "plays": 0,
+        "contexts": 0
+      },
+      "flowStages": 4
+    },
+    {
+      "width": 834,
+      "docOverflow": 0,
+      "mainOverflow": 0,
+      "mediaWidth": 539,
+      "brokenImages": 0,
+      "audioOnLoad": {
+        "starts": 0,
+        "plays": 0,
+        "contexts": 0
+      },
+      "flowStages": 4
+    },
+    {
+      "width": 390,
+      "docOverflow": 0,
+      "mainOverflow": 0,
+      "mediaWidth": 390,
+      "brokenImages": 0,
+      "audioOnLoad": {
+        "starts": 0,
+        "plays": 0,
+        "contexts": 0
+      },
+      "flowStages": 4
+    },
+    {
+      "width": 320,
+      "docOverflow": 0,
+      "mainOverflow": 0,
+      "mediaWidth": 320,
+      "brokenImages": 0,
+      "audioOnLoad": {
+        "starts": 0,
+        "plays": 0,
+        "contexts": 0
+      },
+      "flowStages": 4
+    }
+  ],
+  "checks": [
+    "Desktop traffic lights, maximize/restore, minimize/close and dock reopening",
+    "1440: flow, Quick Look/focus/Escape, muted controls, persistence, theme, dragging threshold, reduced motion, canonical navigation, Back/Forward, refresh, palette",
+    "834: flow, Quick Look/focus/Escape, muted controls, persistence, theme, dragging threshold, reduced motion, canonical navigation, Back/Forward, refresh, palette",
+    "390: flow, Quick Look/focus/Escape, muted controls, persistence, theme, dragging threshold, reduced motion, canonical navigation, Back/Forward, refresh, palette",
+    "320: flow, Quick Look/focus/Escape, muted controls, persistence, theme, dragging threshold, reduced motion, canonical navigation, Back/Forward, refresh, palette",
+    "No JavaScript: complete exported LabStock article and flow; full-source media links work without JS",
+    "Other five direct project routes: HTTP 200, static heading, unchanged canonical URL",
+    "Audio constructor failure: project, viewer and theme still work; saved music never plays on load"
+  ],
+  "errors": [],
+  "status": "PASS"
+}

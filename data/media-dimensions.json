@@ -1,0 +1,314 @@
+{
+  "/projects/bdrs/cover-final.jpg": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/bdrs/cover-final.webp": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/bdrs/dashboard.webp": {
+    "width": 1208,
+    "height": 950
+  },
+  "/projects/bdrs/episode.webp": {
+    "width": 1208,
+    "height": 950
+  },
+  "/projects/bdrs/inventaris.webp": {
+    "width": 1208,
+    "height": 950
+  },
+  "/projects/bdrs/laporan.webp": {
+    "width": 1208,
+    "height": 950
+  },
+  "/projects/bdrs/mobile.webp": {
+    "width": 390,
+    "height": 844
+  },
+  "/projects/bdrs/pengeluaran.webp": {
+    "width": 1208,
+    "height": 950
+  },
+  "/projects/bdrs/readiness.webp": {
+    "width": 480,
+    "height": 930
+  },
+  "/projects/bdrs/thumb.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/bdrs/work.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/bdrs/workstation.webp": {
+    "width": 1208,
+    "height": 950
+  },
+  "/projects/labstock/amprah-keluar.webp": {
+    "width": 1440,
+    "height": 1024
+  },
+  "/projects/labstock/amprah-mobile.webp": {
+    "width": 390,
+    "height": 1543
+  },
+  "/projects/labstock/amprah.webp": {
+    "width": 1440,
+    "height": 1024
+  },
+  "/projects/labstock/hari-ini.webp": {
+    "width": 1440,
+    "height": 1024
+  },
+  "/projects/labstock/laporan.webp": {
+    "width": 1440,
+    "height": 1024
+  },
+  "/projects/labstock/phone-detail.webp": {
+    "width": 390,
+    "height": 844
+  },
+  "/projects/labstock/report-detail.webp": {
+    "width": 1136,
+    "height": 920
+  },
+  "/projects/labstock/request-detail.webp": {
+    "width": 1136,
+    "height": 704
+  },
+  "/projects/labstock/stok.webp": {
+    "width": 1440,
+    "height": 1024
+  },
+  "/projects/labstock/thumb-reset-a.jpg": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/labstock/thumb-reset-a.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/labstock/thumb-reset-b.jpg": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/labstock/thumb-reset-b.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/labstock/thumb-reset-c.jpg": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/labstock/thumb-reset-c.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/labstock/thumb-v2.jpg": {
+    "width": 960,
+    "height": 600
+  },
+  "/projects/labstock/thumb-v2.webp": {
+    "width": 960,
+    "height": 600
+  },
+  "/projects/labstock/thumb.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/labstock/today-detail.webp": {
+    "width": 1136,
+    "height": 888
+  },
+  "/projects/labstock/trace-report.webp": {
+    "width": 422,
+    "height": 290
+  },
+  "/projects/labstock/work.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/padel-vision/analytics/court-control.webp": {
+    "width": 1290,
+    "height": 1182
+  },
+  "/projects/padel-vision/analytics/replay-poster.webp": {
+    "width": 1600,
+    "height": 900
+  },
+  "/projects/padel-vision/analytics/thumb.webp": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/padel-vision/cover-final.jpg": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/padel-vision/cover-final.webp": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/padel-vision/real/pexels-analyzed-poster.webp": {
+    "width": 1280,
+    "height": 720
+  },
+  "/projects/porsche-3d/cinematic/01-rwb964-hero.webp": {
+    "width": 2560,
+    "height": 1440
+  },
+  "/projects/porsche-3d/cinematic/02-918-profile.webp": {
+    "width": 1920,
+    "height": 1080
+  },
+  "/projects/porsche-3d/cinematic/03-lineup.webp": {
+    "width": 2560,
+    "height": 1097
+  },
+  "/projects/porsche-3d/cinematic/04-transition-poster.webp": {
+    "width": 1600,
+    "height": 900
+  },
+  "/projects/porsche-3d/cinematic/05-gt3-gloss.webp": {
+    "width": 1920,
+    "height": 1080
+  },
+  "/projects/porsche-3d/cinematic/05-gt3-matte.webp": {
+    "width": 1920,
+    "height": 1080
+  },
+  "/projects/porsche-3d/cinematic/05-gt3-metallic.webp": {
+    "width": 1920,
+    "height": 1080
+  },
+  "/projects/porsche-3d/cinematic/06-rwb964-light.webp": {
+    "width": 1920,
+    "height": 1080
+  },
+  "/projects/porsche-3d/cinematic/06-rwb964-wheel.webp": {
+    "width": 1920,
+    "height": 1080
+  },
+  "/projects/porsche-3d/cinematic/06-rwb964-wing.webp": {
+    "width": 1920,
+    "height": 1080
+  },
+  "/projects/porsche-3d/cinematic/thumb.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/porsche-3d/cover-final.jpg": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/porsche-3d/cover-final.webp": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/suhulog/cover-final.jpg": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/suhulog/cover-final.webp": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/suhulog/desktop-laporan.webp": {
+    "width": 1440,
+    "height": 900
+  },
+  "/projects/suhulog/desktop-monitoring.webp": {
+    "width": 1440,
+    "height": 900
+  },
+  "/projects/suhulog/device-story.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/suhulog/phone-catat-suhu.webp": {
+    "width": 780,
+    "height": 1688
+  },
+  "/projects/suhulog/thumb.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/projects/suhulog-catat-suhu.jpg": {
+    "width": 960,
+    "height": 600
+  },
+  "/projects/suhulog-laporan.jpg": {
+    "width": 960,
+    "height": 600
+  },
+  "/projects/suhulog-monitoring.jpg": {
+    "width": 960,
+    "height": 600
+  },
+  "/projects/suhulog.jpg": {
+    "width": 960,
+    "height": 600
+  },
+  "/projects/tomato-ripeness/cover-final.jpg": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/tomato-ripeness/cover-final.webp": {
+    "width": 1280,
+    "height": 800
+  },
+  "/projects/tomato-ripeness/research/demo2-combine1.webp": {
+    "width": 1280,
+    "height": 1280
+  },
+  "/projects/tomato-ripeness/research/demo2-combine2.webp": {
+    "width": 1280,
+    "height": 1280
+  },
+  "/projects/tomato-ripeness/research/demo2-combine3.webp": {
+    "width": 1280,
+    "height": 1280
+  },
+  "/projects/tomato-ripeness/research/demo2-combine4.webp": {
+    "width": 1280,
+    "height": 1280
+  },
+  "/projects/tomato-ripeness/research/demo2-yolov11.webp": {
+    "width": 1280,
+    "height": 1280
+  },
+  "/projects/tomato-ripeness/research/demo2-yolov11_swint.webp": {
+    "width": 1280,
+    "height": 1280
+  },
+  "/projects/tomato-ripeness/research/demo2-yolov11_swint_mssppf.webp": {
+    "width": 1280,
+    "height": 1280
+  },
+  "/projects/tomato-ripeness/research/demo3-combine4.webp": {
+    "width": 960,
+    "height": 960
+  },
+  "/projects/tomato-ripeness/research/real1-combine4.webp": {
+    "width": 960,
+    "height": 960
+  },
+  "/projects/tomato-ripeness/research/real1-yolov11.webp": {
+    "width": 960,
+    "height": 960
+  },
+  "/projects/tomato-ripeness/research/real1-yolov11_swint_mssppf.webp": {
+    "width": 960,
+    "height": 960
+  },
+  "/projects/tomato-ripeness/research/thumb.webp": {
+    "width": 1600,
+    "height": 1000
+  },
+  "/wallpaper_mac.jpg": {
+    "width": 2400,
+    "height": 1600
+  }
+}

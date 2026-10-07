@@ -1,0 +1,18 @@
+:root { --aw-motion-fast: 120ms; --aw-motion-normal: 220ms; --aw-motion-slow: 360ms; --aw-motion-ease: cubic-bezier(.2,.8,.2,1); }
+.aw-enter { animation-duration: var(--aw-motion-normal); animation-timing-function: var(--aw-motion-ease); }
+.aw-quicklook, .aw-palette { animation-duration: var(--aw-motion-normal); animation-timing-function: var(--aw-motion-ease); }
+.aw-dock button, .aw-title-actions button, .ls-trace-button { transition: transform var(--aw-motion-fast) var(--aw-motion-ease), opacity var(--aw-motion-fast) var(--aw-motion-ease); }
+.aw-dock button:active, .aw-title-actions button:active, .ls-trace-button:active { transform: translateY(1px); }
+.aw-ui-sound { display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap; font-size: .65rem; }
+.aw-ui-sound svg { width: 1rem; height: 1rem; }
+.aw-mobile-header button.aw-ui-sound { display: inline-flex; width: auto; padding: .3rem; }
+@media (max-width: 380px) { .aw-mobile-header > strong { max-width: 5.5rem; line-height: 1.1; } .aw-mobile-header .aw-ui-sound span { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  :root { --aw-motion-fast: 0ms; --aw-motion-normal: 0ms; --aw-motion-slow: 0ms; }
+  .aw-desktop *, .aw-quicklook *, .aw-palette *, ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+/* Actual-size inspection is opt-in and available for each public evidence set. */
+.aw-quicklook-inspectable > header { grid-template-columns: 3rem minmax(0,1fr) auto 2rem; gap: .5rem; }
+.aw-quicklook > header .aw-zoom-button { width: auto; border-radius: .25rem; padding: 0 .5rem; font-size: .75rem; white-space: nowrap; }
+.aw-quicklook-image.is-actual-size { overflow: auto; overscroll-behavior: contain; }
+.aw-quicklook-image.is-actual-size img { width: auto; height: auto; max-width: none; }

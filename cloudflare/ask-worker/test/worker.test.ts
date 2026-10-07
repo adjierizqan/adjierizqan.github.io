@@ -83,7 +83,7 @@ describe("Adjie Workspace Ask Worker", () => {
     const prompt = buildModelMessages({ message: "What are Adjie’s main projects?", history: [] })[0].content;
     expect(prompt).toContain("around 40–100 words");
     expect(prompt).toContain("without a preamble or artificial heading");
-    expect(prompt).toContain("LabStock, BDRS, SuhuLog, and TomatoVision");
+    expect(prompt).toContain("LabStock, SuhuLog, TomatoVision, and BDRS");
     expect(prompt).toContain("describe only those four and stop");
     expect(prompt).toContain("at most one brief, relevant follow-up sentence");
     expect(prompt).toContain("Indonesian should be conversational and professional");
@@ -141,5 +141,19 @@ describe("locale", () => {
     expect(buildModelMessages(id.value)[0].content).toContain("selected Indonesian");
     const none = validateAskBody({ message: "hi" });
     expect(none.ok && buildModelMessages(none.value)[0].content).not.toContain("selected Indonesian");
+  });
+});
+
+describe("reconciled release context", () => {
+  test("public degrees and BDRS release retain their evidence boundaries", async () => {
+    const { readFileSync } = await import("node:fs");
+    const context = JSON.parse(readFileSync("../../data/portfolio-ai-context.json", "utf8"));
+    expect(context.education[0].program).toContain("completed 2026");
+    expect(context.education[1].program).toContain("completed 2023");
+    const bdrs = context.projects.find((p: {id:string}) => p.id === "bdrs");
+    expect(bdrs.verifiedEvidence[1].value).toContain("74 skipped · 3 incomplete");
+    expect(bdrs.publicLimitations).toContain("record-empty database");
+    expect(readFileSync("src/core.ts", "utf8")).not.toContain('Never use "graduated"');
+    expect(readFileSync("src/core.ts", "utf8")).toContain("Do not output URLs");
   });
 });

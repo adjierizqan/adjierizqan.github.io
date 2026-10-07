@@ -1,0 +1,25 @@
+import Link from "next/link";
+export default function NotFound() {
+  return (
+    <main style={{ maxWidth: 650, margin: "15vh auto", padding: 30 }}>
+      <p>Adjie Workspace / 404</p>
+      <h1 style={{ fontSize: 42, margin: "24px 0" }}>
+        This page isn’t in the workspace.
+      </h1>
+      <p>
+        The project may have moved. All six case studies are available from
+        Home.
+      </p>
+      <Link
+        href="/"
+        style={{
+          display: "inline-block",
+          marginTop: 24,
+          textDecoration: "underline",
+        }}
+      >
+        Return to Workspace →
+      </Link>
+    </main>
+  );
+}

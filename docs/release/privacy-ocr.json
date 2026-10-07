@@ -1,0 +1,390 @@
+{
+  "method": "Tesseract public image scan, no OCR content exported; manual review supplements pattern scan",
+  "files": [
+    {
+      "file": "public/projects/suhulog-monitoring.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog-catat-suhu.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog-laporan.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/cover-final.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/cover-final.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/request-detail.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/amprah-keluar.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/trace-report.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/laporan.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/thumb-reset-a.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/thumb-reset-a.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/thumb-reset-b.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/phone-detail.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/thumb-reset-c.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/thumb-v2.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/today-detail.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/thumb-reset-c.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/thumb-v2.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/work.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/amprah-mobile.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/report-detail.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/thumb-reset-b.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/thumb.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/amprah.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/stok.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/labstock/hari-ini.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cover-final.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cover-final.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/pengeluaran.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/laporan.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/dashboard.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/inventaris.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/readiness.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/mobile.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/work.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/episode.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/thumb.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/workstation.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/cover-final.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/bdrs/cover-final.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog/device-story.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog/phone-catat-suhu.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog/desktop-laporan.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog/desktop-monitoring.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog/thumb.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog/cover-final.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/suhulog/cover-final.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/padel-vision/cover-final.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/padel-vision/cover-final.jpg",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/padel-vision/real/pexels-analyzed-poster.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/padel-vision/analytics/court-control.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/padel-vision/analytics/replay-poster.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/padel-vision/analytics/thumb.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/05-gt3-gloss.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/03-lineup.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/06-rwb964-wing.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/01-rwb964-hero.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/06-rwb964-light.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/05-gt3-metallic.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/thumb.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/04-transition-poster.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/05-gt3-matte.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/06-rwb964-wheel.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/porsche-3d/cinematic/02-918-profile.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/demo2-combine1.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/real1-yolov11_swint_mssppf.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/demo2-yolov11.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/demo3-combine4.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/demo2-yolov11_swint_mssppf.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/real1-yolov11.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/real1-combine4.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/demo2-combine4.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/demo2-yolov11_swint.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/thumb.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/demo2-combine3.webp",
+      "ocr": true,
+      "review": false
+    },
+    {
+      "file": "public/projects/tomato-ripeness/research/demo2-combine2.webp",
+      "ocr": true,
+      "review": false
+    }
+  ]
+}

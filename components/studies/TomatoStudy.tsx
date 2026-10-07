@@ -1,0 +1,205 @@
+"use client";
+import Image from "next/image";
+import { useState } from "react";
+import {
+  tomatoConfigurations as models,
+  tomatoMatchedScene as scenes,
+  tomatoDataset as dataset,
+  tomatoTraining as training,
+  formatMetric,
+} from "@/data/tomatovision";
+import {
+  Boundary,
+  Brief,
+  Proof,
+  Record,
+  Steps,
+  type StudyProps,
+} from "./StudyPrimitives";
+export default function TomatoStudy({ project: p }: StudyProps) {
+  const [active, setActive] = useState(0);
+  return (
+    <article className="study study-tomato">
+      <header className="tomato-opener">
+        <p className="study-label">
+          Applied computer vision / Master’s thesis / 2026
+        </p>
+        <h1>TomatoVision</h1>
+        <div>
+          <h2>
+            One scene.
+            <br />
+            <em>Different hypotheses.</em>
+          </h2>
+          <p>{p.summary}</p>
+        </div>
+      </header>
+      <section
+        className="tomato-comparison"
+        aria-label="Same-scene model comparison"
+      >
+        <Steps
+          items={scenes.map((s) => s.tab)}
+          active={active}
+          setActive={setActive}
+        />
+        <figure>
+          <a href={scenes[active].src} target="_blank" rel="noreferrer">
+            <Image
+              src={scenes[active].src}
+              alt={scenes[active].alt}
+              width={1280}
+              height={1280}
+              sizes="(max-width:760px) 100vw, 1050px"
+              preload
+            />
+            <span>Inspect original ↗</span>
+          </a>
+          <figcaption>
+            <strong>{scenes[active].label}</strong>
+            <span>Qualitative demo · not validation imagery</span>
+          </figcaption>
+        </figure>
+        <p className="study-note">
+          The red fruit is classified as orange in this scene. Domain shift is
+          shown as observed, not retouched. Photo:{" "}
+          <a href="https://commons.wikimedia.org/wiki/File:-2020-07-20_Bush_tomato_plant_(Totem),_Trimingham,_Norfolk_(1).JPG">
+            Kolforn
+          </a>
+          ; detections overlaid. Image adaptations shared under{" "}
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+            CC BY-SA 4.0
+          </a>
+          .
+        </p>
+      </section>
+      <Record project={p} />
+      <Brief project={p} />
+      <section className="study-section">
+        <header className="study-heading">
+          <span className="study-label">01 / Research method</span>
+          <h2>
+            Change the architecture.
+            <br />
+            <em>Then test the ensemble.</em>
+          </h2>
+        </header>
+        <ol className="tomato-method">
+          <li>
+            <small>Baseline</small>
+            <h3>YOLOv11</h3>
+            <p>A fixed reference for the architectural comparisons.</p>
+          </li>
+          <li>
+            <small>Single-model variants</small>
+            <h3>
+              Swin-T
+              <br />+ multi-scale SPPF
+            </h3>
+            <p>Evaluate the modified detector independently.</p>
+          </li>
+          <li>
+            <small>Prediction fusion</small>
+            <h3>
+              Weighted
+              <br />
+              Boxes Fusion
+            </h3>
+            <p>Combine model outputs and report the ensemble separately.</p>
+          </li>
+        </ol>
+      </section>
+      <section className="study-section" id="tomato-results">
+        <header className="study-heading">
+          <span className="study-label">02 / Quantitative evaluation</span>
+          <h2>
+            The result depends
+            <br />
+            <em>on what you run.</em>
+          </h2>
+          <p>
+            Single-model and ensemble results from the recorded thesis
+            evaluation. These figures do not measure the demo photograph above.
+          </p>
+        </header>
+        <div
+          className="research-table-wrap"
+          tabIndex={0}
+          role="region"
+          aria-label="Model evaluation table; scroll horizontally if needed"
+        >
+          <table className="research-table">
+            <caption>Seven evaluated configurations</caption>
+            <thead>
+              <tr>
+                <th scope="col">Configuration</th>
+                <th scope="col">Type</th>
+                <th scope="col">mAP@0.5</th>
+                <th scope="col">mAP@0.5:0.95</th>
+                <th scope="col">ms / image</th>
+              </tr>
+            </thead>
+            <tbody>
+              {models.map((m) => (
+                <tr key={m.id}>
+                  <th scope="row">
+                    {m.label}
+                    {m.members && <small>{m.members}</small>}
+                  </th>
+                  <td>{m.kind}</td>
+                  <td>{formatMetric(m.map50)}</td>
+                  <td>{formatMetric(m.map5095)}</td>
+                  <td>{m.msPerImage.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="study-note">
+          Timing belongs to the recorded evaluation setup; it is not a browser
+          benchmark or a deployment guarantee.
+        </p>
+      </section>
+      <section className="study-section tomato-data">
+        <div>
+          <span className="study-label">03 / Dataset & training</span>
+          <h2>
+            Keep the denominator
+            <br />
+            <em>in the story.</em>
+          </h2>
+        </div>
+        <dl>
+          <div>
+            <dt>Source imagery</dt>
+            <dd>
+              {dataset.sourceImages.toLocaleString("en-US")} images ·{" "}
+              {dataset.source}
+            </dd>
+          </div>
+          <div>
+            <dt>Source annotations</dt>
+            <dd>
+              {Object.entries(dataset.boxes)
+                .map(([k, v]) => `${v.toLocaleString("en-US")} ${k}`)
+                .join(" · ")}
+            </dd>
+          </div>
+          <div>
+            <dt>Exported split</dt>
+            <dd>{dataset.split}</dd>
+          </div>
+          <div>
+            <dt>Training configuration</dt>
+            <dd>
+              {training.imgsz}px · batch {training.batch} · {training.epochs}{" "}
+              epochs · patience {training.patience}
+            </dd>
+          </div>
+        </dl>
+      </section>
+      <Proof project={p} />
+      <Boundary project={p} />
+    </article>
+  );
+}

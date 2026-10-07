@@ -20,8 +20,7 @@ describe("language", () => {
   // Indonesian function words that would signal a mixed-language sentence. Product and domain
   // terms shown in screenshots (Amprah, Stok, Hari Ini, Pagi, Sore) are allowed as names.
   const INDONESIAN = /\b(yang|dan|untuk|dengan|ini|itu|apa|bagaimana|sudah|masih|secara|dapat|adalah|tidak|akan|atau|dari|pada|sekarang|jelaskan)\b/i;
-  const files = ["components/WorkspacePrototype.tsx", "components/tomatovision/TomatoVisionStory.tsx", "components/padel/PadelAnalytics.tsx",
-    "components/evidence/ProductEvidence.tsx", "components/project-story/ProjectStory.tsx", "data/workspace.ts", "data/tomatovision.ts"];
+  const files = ["components/WorkspacePrototype.tsx", "components/studies/SuhuLogStudy.tsx", "components/studies/BdrsStudy.tsx", "components/studies/TomatoStudy.tsx", "components/studies/LabsStudy.tsx", "components/workspace/WorkspaceHome.tsx", "data/workspace.ts", "data/tomatovision.ts"];
   test("English source strings contain no Indonesian", () => {
     const offenders: string[] = [];
     for (const file of files) {
@@ -36,17 +35,11 @@ describe("language", () => {
   });
 });
 
-describe("Indonesian translation", () => {
-  test("every UI string and project text field has an Indonesian entry", async () => {
-    // @ts-expect-error plain ESM script without type declarations
-    const { uiKeys, projectKeys, SAME } = await import("../scripts/i18n-keys.mjs");
-    const { ID } = await import("../lib/i18n-id");
-    const { allWorkspaceProjects } = await import("./workspace");
-    const tv = await import("./tomatovision");
-    const extra = [tv.tomatoStatus, tv.tomatoDataset.split, tv.tomatoDemo.photos, ...tv.tomatoMatchedScene.flatMap((s) => [s.tab, s.label, s.alt]),
-      ...tv.tomatoConfigurations.map((c) => c.members).filter(Boolean), "green", "orange", "red"];
-    const keys: string[] = [...new Set([...uiKeys(), ...projectKeys(allWorkspaceProjects, extra)])] as string[];
-    const missing = keys.filter((key) => !(key in ID) && !SAME.has(key));
-    expect(missing).toEqual([]);
+describe("public language boundary", () => {
+  test("English-only UI has no mutable translation state or partial language toggle", () => {
+    const ui = readFileSync("components/WorkspacePrototype.tsx", "utf8");
+    expect(ui).not.toContain("LanguageSwitch");
+    expect(readFileSync("lib/i18n.ts", "utf8")).not.toContain("let active");
+    expect(readFileSync("app/layout.tsx", "utf8")).toContain('lang="en"');
   });
 });
