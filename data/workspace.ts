@@ -173,9 +173,8 @@ export const featuredWork: WorkspaceProject[] = [
       { src: "/projects/suhulog/phone-catat-suhu.webp", caption: "On a phone: staff pick the monitoring point and the morning (Pagi) or afternoon (Sore) slot, then enter the reading." },
       { src: "/projects/suhulog/desktop-monitoring.webp", caption: "On a laptop: the monthly curve per point, with configured limits and exceptions." },
       { src: "/projects/suhulog/desktop-laporan.webp", caption: "Monthly report backed by the same records used for the Excel and PDF export." },
-      { src: "/projects/suhulog-label-qr.jpg", caption: "Printable QR labels that open the exact monitoring point's entry flow." },
     ],
-    assetNote: "Existing sanitized portfolio captures; no hospital-identifying operational records. QR labels shown are illustrative demo evidence, not a production entry link.",
+    assetNote: "Existing sanitized portfolio captures; no hospital-identifying operational records. Scannable labels are withheld; the QR entry stage is explained without publishing an encoded destination.",
     href: "/projects/suhulog",
   },
   {

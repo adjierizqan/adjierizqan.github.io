@@ -1,6 +1,6 @@
 # LabStock — reset candidate
 
-Status: **owner review pending**. This replaces the rejected first V2 presentation. It does not approve or propagate a design to any other project.
+Status: **approved by the owner in the final end-to-end brief**. This replaces the rejected first V2 presentation. It does not approve or propagate a design to any other project.
 
 Branch: `feat/workspace-v2-labstock`, still based on `a689541`. The working tree contains both the original correctness foundations and this replacement presentation. Main is unchanged; no reset, merge, commit, push or deployment was performed.
 
@@ -116,3 +116,7 @@ Technical passes do not approve the design. Owner visual review and listening on
 Original screenshots are finite-resolution evidence, not newly captured higher-resolution screens. Cropped views are presentation derivatives, with full original evidence reachable. No backend re-audit or new deployment/usage claim is implied.
 
 No work on SuhuLog, TomatoVision, BDRS, Padel Vision or Porsche 3D. No propagation, merge or deployment. Stop here for owner review.
+
+## Subsequent owner decision
+
+The final end-to-end brief approved this candidate and authorized portfolio-wide completion, merge and deployment after release gates. The earlier stop boundary is historical. See `docs/release/FINAL_PORTFOLIO_SYSTEM.md`.

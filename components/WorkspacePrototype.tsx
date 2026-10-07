@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import dimensions from "@/data/media-dimensions.json";
 import dynamic from "next/dynamic";
 import { WorkspaceHome } from "@/components/workspace/WorkspaceHome";
 const LabStockCaseStudy = dynamic(() => import("@/components/labstock/LabStockCaseStudy").then(m => m.LabStockCaseStudy));
@@ -44,7 +45,6 @@ type WindowState = "open" | "minimized" | "closed";
 type QuickLookImage = { src: string; caption: string };
 type AskStatus = "idle" | "sending" | "streaming" | "complete" | "error";
 
-const pronunciationTrack: string | null = null;
 
 function withViewTransition(update: () => void) {
   if (typeof document === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -111,26 +111,6 @@ function Glyph({ name }: { name: "home" | "work" | "projects" | "labs" | "book" 
   return <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 
-function PronunciationButton({ className = "" }: { className?: string }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [playing, setPlaying] = useState(false);
-
-  function play() {
-    const audio = audioRef.current;
-    if (!pronunciationTrack || !audio) return;
-    audio.currentTime = 0;
-    void audio.play();
-  }
-
-  return (
-    <button className={className + (playing ? " is-playing" : "")} type="button" onClick={play} disabled={!pronunciationTrack} title={pronunciationTrack ? t("Hear name pronunciation") : t("Pronunciation audio is not yet available")} aria-label={pronunciationTrack ? t("Play Adjie Rizqan name pronunciation") : t("Pronunciation audio unavailable")}>
-      {pronunciationTrack && <audio ref={audioRef} src={pronunciationTrack} onPlay={() => setPlaying(true)} onEnded={() => setPlaying(false)} onPause={() => setPlaying(false)} preload="none" />}
-      <Glyph name="speaker" />
-      <span className="aw-audio-response" aria-hidden="true"><i /><i /><i /></span>
-    </button>
-  );
-}
-
 function QuickLook({ images, index, close, navigate }: {
   images: QuickLookImage[];
   index: number;
@@ -177,7 +157,7 @@ function QuickLook({ images, index, close, navigate }: {
       <section ref={dialogRef} className={"aw-quicklook" + (allowZoom ? " aw-quicklook-inspectable" : "")} role="dialog" aria-modal="true" aria-label={t("Project image viewer")}>
         <header><span>{index + 1} / {images.length}</span><p>{image.caption}</p>{allowZoom && <button type="button" className="aw-zoom-button" aria-pressed={zoomed} onClick={() => { playUISound("tap"); setZoomed(!zoomed); }}>{zoomed ? L("Fit image", "Sesuaikan") : L("Actual size", "Ukuran asli")}</button>}<button type="button" autoFocus onClick={close} aria-label={t("Close image viewer")}><Glyph name="close" /></button></header>
         <div className={"aw-quicklook-image" + (allowZoom && zoomed ? " is-actual-size" : "")} key={image.src} tabIndex={allowZoom && zoomed ? 0 : undefined} role={allowZoom && zoomed ? "region" : undefined} aria-label={allowZoom && zoomed ? L("Full resolution image; scroll to inspect", "Gambar resolusi penuh; gulir untuk memeriksa") : undefined}>
-          {allowZoom && zoomed ? <Image src={image.src} alt={image.caption} width={1440} height={1024} onLoad={event => { const img = event.currentTarget; img.style.width = `${img.naturalWidth}px`; img.style.height = `${img.naturalHeight}px`; }} priority /> : <Image src={image.src} alt={image.caption} fill sizes="100vw" quality={95} className="object-contain" priority />}
+          {allowZoom && zoomed ? <Image src={image.src} alt={image.caption} width={dimensions[image.src as keyof typeof dimensions]?.width ?? 1440} height={dimensions[image.src as keyof typeof dimensions]?.height ?? 1024} priority /> : <Image src={image.src} alt={image.caption} fill sizes="100vw" quality={95} className="object-contain" priority />}
         </div>
         {index > 0 && <button type="button" className="aw-quicklook-nav is-previous" onClick={() => navigate(-1)} aria-label={t("Previous image")}><Glyph name="arrow" /></button>}
         {index < images.length - 1 && <button type="button" className="aw-quicklook-nav is-next" onClick={() => navigate(1)} aria-label={t("Next image")}><Glyph name="arrow" /></button>}
@@ -216,7 +196,6 @@ function Composer({ query, setQuery, submit, stop, busy = false, placeholder }: 
       />
       <div className="aw-composer-tools">
         <div>
-          <button type="button" aria-label={t("Add project context")}><Glyph name="plus" /></button>
           <button type="button" onClick={() => setQuery(t("Show me Adjie’s operational systems."))}><Glyph name="search" /> {t("Projects")}</button>
           <button type="button" onClick={() => setQuery(t("What evidence is available for Adjie’s work?"))}><Glyph name="book" /> {t("Evidence")}</button>
           <button type="button" onClick={() => setQuery(t("How does Adjie approach reliability?"))}><Glyph name="spark" /> {t("Build notes")}</button>
@@ -253,7 +232,7 @@ function Sidebar({ view, selected, setView, newSession, selectProject, openPalet
           <header className="aw-profile">
             <span className="aw-avatar is-light">a.</span>
             <span><strong>{t("Adjie Rizqan")}</strong><small>{t("Software engineer")}</small></span>
-            <PronunciationButton className="aw-pronounce" />
+
             <button className="aw-mobile-close" type="button" onClick={close} aria-label={t("Close navigation")}><Glyph name="close" /></button>
           </header>
 
@@ -903,7 +882,7 @@ export function WorkspacePrototype({ initialProject = null }: { initialProject?:
           <div className="aw-title-actions" data-no-drag>
             <span>{t("Software · Systems · Research")}</span>
             <button type="button" onClick={openPalette}><kbd>⌘ K</kbd></button>
-            
+
             <SoundButton />
             <MusicButton />
             <button type="button" className="aw-appearance" onClick={() => { playUISound("tap"); setTheme(theme === "dark" ? "light" : "dark"); }} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")} title={theme === "dark" ? t("Light mode") : t("Dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>
@@ -918,7 +897,7 @@ export function WorkspacePrototype({ initialProject = null }: { initialProject?:
             <header className="aw-mobile-header">
               <button type="button" onClick={() => setSidebarOpen(true)} aria-label={t("Open navigation")}><Glyph name="menu" /></button>
               <strong>{t("Adjie Workspace")}</strong>
-              
+
               <SoundButton />
               <MusicButton className="aw-mobile-music" />
               <button type="button" className="aw-mobile-theme" onClick={() => { playUISound("tap"); setTheme(theme === "dark" ? "light" : "dark"); }} aria-pressed={theme === "dark"} aria-label={theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")}><Glyph name={theme === "dark" ? "sun" : "moon"} /></button>

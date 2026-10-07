@@ -1,7 +1,8 @@
+import { identity } from "./profile";
 export const site = {
-  name: "Adjie Rizqan",
-  email: "adjierizqan@gmail.com",
-  github: "https://github.com/adjierizqan",
-  linkedin: "https://www.linkedin.com/in/muhammadrizqan/",
-  cv: "/muhammad-rizqan-nur-adjie-cv-2026.pdf",
+  name: identity.name,
+  email: identity.contact.email,
+  github: identity.contact.github,
+  linkedin: identity.contact.linkedin,
+  cv: identity.contact.resumeTarget,
 } as const;

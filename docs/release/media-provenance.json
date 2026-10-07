@@ -1,0 +1,29 @@
+{
+  "sources": [
+    {
+      "project": "labstock",
+      "source": "approved thumb-reset-a"
+    },
+    {
+      "project": "suhulog",
+      "source": "existing device-story"
+    },
+    {
+      "project": "tomato-ripeness",
+      "source": "real1 baseline + WBF, Kolforn CC BY-SA 4.0"
+    },
+    {
+      "project": "bdrs",
+      "source": "synthetic workstation + mobile"
+    },
+    {
+      "project": "padel-vision",
+      "source": "Pexels UsaOne Ell analyzed poster"
+    },
+    {
+      "project": "porsche-3d",
+      "source": "own Three.js capture, Ddiaz Design models"
+    }
+  ],
+  "transform": "Sharp, no UI generation. Existing evidence only. 1280x800 WebP/JPEG. Source crop/downsample only; LabStock unchanged."
+}

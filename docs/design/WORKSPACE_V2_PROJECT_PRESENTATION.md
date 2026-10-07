@@ -1,6 +1,6 @@
 # Workspace V2 project presentation
 
-Status: LabStock reset candidate for owner visual review. The first V2 candidate was rejected. Current direction and artifacts: [labstock-reset/README.md](labstock-reset/README.md). Not approved for propagation.
+Status: LabStock reset approved by the owner in the final end-to-end brief. The final system is authoritative at [FINAL_PORTFOLIO_SYSTEM.md](../release/FINAL_PORTFOLIO_SYSTEM.md). Earlier LabStock-only stop conditions below are historical and superseded.
 
 ## Authority and scope
 

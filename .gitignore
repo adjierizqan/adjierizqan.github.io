@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Full browser matrices are CI artifacts; selected release screenshots are force-added.
+/docs/release/screenshots/
+/docs/release/shell-screenshots/
+/docs/release/production-screenshots/
