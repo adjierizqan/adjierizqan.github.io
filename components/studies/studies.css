@@ -561,7 +561,7 @@
     margin-top: 10px;
   }
   .study h1 {
-    font-size: 3.4rem;
+    font-size: clamp(2.5rem, 15cqw, 3.4rem);
   }
   .bdrs-opener > div {
     display: block;

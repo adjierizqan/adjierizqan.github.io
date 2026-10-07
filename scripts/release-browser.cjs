@@ -85,7 +85,7 @@ const report = { base, browsers: [], checks: [], errors: [] };
             ),
           }));
           expect(audit.overflow).toBe(0);
-          expect(audit.content.every((n) => n === 0)).toBe(true);
+          expect(audit.content, `${name}/${width}/${slug || "home"}: content overflow`).toEqual(audit.content.map(() => 0));
           expect(audit.broken).toBe(0);
           expect(audit.autoplay).toBe(false);
           expect(
