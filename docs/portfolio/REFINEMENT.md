@@ -26,6 +26,8 @@ The full question, lead, answer and project links exist in original HTML. A sing
 
 The existing sound engine and mappings are untouched: meaningful navigation retains gesture-driven tap/open/close feedback, global mute persists, audio failure is harmless. Explore Work uses a silent native anchor. Real Ask uses the existing navigation gesture. Physical-device sound audition remains a manual qualification.
 
+Live screenshot review caught a pre-existing composer rule that constrained the labelled Projects suggestion to an icon-button width. Removed that stale selector and allowed the footer groups to wrap on narrow screens. A browser assertion now requires every visible suggestion label to fit its button. This is a bounded correctness fix, not a shell redesign.
+
 ## Recruiter review
 
 - **10 seconds:** name/role, a concrete engineering concern, operational work and computer vision, plus real product imagery without scrolling.

@@ -160,9 +160,6 @@
     background: #0f0f0f;
     color: #acb1bc
 }
-:root[data-theme="dark"] .aw-composer-tools button:first-child {
-    background: #121213
-}
 :root[data-theme="dark"] .aw-composer-submit > span {
     color: #aaafb9
 }
