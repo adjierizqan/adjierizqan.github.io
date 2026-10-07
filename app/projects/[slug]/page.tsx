@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { WorkspacePrototype } from "@/components/WorkspacePrototype";
-import { CaseStudy } from "@/components/case-study/CaseStudy";
 import { allWorkspaceProjects } from "@/data/workspace";
 import { getProject, projectMetadata } from "@/lib/projects";
 
@@ -35,6 +34,5 @@ export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) notFound();
-  if (slug === "labstock") return <WorkspacePrototype initialProject={slug} />;
-  return <CaseStudy project={project} />;
+  return <WorkspacePrototype initialProject={slug} />;
 }

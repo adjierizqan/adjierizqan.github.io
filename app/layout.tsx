@@ -16,13 +16,16 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://adjierizqan.github.io"),
-  title: "Adjie — Software Engineer & AI Builder",
+  title: "Adjie Rizqan — Software Engineer",
   description:
-    "Explore Adjie Rizqan's operational software and applied AI work through a browse-first interactive workspace.",
+    "Explore Adjie Rizqan's operational software and applied AI work inside Adjie Workspace.",
   alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
+  openGraph: { type: "website", url: "/", title: "Adjie Rizqan — Software Engineer", description: "Operational software, data-heavy applications and applied computer vision.", images: ["/projects/labstock/thumb-reset-a.jpg"] },
+  twitter: { card: "summary_large_image", title: "Adjie Rizqan — Software Engineer", images: ["/projects/labstock/thumb-reset-a.jpg"] },
 };
 
-const THEME_BOOT = `(function(){try{var d=document.documentElement,m=window.matchMedia("(prefers-color-scheme: dark)"),k="aw-theme";var s=localStorage.getItem(k);d.dataset.theme=s==="dark"||s==="light"?s:(m.matches?"dark":"light");var l=localStorage.getItem("aw-locale");d.lang=l==="id"?"id":"en";m.addEventListener("change",function(e){if(!localStorage.getItem(k))d.dataset.theme=e.matches?"dark":"light"})}catch(e){}})();`;
+const THEME_BOOT = `(function(){try{var d=document.documentElement,m=window.matchMedia("(prefers-color-scheme: dark)"),k="aw-theme";var s=localStorage.getItem(k);d.dataset.theme=s==="dark"||s==="light"?s:(m.matches?"dark":"light");d.lang="en";m.addEventListener("change",function(e){if(!localStorage.getItem(k))d.dataset.theme=e.matches?"dark":"light"})}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -40,7 +43,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
       </head>
       <body className="flex min-h-full flex-col">
-        <main className="site-main flex-1">{children}</main>
+        <div className="site-main flex-1">{children}</div>
       </body>
     </html>
   );

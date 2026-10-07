@@ -46,7 +46,7 @@ describe("portfolio content integrity", () => {
     const labstock = featuredWork.find((project) => project.slug === "labstock");
     const bdrs = featuredWork.find((project) => project.slug === "bdrs");
     expect(labstock?.publicLimitations).toContain("Production infrastructure");
-    expect(bdrs?.publicLimitations).toContain("No production, deployment, user, compliance, or release claim");
+    expect(bdrs?.publicLimitations).toContain("No compliance, penetration-test, efficiency or cost claim");
     // Screens are shown only from recorded synthetic sources, and say so.
     for (const project of [labstock, bdrs]) {
       const media = [project?.image, ...(project?.gallery ?? []).map((item) => item.src)];
@@ -120,7 +120,8 @@ describe("TomatoVision public media", () => {
   test("no thesis-dataset imagery is published", () => {
     // thumb.webp is a split of real1-yolov11 and real1-combine4 (docs/design/v101/build_assets.py)
     expect(readdirSync(research).every((file) => file.startsWith("demo") || file.startsWith("real") || file === "thumb.webp")).toBe(true);
-    expect(readdirSync("public/projects/tomato-ripeness")).toEqual(["research"]);
+    // Final covers are derived only from the licensed real1 demo pair (docs/release/media.cjs).
+    expect(readdirSync("public/projects/tomato-ripeness").sort()).toEqual(["cover-final.jpg", "cover-final.webp", "research"]);
   });
 });
 

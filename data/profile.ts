@@ -11,7 +11,7 @@
 export const identity = {
   "name": "Adjie Rizqan",
   "legalName": "Muhammad Rizqan Nur Adjie Adzani",
-  "positioning": "Adjie builds operational software and applied AI systems.",
+  "positioning": "Software and full-stack engineering for operational and data-heavy applications, with applied AI and computer vision research.",
   "focusAreas": [
     "Software engineering",
     "Applied AI and computer vision research",
@@ -28,11 +28,11 @@ export const identity = {
 export const education = [
   {
     "institution": "Tamkang University",
-    "program": "Computer Science and Information Engineering, master's program; thesis research on TomatoVision. Completion date is not stated in the public record."
+    "program": "Master’s in Computer Science and Information Engineering · completed 2026 · thesis research: TomatoVision"
   },
   {
     "institution": "Telkom University",
-    "program": "S1 Rekayasa Perangkat Lunak (Software Engineering); alumnus"
+    "program": "Bachelor’s / S1 Software Engineering · completed 2023"
   }
 ] as const;
 
