@@ -47,3 +47,5 @@ next-env.d.ts
 
 /docs/release/production-smoke.json
 /docs/release/DEPLOYED.md
+/docs/portfolio/screenshots/
+/docs/portfolio/PRODUCTION.md

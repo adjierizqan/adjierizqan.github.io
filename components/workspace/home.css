@@ -4,42 +4,66 @@
   --home-line: #d9dedc;
   color: var(--home-ink);
   container-type: inline-size;
-  padding: 45px !important;
+  padding: 34px 45px 45px !important;
 }
-.home-intro > p {
-  font-size: 0.78rem;
-  margin-bottom: 30px;
+.home-identity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 }
 .home-intro h1 {
-  font-size: clamp(2.8rem, 5.7cqw, 5rem);
-  line-height: 1.04;
-  letter-spacing: -0.06em;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
   font-weight: 600;
 }
-.home-intro em {
-  font-family: Georgia, serif;
-  font-weight: 400;
-}
-.home-intro > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 30px;
-  align-items: end;
-  margin-top: 28px;
-}
-.home-intro > div p {
-  max-width: 580px;
-  font-size: 0.9rem;
-  line-height: 1.7;
+.home-identity p, .home-identity > a {
+  font-size: .76rem;
   color: var(--home-muted);
 }
-.home-intro a {
-  white-space: nowrap;
-  font-size: 0.8rem;
+.home-identity p { margin-top: 5px; }
+.home-conversation { margin-top: 32px; }
+.home-example-label {
+  display: flex;
+  gap: 12px;
+  font-size: .7rem;
+  color: var(--home-muted);
+  margin-bottom: 20px;
 }
-.home-selected {
-  margin-top: 60px;
+.home-prompt, .home-reply {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 16px;
 }
+.home-prompt > span, .home-reply > span {
+  font-size: .72rem;
+  color: var(--home-muted);
+  padding-top: 6px;
+}
+.home-prompt > p { font-size: 1.05rem; }
+.home-reply { margin-top: 18px; }
+.home-reply h2 {
+  max-width: 780px;
+  font-size: clamp(1.8rem, 3.5cqw, 2.8rem);
+  line-height: 1.13;
+  letter-spacing: -.045em;
+  font-weight: 550;
+}
+.home-reply > div > p {
+  max-width: 740px;
+  margin-top: 16px;
+  color: var(--home-muted);
+  font-size: .88rem;
+  line-height: 1.7;
+}
+.home-intro-actions { display: flex; flex-wrap: wrap; gap: 14px 30px; margin: 22px 0 0 92px; font-size: .78rem; }
+.home-intro-actions button { color: var(--home-muted); text-align: left; }
+/* Presentation only: text is rendered in the original HTML, never timer-created.
+   No delays, hidden states or audio. Even the first animation frame is readable. */
+.home-reply > div { animation: home-answer-in var(--aw-motion-slow) var(--aw-motion-ease) both; }
+@keyframes home-answer-in { from { opacity: .72; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.home-selected { margin-top: 32px; }
 .home-selected > header {
   display: flex;
   justify-content: space-between;
@@ -207,13 +231,6 @@
   .home-about {
     grid-template-columns: 1fr;
   }
-  .home-intro > div {
-    display: block;
-  }
-  .home-intro a {
-    display: inline-block;
-    margin-top: 20px;
-  }
   .home-selected header span {
     display: none;
   }
@@ -229,8 +246,15 @@
     padding: 28px 20px !important;
   }
   .home-intro h1 {
-    font-size: 2.9rem;
+    font-size: 1.35rem;
   }
+  .home-conversation { margin-top: 26px; }
+  .home-prompt, .home-reply { grid-template-columns: minmax(0, 1fr); gap: 5px; }
+  .home-reply { margin-top: 18px; }
+  .home-reply h2 { font-size: 1.9rem; }
+  .home-reply > div > p { font-size: .82rem; line-height: 1.65; }
+  .home-intro-actions { margin-left: 0; gap: 14px; font-size: .74rem; }
+  .home-example-label { margin-bottom: 12px; }
   .home-ask {
     display: block;
   }
@@ -239,6 +263,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .home-reply > div { animation: none; }
   .home-project:hover figure img {
     transform: none;
   }

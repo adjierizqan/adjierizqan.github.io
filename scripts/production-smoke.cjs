@@ -2,7 +2,7 @@
 const { chromium, expect } = require("@playwright/test");
 const fs = require("node:fs");
 const base = process.env.QA_BASE || "https://adjierizqan.github.io";
-const dir = "docs/release/production-screenshots";
+const dir = process.env.QA_OUTPUT || "docs/release/production-screenshots";
 fs.mkdirSync(dir, { recursive: true });
 const slugs = [
   "",
@@ -22,6 +22,13 @@ const slugs = [
         viewport: { width, height: 900 },
         colorScheme: "light",
       });
+      await p.addInitScript(() => {
+        window.__audioContexts = 0;
+        const Original = window.AudioContext;
+        window.AudioContext = class extends Original {
+          constructor(...args) { super(...args); window.__audioContexts++; }
+        };
+      });
       p.on("pageerror", (e) => report.errors.push(e.message));
       p.on("console", (m) => {
         if (m.type() === "error") report.errors.push(m.text());
@@ -31,6 +38,11 @@ const slugs = [
         const r = await p.goto(base + url, { waitUntil: "networkidle" });
         expect(r.status()).toBe(200);
         await expect(p.locator("h1")).toHaveCount(1);
+        if (!slug) {
+          await expect(p.getByRole("region", { name: "Example conversation" })).toBeVisible();
+          await expect(p.locator(".home-reply")).toContainText("computer vision research");
+          expect(await p.evaluate(() => window.__audioContexts)).toBe(0);
+        }
         await expect(p.locator("link[rel=canonical]")).toHaveAttribute(
           "href",
           base + url,
@@ -77,6 +89,8 @@ const slugs = [
       await p.close();
     }
     const p = await b.newPage();
+    p.on("pageerror", e => report.errors.push(e.message));
+    p.on("console", m => { if (m.type() === "error") report.errors.push(m.text()); });
     await p.goto(base, { waitUntil: "networkidle" });
     for (const path of [
       "/sitemap.xml",
@@ -88,7 +102,8 @@ const slugs = [
     expect(
       (await p.request.get(base + "/projects/suhulog-label-qr.jpg")).status(),
     ).toBe(404);
-    await p.getByRole("button", { name: "Ask AI ↗", exact: true }).click();
+    await p.getByRole("button", { name: "Ask your own question ↗", exact: true }).click();
+    await expect(p.getByText("Adjie AI · Preview", { exact: true })).toHaveCount(0);
     await p
       .locator("textarea")
       .fill("When did Adjie complete his degrees at Tamkang and Telkom?");
@@ -97,6 +112,8 @@ const slugs = [
       timeout: 90000,
     });
     await expect(p.locator(".aw-message").last()).toContainText("2023");
+    await expect(p.locator(".aw-message").last().locator("span").first()).toHaveText("Workspace", { timeout: 90000 });
+    await p.screenshot({ path: `${dir}/ask-verified.png` });
     report.ask = {
       status: "PASS",
       answer: await p.locator(".aw-message").last().innerText(),
@@ -104,7 +121,7 @@ const slugs = [
     expect(report.errors).toEqual([]);
     report.status = "PASS";
     fs.writeFileSync(
-      "docs/release/production-smoke.json",
+      process.env.QA_REPORT || "docs/release/production-smoke.json",
       JSON.stringify(report, null, 2),
     );
   } finally {

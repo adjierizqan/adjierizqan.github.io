@@ -12,6 +12,11 @@ export const identity = {
   "name": "Adjie Rizqan",
   "legalName": "Muhammad Rizqan Nur Adjie Adzani",
   "positioning": "Software and full-stack engineering for operational and data-heavy applications, with applied AI and computer vision research.",
+  "introduction": {
+    "question": "What connects Adjie's work?",
+    "lead": "The record should tell you how it got there.",
+    "answer": "Adjie builds operational software where sources, changes and reports stay connected. Stock movements in LabStock. Readings and corrections in SuhuLog. And computer vision research that separates what a model shows from what its evaluation proves."
+  },
   "focusAreas": [
     "Software engineering",
     "Applied AI and computer vision research",

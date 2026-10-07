@@ -14,23 +14,27 @@ export function WorkspaceHome({
   return (
     <main className="aw-center workspace-home aw-enter">
       <header className="home-intro">
-        <p>Adjie Rizqan / Software engineer</p>
-        <h1>
-          Useful software.
-          <br />
-          <em>Carefully engineered.</em>
-        </h1>
-        <div>
-          <p>{identity.positioning}</p>
-          <a href={site.cv} target="_blank" rel="noreferrer">
-            Résumé ↗
-          </a>
+        <div className="home-identity">
+          <div><h1>{identity.name}</h1><p>Software / full-stack engineer</p></div>
+          <a href={site.cv} target="_blank" rel="noreferrer">Résumé ↗</a>
         </div>
+        <section className="home-conversation" aria-label="Example conversation">
+          <p className="home-example-label">Example conversation <span aria-hidden="true">↙</span></p>
+          <div className="home-prompt"><span>Visitor</span><p>{identity.introduction.question}</p></div>
+          <div className="home-reply"><span>Adjie AI</span><div>
+            <h2>{identity.introduction.lead}</h2>
+            <p>{identity.introduction.answer}</p>
+          </div></div>
+          <nav className="home-intro-actions" aria-label="Introduction actions">
+            <a href="#home-work">Explore the work ↓</a>
+            <button type="button" onClick={openAsk}>Ask your own question ↗</button>
+          </nav>
+        </section>
       </header>
       <section className="home-selected" aria-labelledby="home-work">
         <header>
-          <h2 id="home-work">Selected work</h2>
-          <span>Product, systems & research / 2026</span>
+          <h2 id="home-work" tabIndex={-1}>Selected work</h2>
+          <span>The work behind the answer</span>
         </header>
         <div className="home-work-list">
           {featuredWork.map((p, i) => (

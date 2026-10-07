@@ -41,6 +41,8 @@ const report = { base, browsers: [], checks: [], errors: [] };
             };
         });
         const page = await context.newPage();
+        let askRequests = 0;
+        page.on("request", r => { if (r.url().includes("workers.dev/ask")) askRequests++; });
         page.on("pageerror", (e) =>
           report.errors.push(`${name}/${width}: ${e.message}`),
         );
@@ -60,6 +62,19 @@ const report = { base, browsers: [], checks: [], errors: [] };
             "https://adjierizqan.github.io" + url,
           );
           expect(await page.evaluate(() => window.__audio)).toBe(0);
+          if (!slug) {
+            expect(askRequests).toBe(0);
+            await expect(page.getByRole("region", { name: "Example conversation" })).toBeVisible();
+            await expect(page.locator(".home-reply")).toContainText("computer vision research");
+            const proof = await page.locator(".home-project img").first().boundingBox();
+            // The recruiter sees actual product evidence before scrolling, not just a chat.
+            expect(proof.y).toBeLessThan(width === 834 ? 900 : 760);
+            await page.emulateMedia({ reducedMotion: "reduce" });
+            expect(await page.locator(".home-reply").evaluate(e => e.getAnimations({ subtree: true }).length)).toBe(0);
+            await expect(page.locator(".home-reply h2")).toBeVisible();
+            await page.emulateMedia({ reducedMotion: "no-preference" });
+            await page.locator(".aw-center").evaluate(e => Promise.all(e.getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))));
+          }
           await page.locator("main img").evaluateAll(async (imgs) => {
             imgs.forEach((i) => (i.loading = "eager"));
             await Promise.all(
@@ -137,6 +152,23 @@ const report = { base, browsers: [], checks: [], errors: [] };
             .getByRole("button", { name: "Switch to light mode", exact: true })
             .filter({ visible: true })
             .click();
+          if (!slug) {
+            await page.getByRole("link", { name: "Explore the work ↓", exact: true }).click();
+            await expect(page.locator("#home-work")).toBeInViewport();
+            await page.screenshot({ path: `${dir}/${name}-${width}-selected-work.png` });
+            await page.route("https://adjie-workspace-ask.adjierizqan.workers.dev/ask", async route => {
+              expect(route.request().postDataJSON().message).toBe("How does LabStock preserve history?");
+              await route.fulfill({ contentType: "text/event-stream", body: 'data: {"response":"Fixture: a real visitor request reached the Ask transport."}\n\ndata: [DONE]\n\n' });
+            });
+            await page.getByRole("button", { name: "Ask your own question ↗", exact: true }).click();
+            await expect(page.getByRole("region", { name: "Example conversation" })).toHaveCount(0);
+            await expect(page.getByText("Adjie AI · Preview", { exact: true })).toHaveCount(0);
+            await page.locator("textarea").fill("How does LabStock preserve history?");
+            await page.locator("textarea").press("Enter");
+            await expect(page.locator(".aw-message").last()).toContainText("Fixture: a real visitor request");
+            expect(askRequests).toBe(1);
+            await page.screenshot({ path: `${dir}/${name}-${width}-ask.png` });
+          }
           console.log(`${name} ${width}px ${slug || "home"}: PASS`);
           report.checks.push({ name, width, page: slug || "home", ...audit });
         }
@@ -150,6 +182,10 @@ const report = { base, browsers: [], checks: [], errors: [] };
       }
       const nojs = await browser.newContext({ javaScriptEnabled: false });
       const p = await nojs.newPage();
+      await p.goto(base + "/");
+      await expect(p.getByRole("region", { name: "Example conversation" })).toBeVisible();
+      await expect(p.locator(".home-reply")).toContainText("Stock movements in LabStock");
+      await expect(p.locator(".home-project")).toHaveCount(4);
       for (const slug of slugs.slice(1)) {
         await p.goto(base + `/projects/${slug}/`);
         await expect(p.locator("h1")).toHaveCount(1);
