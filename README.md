@@ -1,43 +1,58 @@
 # Adjie Workspace
 
-A software-engineering portfolio inside a macOS-inspired workspace. Static Next.js frontend; a separately deployed Cloudflare Worker provides optional, public-context Ask AI.
+My portfolio, built with Next.js and hosted on GitHub Pages.
 
-## Development and release gates
+It has six project case studies and an optional Ask AI feature. The AI endpoint runs separately on Cloudflare Workers.
 
-```sh
+[View the site](https://adjierizqan.github.io/)
+
+## Local setup
+
+Use Node.js 22 and Bun for the test and build scripts.
+
+```bash
 npm ci
 npm run dev
-npm test          # portfolio + Worker tests; requires Bun
+```
+
+The site works without the AI endpoint. To use Ask AI, set `NEXT_PUBLIC_ASK_API_URL` to the Worker URL before building.
+
+## Checks
+
+```bash
+npm test
 npm run lint
 npm run typecheck
 npm run build
 npm run test:static
-# Serve out/ on 127.0.0.1:4182, then:
+```
+
+Browser checks need the exported `out/` directory served at `http://127.0.0.1:4182`.
+
+```bash
 QA_WEBKIT=1 npm run test:browser
 npm run test:shell
 ```
 
-CI runs these gates before GitHub Pages deployment from main. No browser test sends a real Ask request; production connectivity is verified separately.
+GitHub Actions runs the release checks before deploying `main` to GitHub Pages. Browser tests don't make live Ask AI requests.
 
-## Source of truth
+## Where to look
 
-- `data/workspace.ts`: six canonical projects and public evidence boundaries.
-- `data/profile.ts`: identity, positioning, education.
-- `data/tomatovision.ts`: detailed verified research evaluation.
-- `npm run ai-context`: regenerates the Worker context; never edit the JSON manually.
-- `data/site.ts`: public contact destinations.
-- `components/labstock/`: approved benchmark.
-- `components/studies/`: distinct project compositions and shared evidence primitives.
-- `components/WorkspacePrototype.tsx`: preserved shell and navigation.
+- `data/workspace.ts`: project content and metadata
+- `data/profile.ts`: profile and education
+- `data/tomatovision.ts`: research results
+- `components/studies/`: individual project layouts
+- `cloudflare/ask-worker/`: Ask AI backend
 
-All six project URLs export real content at `/projects/<slug>/`. Legacy query URLs normalize to canonical paths. English-only UI; Ask follows visitor language.
+Run `npm run ai-context` after changing profile or project facts. It generates `data/portfolio-ai-context.json`, which should not be edited by hand.
 
-## Assets and documentation
+The résumé is at `public/muhammad-rizqan-nur-adjie-cv-2026.pdf`. Run `bun scripts/build-resume.ts` to generate its HTML, then print it to PDF with Chromium at A4 size with backgrounds enabled.
 
-Only sanitized/synthetic or licensed public media may be published. See [final system and provenance](docs/release/FINAL_PORTFOLIO_SYSTEM.md). `docs/release/media.cjs` generates curated covers; `scripts/media-dimensions.cjs` derives native image sizes.
+Shared dark-theme styles are generated with `node scripts/build-dark-theme.mjs`.
 
-The single résumé is `public/muhammad-rizqan-nur-adjie-cv-2026.pdf`. `bun scripts/build-resume.ts` generates its HTML from canonical data; print that HTML with Chromium at A4 with backgrounds. Prior résumé versions remain in Git history.
+## Documentation
 
-Shared shell dark styles are generated with `node scripts/build-dark-theme.mjs`; new project/Home styles use semantic dark-mode tokens. Sound is original Web Audio, direct-gesture-only, with persisted global mute. Music never autoplays.
+- [Ask AI setup and deployment](docs/ASK_AI.md)
+- [Release notes and screenshot sources](docs/release/FINAL_PORTFOLIO_SYSTEM.md)
 
-Worker deployment: [Ask AI operations](docs/ASK_AI.md). Frontend endpoint: `NEXT_PUBLIC_ASK_API_URL`, a public URL rather than a secret.
+Public screenshots use synthetic or sanitized data. Private hospital records and deployment details are not included.
