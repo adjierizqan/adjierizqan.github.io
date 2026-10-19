@@ -29,22 +29,20 @@ jobs:
         env:
           NEXT_PUBLIC_ASK_API_URL: https://adjie-workspace-ask.adjierizqan.workers.dev
       - run: npm run test:static
-      - run: npx playwright install --with-deps chromium webkit
-      - name: Production browser checks
+      - run: npx playwright install --with-deps chromium
+      - name: Browser checks
+        # The v2 site replaced the Workspace shell at /. The Workspace now lives
+        # at /workspace/; its shell scripts still target / and are not run here.
         run: |
           python3 -m http.server 4182 --bind 127.0.0.1 --directory out > /tmp/portfolio-http.log 2>&1 &
-          QA_WEBKIT=1 npm run test:browser
-          npm run test:intros
-          npm run test:integration
-          npm run test:shell
-          QA_ENGINE=webkit npm run test:shell
+          npm run test:v2
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: browser-evidence
           path: |
-            docs/release/browser-results.json
-            docs/release/screenshots/
+            docs/v2/browser-results.json
+            docs/v2/screenshots/
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:

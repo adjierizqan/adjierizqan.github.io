@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { allWorkspaceProjects } from "./workspace";
-import { dynamicParams, generateMetadata, generateStaticParams } from "../app/projects/[slug]/page";
+import { dynamicParams, generateMetadata, generateStaticParams } from "../app/(site)/projects/[slug]/page";
 import { getProject, projectMetadata, projectPath } from "../lib/projects";
 
 const SIX = ["labstock", "bdrs", "suhulog", "tomato-ripeness", "padel-vision", "porsche-3d"];
