@@ -1,51 +1,60 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import "./theme-dark.css";
-import "@/components/workspace/motion.css";
-import "@/components/workspace/interface.css";
+import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import { SITE_URL } from "@/data/personal-site";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Fonts are self-hosted from app/fonts so builds never fetch from Google Fonts.
+// Licences: app/fonts/LICENSE-*.txt (SIL OFL 1.1).
+const grotesk = localFont({
+  src: "./fonts/schibsted-grotesk-latin-wght-normal.woff2",
+  variable: "--font-grotesk",
+  weight: "400 900",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const literata = localFont({
+  src: [
+    { path: "./fonts/literata-latin-wght-normal.woff2", style: "normal" },
+    { path: "./fonts/literata-latin-wght-italic.woff2", style: "italic" },
+  ],
+  variable: "--font-literata",
+  weight: "200 900",
+  display: "swap",
 });
+
+// Used only by the archived Workspace at /workspace/.
+const geistSans = localFont({ src: "./fonts/Geist-Variable.woff2", variable: "--font-geist-sans", weight: "100 900", display: "swap" });
+const geistMono = localFont({ src: "./fonts/GeistMono-Variable.woff2", variable: "--font-geist-mono", weight: "100 900", display: "swap" });
+
+const description =
+  "Adjie Rizqan, software and full-stack engineer. Operational software for a hospital laboratory, and applied computer vision research.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://adjierizqan.github.io"),
+  metadataBase: new URL(SITE_URL),
   title: "Adjie Rizqan — Software Engineer",
-  description:
-    "Explore Adjie Rizqan's operational software and applied AI work inside Adjie Workspace.",
+  description,
   alternates: { canonical: "/" },
   robots: { index: true, follow: true },
-  openGraph: { type: "website", url: "/", title: "Adjie Rizqan — Software Engineer", description: "Operational software, data-heavy applications and applied computer vision.", images: ["/projects/labstock/thumb-reset-a.jpg"] },
-  twitter: { card: "summary_large_image", title: "Adjie Rizqan — Software Engineer", images: ["/projects/labstock/thumb-reset-a.jpg"] },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Adjie Rizqan",
+    title: "Adjie Rizqan — Software Engineer",
+    description,
+    images: ["/projects/labstock/thumb-reset-a.jpg"],
+  },
+  twitter: { card: "summary_large_image", title: "Adjie Rizqan — Software Engineer", description, images: ["/projects/labstock/thumb-reset-a.jpg"] },
 };
 
-const THEME_BOOT = `(function(){try{var d=document.documentElement,m=window.matchMedia("(prefers-color-scheme: dark)"),k="aw-theme";var s=localStorage.getItem(k);d.dataset.theme=s==="dark"||s==="light"?s:(m.matches?"dark":"light");d.lang="en";m.addEventListener("change",function(e){if(!localStorage.getItem(k))d.dataset.theme=e.matches?"dark":"light"})}catch(e){}})();`;
+export const viewport: Viewport = { themeColor: "#f5f6f3" };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${grotesk.variable} ${literata.variable} ${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        {/* Theme and language before first paint: saved choice, else system theme / English. */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
-      </head>
-      <body className="flex min-h-full flex-col">
-        <div className="site-main flex-1">{children}</div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
