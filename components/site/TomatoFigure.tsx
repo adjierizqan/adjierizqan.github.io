@@ -32,7 +32,7 @@ export function TomatoFigure({ options, caption }: { options: TomatoOption[]; ca
             </button>
           ))}
         </div>
-        <h3 className="t-h3" aria-live="polite">{current.label}</h3>
+        <p className="t-h3" aria-live="polite">{current.label}</p>
         <dl className="metric-rows">
           <div><dt>mAP@0.5</dt><dd>{formatMetric(current.map50)}</dd></div>
           <div><dt>mAP@0.5:0.95</dt><dd>{formatMetric(current.map5095)}</dd></div>

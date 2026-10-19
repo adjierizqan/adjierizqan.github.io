@@ -263,7 +263,7 @@ function Tomato({ project }: { project: WorkspaceProject }) {
           <h2 id="s-table" className="t-h3">All seven configurations</h2>
           <p className="t-caption">Table 1. Best value in each column in bold.</p>
         </div>
-        <div className="col-main table-wrap">
+        <div className="col-main table-wrap" tabIndex={0} role="region" aria-label="Table 1, all seven configurations (scrolls sideways on small screens)">
           <table className="results">
             <thead><tr><th scope="col">Configuration</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">mAP@0.5</th><th scope="col">mAP@0.5:0.95</th><th scope="col">fps</th></tr></thead>
             <tbody>

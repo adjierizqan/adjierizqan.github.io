@@ -12,18 +12,16 @@ const grotesk = localFont({
 });
 
 const literata = localFont({
-  src: [
-    { path: "./fonts/literata-latin-wght-normal.woff2", style: "normal" },
-    { path: "./fonts/literata-latin-wght-italic.woff2", style: "italic" },
-  ],
+  src: "./fonts/literata-latin-wght-normal.woff2",
   variable: "--font-literata",
   weight: "200 900",
   display: "swap",
 });
 
 // Used only by the archived Workspace at /workspace/.
-const geistSans = localFont({ src: "./fonts/Geist-Variable.woff2", variable: "--font-geist-sans", weight: "100 900", display: "swap" });
-const geistMono = localFont({ src: "./fonts/GeistMono-Variable.woff2", variable: "--font-geist-mono", weight: "100 900", display: "swap" });
+// preload: false, so the new site never downloads them.
+const geistSans = localFont({ src: "./fonts/Geist-Variable.woff2", variable: "--font-geist-sans", weight: "100 900", display: "swap", preload: false });
+const geistMono = localFont({ src: "./fonts/GeistMono-Variable.woff2", variable: "--font-geist-mono", weight: "100 900", display: "swap", preload: false });
 
 const description =
   "Adjie Rizqan, software and full-stack engineer. Operational software for a hospital laboratory, and applied computer vision research.";
