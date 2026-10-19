@@ -92,7 +92,7 @@ const pages = ["/", "/work/", "/projects/labstock/", "/projects/bdrs/", "/projec
   // Tomato switch updates the selected configuration.
   await p.goto(BASE + "/projects/tomato-ripeness/");
   await p.click('button[aria-pressed]:has-text("Baseline")');
-  const label = await p.textContent(".fig-1-side h3");
+  const label = await p.textContent(".fig-1-side .t-h3");
   if (!label?.includes("YOLOv11 baseline")) failures.push("Tomato switch did not update: " + label);
   await ctx.close();
   await browser.close();
