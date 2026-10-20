@@ -21,7 +21,7 @@ export function getProject(slug: string): WorkspaceProject | undefined {
 }
 
 export function projectTitle(project: WorkspaceProject): string {
-  return `${project.title} — ${identity.name}`;
+  return `${project.title} | ${identity.name}`;
 }
 
 /** Prefer the project’s JPEG/PNG social derivative when supplied. */
@@ -34,7 +34,7 @@ export function projectMetadata(project: WorkspaceProject): Metadata {
   const title = projectTitle(project);
   const description = project.summary; // 129–161 chars, used verbatim
   const image = previewImage(project);
-  const images = image ? [{ url: image, alt: `${project.title} — project image` }] : undefined;
+  const images = image ? [{ url: image, alt: `${project.title}, project image` }] : undefined;
 
   return {
     title,

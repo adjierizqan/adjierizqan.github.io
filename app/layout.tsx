@@ -4,17 +4,14 @@ import { SITE_URL } from "@/data/personal-site";
 
 // Fonts are self-hosted from app/fonts so builds never fetch from Google Fonts.
 // Licences: app/fonts/LICENSE-*.txt (SIL OFL 1.1).
-const grotesk = localFont({
-  src: "./fonts/schibsted-grotesk-latin-wght-normal.woff2",
-  variable: "--font-grotesk",
-  weight: "400 900",
-  display: "swap",
-});
-
-const literata = localFont({
-  src: "./fonts/literata-latin-wght-normal.woff2",
-  variable: "--font-literata",
-  weight: "200 900",
+// IBM Plex Sans: an engineering typeface with good small-size legibility, read
+// as plain and technical rather than as a design statement. Licence: app/fonts.
+const plex = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-sans-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/ibm-plex-sans-latin-600-normal.woff2", weight: "600", style: "normal" },
+  ],
+  variable: "--font-plex",
   display: "swap",
 });
 
@@ -28,7 +25,7 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Adjie Rizqan — Software Engineer",
+  title: "Adjie Rizqan, software engineer",
   description,
   alternates: { canonical: "/" },
   robots: { index: true, follow: true },
@@ -36,20 +33,25 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "Adjie Rizqan",
-    title: "Adjie Rizqan — Software Engineer",
+    title: "Adjie Rizqan, software engineer",
     description,
     images: ["/projects/labstock/thumb-reset-a.jpg"],
   },
-  twitter: { card: "summary_large_image", title: "Adjie Rizqan — Software Engineer", description, images: ["/projects/labstock/thumb-reset-a.jpg"] },
+  twitter: { card: "summary_large_image", title: "Adjie Rizqan, software engineer", description, images: ["/projects/labstock/thumb-reset-a.jpg"] },
 };
 
-export const viewport: Viewport = { themeColor: "#f5f6f3" };
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#121214" },
+  ],
+};
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${grotesk.variable} ${literata.variable} ${geistSans.variable} ${geistMono.variable}`}
+      className={`${plex.variable} ${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
       <body>{children}</body>

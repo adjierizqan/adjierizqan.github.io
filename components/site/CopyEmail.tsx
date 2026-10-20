@@ -15,9 +15,7 @@ export function CopyEmail({ email }: { email: string }) {
   };
   return (
     <>
-      <button type="button" className="button-quiet" onClick={copy}>
-        {state === "copied" ? "Copied" : "Copy address"}
-      </button>
+      <button type="button" className="copy" onClick={copy}>{state === "copied" ? "Copied" : "Copy email"}</button>
       <span className="sr-only" role="status">
         {state === "copied" ? "Email address copied" : state === "failed" ? "Copy failed. Select the address instead." : ""}
       </span>
