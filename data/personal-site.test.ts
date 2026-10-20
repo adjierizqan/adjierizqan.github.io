@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { allWorkspaceProjects, featuredWork } from "./workspace";
-import { homeEntries, releases, workGroups, hero, plainHeadline, constraints, workflows } from "./personal-site";
+import { allWorkspaceProjects } from "./workspace";
+import { cases, experimentRows, intro, releases, workRows } from "./personal-site";
 import { tomatoConfigurations } from "./tomatovision";
 
-describe("v2 site content", () => {
+describe("personal site content", () => {
   test("every public project has a release state with a named source", () => {
     for (const p of allWorkspaceProjects) {
       expect(releases[p.slug]?.state.length).toBeGreaterThan(0);
@@ -11,28 +11,26 @@ describe("v2 site content", () => {
     }
   });
 
-  test("the work index lists each public project exactly once", () => {
-    const listed = workGroups.flatMap((g) => g.rows.map((r) => r.slug)).sort();
+  test("the home page lists each public project exactly once", () => {
+    const listed = [...workRows, ...experimentRows].map((r) => r.slug).sort();
     expect(listed).toEqual(allWorkspaceProjects.map((p) => p.slug).sort());
   });
 
-  test("featured work has homepage copy", () => {
-    for (const p of featuredWork) expect(homeEntries[p.slug]).toBeDefined();
+  test("every project except the thesis has case copy and a hero", () => {
+    for (const p of allWorkspaceProjects.filter((p) => p.slug !== "tomato-ripeness")) {
+      expect(cases[p.slug]?.hero.src).toMatch(/^\/projects\//);
+    }
   });
 
-  test("the headline reads as one sentence without the struck word", () => {
-    expect(plainHeadline).toBe("I build software where a correction adds to the record.");
-    expect(plainHeadline).not.toContain(hero.replaced);
-  });
-
-  test("homepage TomatoVision figures match the locked research record", () => {
+  test("TomatoVision figures match the locked research record", () => {
     const byId = Object.fromEntries(tomatoConfigurations.map((c) => [c.id, c.map50]));
     expect([byId["yolov11"], byId["swin-t-mssppf"], byId["combine-4"]]).toEqual([0.795, 0.807, 0.824]);
   });
 
-  test("no unverified release or uncleared project is described", () => {
-    const text = JSON.stringify({ homeEntries, releases, workGroups, constraints, workflows }).toLowerCase();
-    expect(text).not.toContain("hemovigil");
-    expect(text).not.toContain("elab");
+  test("copy has no em dashes and no unverified or uncleared work", () => {
+    const text = JSON.stringify({ intro, releases, workRows, experimentRows, cases });
+    expect(text).not.toContain("\u2014");
+    expect(text.toLowerCase()).not.toContain("hemovigil");
+    expect(text.toLowerCase()).not.toContain("elab");
   });
 });

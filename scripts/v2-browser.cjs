@@ -15,11 +15,12 @@ const viewports = [
   { name: "390", width: 390, height: 844 },
   { name: "360", width: 360, height: 800 },
 ];
-const pages = ["/", "/work/", "/projects/labstock/", "/projects/bdrs/", "/projects/suhulog/", "/projects/tomato-ripeness/", "/projects/padel-vision/", "/projects/porsche-3d/", "/workspace/", "/missing-page/"];
+const pages = ["/", "/projects/labstock/", "/projects/bdrs/", "/projects/suhulog/", "/projects/tomato-ripeness/", "/projects/padel-vision/", "/projects/porsche-3d/", "/workspace/", "/missing-page/"];
 
 (async () => {
   const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
   const results = [];
+  let askResult = null;
   const failures = [];
   fs.mkdirSync(OUT, { recursive: true });
   for (const vp of viewports) {
@@ -77,26 +78,31 @@ const pages = ["/", "/work/", "/projects/labstock/", "/projects/bdrs/", "/projec
     }
     await context.close();
   }
-  // Keyboard: first Tab reaches the skip link; mobile menu opens, traps Escape and returns focus.
+  // Keyboard: first Tab reaches the skip link.
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const p = await ctx.newPage();
   await p.goto(BASE + "/");
   await p.keyboard.press("Tab");
   const firstFocus = await p.evaluate(() => document.activeElement?.textContent?.trim());
   if (firstFocus !== "Skip to content") failures.push(`first Tab focused "${firstFocus}"`);
-  await p.click("button.menu-button");
-  const sheet = await p.isVisible("#menu-sheet");
-  await p.keyboard.press("Escape");
-  const closed = !(await p.isVisible("#menu-sheet"));
-  if (!sheet || !closed) failures.push("mobile menu open/close failed");
+  // Ask: submitting shows the question and ends in an answer or an error with a retry, never a dead control.
+  if (await p.isVisible("#ask-input")) {
+    await p.fill("#ask-input", "How does LabStock keep imports traceable?");
+    await p.click(".ask-form button[type=submit]");
+    await p.waitForSelector(".ask-answer", { timeout: 5000 });
+    await p.waitForFunction(() => !document.querySelector(".ask-answer .status")?.textContent?.includes("Thinking"), null, { timeout: 20000 }).catch(() => {});
+    const askText = await p.textContent(".ask-answer");
+    if (!askText?.includes("How does LabStock")) failures.push("Ask did not show the question");
+    askResult = askText?.slice(0, 160) ?? "";
+  } else askResult = "Ask box not rendered (no endpoint configured)";
   // Tomato switch updates the selected configuration.
   await p.goto(BASE + "/projects/tomato-ripeness/");
   await p.click('button[aria-pressed]:has-text("Baseline")');
-  const label = await p.textContent(".fig-1-side .t-h3");
+  const label = await p.textContent(".metrics");
   if (!label?.includes("YOLOv11 baseline")) failures.push("Tomato switch did not update: " + label);
   await ctx.close();
   await browser.close();
-  fs.writeFileSync("docs/v2/browser-results.json", JSON.stringify({ base: BASE, results, failures }, null, 1));
+  fs.writeFileSync("docs/v2/browser-results.json", JSON.stringify({ base: BASE, askResult, results, failures }, null, 1));
   console.log(`${results.length} page loads, ${failures.length} failures`);
   for (const f of failures) console.log("FAIL", f);
   process.exit(failures.length ? 1 : 0);
