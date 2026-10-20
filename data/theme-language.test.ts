@@ -8,9 +8,9 @@ describe("theme", () => {
     expect(readFileSync(OUTPUT, "utf8")).toBe(build());
   });
 
-  test("the theme is applied before paint and persisted under one key", () => {
-    const layout = readFileSync("app/layout.tsx", "utf8");
-    expect(layout).toContain('import "./theme-dark.css"');
+  test("the Workspace theme is applied before paint and persisted under one key", () => {
+    const layout = readFileSync("app/(workspace)/workspace/layout.tsx", "utf8");
+    expect(layout).toContain('import "../../theme-dark.css"');
     expect(layout).toContain("prefers-color-scheme: dark");
     expect(layout).toContain('k="aw-theme"');
   });

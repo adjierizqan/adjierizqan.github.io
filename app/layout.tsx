@@ -1,51 +1,60 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import "./theme-dark.css";
-import "@/components/workspace/motion.css";
-import "@/components/workspace/interface.css";
+import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import { SITE_URL } from "@/data/personal-site";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Fonts are self-hosted from app/fonts so builds never fetch from Google Fonts.
+// Licences: app/fonts/LICENSE-*.txt (SIL OFL 1.1).
+// IBM Plex Sans: an engineering typeface with good small-size legibility, read
+// as plain and technical rather than as a design statement. Licence: app/fonts.
+const plex = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-sans-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/ibm-plex-sans-latin-600-normal.woff2", weight: "600", style: "normal" },
+  ],
+  variable: "--font-plex",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// Used only by the archived Workspace at /workspace/.
+// preload: false, so the new site never downloads them.
+const geistSans = localFont({ src: "./fonts/Geist-Variable.woff2", variable: "--font-geist-sans", weight: "100 900", display: "swap", preload: false });
+const geistMono = localFont({ src: "./fonts/GeistMono-Variable.woff2", variable: "--font-geist-mono", weight: "100 900", display: "swap", preload: false });
+
+const description =
+  "Adjie Rizqan, software and full-stack engineer. Operational software for a hospital laboratory, and applied computer vision research.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://adjierizqan.github.io"),
-  title: "Adjie Rizqan — Software Engineer",
-  description:
-    "Explore Adjie Rizqan's operational software and applied AI work inside Adjie Workspace.",
+  metadataBase: new URL(SITE_URL),
+  title: "Adjie Rizqan, software engineer",
+  description,
   alternates: { canonical: "/" },
   robots: { index: true, follow: true },
-  openGraph: { type: "website", url: "/", title: "Adjie Rizqan — Software Engineer", description: "Operational software, data-heavy applications and applied computer vision.", images: ["/projects/labstock/thumb-reset-a.jpg"] },
-  twitter: { card: "summary_large_image", title: "Adjie Rizqan — Software Engineer", images: ["/projects/labstock/thumb-reset-a.jpg"] },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Adjie Rizqan",
+    title: "Adjie Rizqan, software engineer",
+    description,
+    images: ["/projects/labstock/thumb-reset-a.jpg"],
+  },
+  twitter: { card: "summary_large_image", title: "Adjie Rizqan, software engineer", description, images: ["/projects/labstock/thumb-reset-a.jpg"] },
 };
 
-const THEME_BOOT = `(function(){try{var d=document.documentElement,m=window.matchMedia("(prefers-color-scheme: dark)"),k="aw-theme";var s=localStorage.getItem(k);d.dataset.theme=s==="dark"||s==="light"?s:(m.matches?"dark":"light");d.lang="en";m.addEventListener("change",function(e){if(!localStorage.getItem(k))d.dataset.theme=e.matches?"dark":"light"})}catch(e){}})();`;
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#121214" },
+  ],
+};
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${plex.variable} ${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        {/* Theme and language before first paint: saved choice, else system theme / English. */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
-      </head>
-      <body className="flex min-h-full flex-col">
-        <div className="site-main flex-1">{children}</div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

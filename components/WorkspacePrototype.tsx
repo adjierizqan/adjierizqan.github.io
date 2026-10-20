@@ -27,6 +27,7 @@ import { FileIcon, MailIcon } from "@/components/Icons";
 import { L, t, tk } from "@/lib/i18n";
 import { localizeProject } from "@/lib/localize-project";
 import { site } from "@/data/site";
+import { SITE_URL } from "@/data/personal-site";
 import { streamPortfolioAnswer } from "@/lib/portfolio-ai";
 import { contextHistory, groupTurns, type AskTurn } from "@/lib/ask-context";
 import {
@@ -558,11 +559,15 @@ function subscribeToUrl(onChange: () => void) {
     window.removeEventListener(URL_CHANGE_EVENT, onChange);
   };
 }
-const readProjectParam = () => window.location.pathname.match(/^\/projects\/([^/]+)\/?$/)?.[1] ?? new URLSearchParams(window.location.search).get("project");
+// The Workspace now lives at /workspace/ beside the new site, which owns
+// /projects/<slug>/. Selection is kept in ?project= so it never navigates away.
+const WORKSPACE_PATH = "/workspace/";
+const readProjectParam = () => new URLSearchParams(window.location.search).get("project");
 function writeProjectParam(slug: string | null) {
   const url = new URL(window.location.href);
   url.searchParams.delete("project");
-  url.pathname = slug ? `/projects/${slug}/` : "/";
+  url.pathname = WORKSPACE_PATH;
+  if (slug) url.searchParams.set("project", slug);
   url.hash = "";
   if (url.href === window.location.href) return;
   window.history.pushState(null, "", url);
@@ -627,7 +632,7 @@ function AudioControls() {
   </>;
 }
 
-export function WorkspacePrototype({ initialProject = null }: { initialProject?: string | null }) {
+export function WorkspacePrototype({ initialProject = null }: { initialProject?: string | null; basePath?: string }) {
   const windowRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; start: Point; origin: Point } | null>(null);
   const restorePositionRef = useRef<Point>({ x: 0, y: 0 });
@@ -657,13 +662,6 @@ export function WorkspacePrototype({ initialProject = null }: { initialProject?:
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const theme = useSyncExternalStore(subscribeToTheme, readTheme, readThemeOnServer);
-  useEffect(() => {
-    const legacy = new URLSearchParams(window.location.search).get("project");
-    if (legacy && rawAll.some(p => p.slug === legacy)) {
-      window.history.replaceState(null, "", `/projects/${legacy}/`);
-      window.dispatchEvent(new Event(URL_CHANGE_EVENT));
-    }
-  }, []);
   const [windowState, setWindowState] = useState<WindowState>("open");
   const [maximized, setMaximized] = useState(false);
   const [quickLookIndex, setQuickLookIndex] = useState<number | null>(null);
@@ -678,11 +676,11 @@ export function WorkspacePrototype({ initialProject = null }: { initialProject?:
   useEffect(() => {
     const project = rawAll.find(p => p.slug === urlProject);
     const title = project ? `${project.title} — Adjie Rizqan` : "Adjie Rizqan — Software Engineer";
-    const url = `https://adjierizqan.github.io${project ? `/projects/${project.slug}/` : "/"}`;
+    const url = `${SITE_URL}${project ? `/projects/${project.slug}/` : WORKSPACE_PATH}`;
     document.title = title;
     document.querySelector('link[rel="canonical"]')?.setAttribute("href", url);
     const description = project?.summary ?? "Explore Adjie Rizqan's operational software and applied AI work inside Adjie Workspace.";
-    for (const [selector, value] of [["meta[name='description']", description], ["meta[property='og:title']", title], ["meta[property='og:description']", description], ["meta[property='og:url']", url], ["meta[name='twitter:title']", title], ["meta[name='twitter:description']", description], ["meta[property='og:image']", `https://adjierizqan.github.io${project?.socialImage ?? "/projects/labstock/thumb-reset-a.jpg"}`], ["meta[name='twitter:image']", `https://adjierizqan.github.io${project?.socialImage ?? "/projects/labstock/thumb-reset-a.jpg"}`]]) document.querySelector(selector)?.setAttribute("content", value);
+    for (const [selector, value] of [["meta[name='description']", description], ["meta[property='og:title']", title], ["meta[property='og:description']", description], ["meta[property='og:url']", url], ["meta[name='twitter:title']", title], ["meta[name='twitter:description']", description], ["meta[property='og:image']", `${SITE_URL}${project?.socialImage ?? "/projects/labstock/thumb-reset-a.jpg"}`], ["meta[name='twitter:image']", `${SITE_URL}${project?.socialImage ?? "/projects/labstock/thumb-reset-a.jpg"}`]]) document.querySelector(selector)?.setAttribute("content", value);
   }, [urlProject]);
 
   const openPalette = useCallback(() => {

@@ -1,25 +1,15 @@
 import Link from "next/link";
+import "@/components/site/site.css";
+
 export default function NotFound() {
   return (
-    <main style={{ maxWidth: 650, margin: "15vh auto", padding: 30 }}>
-      <p>Adjie Workspace / 404</p>
-      <h1 style={{ fontSize: 42, margin: "24px 0" }}>
-        This page isn’t in the workspace.
-      </h1>
-      <p>
-        The project may have moved. All six case studies are available from
-        Home.
-      </p>
-      <Link
-        href="/"
-        style={{
-          display: "inline-block",
-          marginTop: 24,
-          textDecoration: "underline",
-        }}
-      >
-        Return to Workspace →
-      </Link>
+    <main id="main" className="page">
+      <div className="col">
+        <p className="small muted">404</p>
+        <h1 style={{ fontSize: 32, lineHeight: 1.2, margin: "12px 0 16px" }}>This page isn’t here.</h1>
+        <p>The project may have moved. Every case study is listed on the home page.</p>
+        <p style={{ marginTop: 12 }}><Link href="/" className="home-link">Go to the home page</Link></p>
+      </div>
     </main>
   );
 }

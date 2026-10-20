@@ -1,23 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { WorkspacePrototype } from "@/components/WorkspacePrototype";
 import { allWorkspaceProjects } from "@/data/workspace";
 import { getProject, projectMetadata } from "@/lib/projects";
+import { CaseStudy } from "@/components/site/CaseStudy";
 
 type Props = { params: Promise<{ slug: string }> };
 
-/**
- * A real, statically generated case study per project.
- *
- * This replaces a client-side redirect to `/?project=<slug>`, which made every
- * project URL a noindex hop into the workspace and left /projects/bdrs/ and
- * /projects/labstock/ without a page at all. The page reads the canonical
- * project data directly. LabStock uses an explicit server-rendered Workspace
- * selection and its shared case study; the other routes keep their existing view.
- *
- * dynamicParams is false because static export cannot render a slug that
- * generateStaticParams did not return; an unknown slug is a 404 from the host.
- */
+// Static export cannot render a slug generateStaticParams did not return,
+// so unknown slugs are a 404 from the host.
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -34,5 +24,5 @@ export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) notFound();
-  return <WorkspacePrototype initialProject={slug} />;
+  return <CaseStudy project={project} all={allWorkspaceProjects} />;
 }

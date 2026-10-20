@@ -1,0 +1,86 @@
+{
+ "tool": "Lighthouse 12, local build served with brotli by `serve`, Chrome 141 headless, default simulated throttling (mobile) and desktop preset",
+ "date": "2026-10-20",
+ "design": "direction C",
+ "note": "Lab measurements on a local machine, not field data from the deployed origin.",
+ "results": {
+  "p-desktop": {
+   "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "FCP": "0.3\u00a0s",
+   "LCP": "0.4\u00a0s",
+   "CLS": "0",
+   "TBT": "0\u00a0ms",
+   "bytes": "Total size was 646\u00a0KiB"
+  },
+  "p-mobile": {
+   "scores": {
+    "performance": 99,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "FCP": "0.9\u00a0s",
+   "LCP": "2.1\u00a0s",
+   "CLS": "0",
+   "TBT": "40\u00a0ms",
+   "bytes": "Total size was 582\u00a0KiB"
+  },
+  "pprojects-labstock--desktop": {
+   "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "FCP": "0.3\u00a0s",
+   "LCP": "0.5\u00a0s",
+   "CLS": "0",
+   "TBT": "0\u00a0ms",
+   "bytes": "Total size was 355\u00a0KiB"
+  },
+  "pprojects-labstock--mobile": {
+   "scores": {
+    "performance": 98,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "FCP": "0.9\u00a0s",
+   "LCP": "2.3\u00a0s",
+   "CLS": "0",
+   "TBT": "70\u00a0ms",
+   "bytes": "Total size was 291\u00a0KiB"
+  },
+  "pprojects-tomato-ripeness--desktop": {
+   "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "FCP": "0.3\u00a0s",
+   "LCP": "0.4\u00a0s",
+   "CLS": "0",
+   "TBT": "0\u00a0ms",
+   "bytes": "Total size was 612\u00a0KiB"
+  },
+  "pprojects-tomato-ripeness--mobile": {
+   "scores": {
+    "performance": 95,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "FCP": "1.0\u00a0s",
+   "LCP": "2.9\u00a0s",
+   "CLS": "0",
+   "TBT": "40\u00a0ms",
+   "bytes": "Total size was 612\u00a0KiB"
+  }
+ }
+}
