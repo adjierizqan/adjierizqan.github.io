@@ -1,9 +1,10 @@
 {
  "tool": "Lighthouse 12, local build served with brotli by `serve`, Chrome 141 headless, default simulated throttling (mobile) and desktop preset",
  "date": "2026-10-20",
+ "design": "direction C",
  "note": "Lab measurements on a local machine, not field data from the deployed origin.",
  "results": {
-  "home-desktop": {
+  "p-desktop": {
    "scores": {
     "performance": 100,
     "accessibility": 100,
@@ -14,22 +15,22 @@
    "LCP": "0.4\u00a0s",
    "CLS": "0",
    "TBT": "0\u00a0ms",
-   "bytes": "Total size was 484\u00a0KiB"
+   "bytes": "Total size was 646\u00a0KiB"
   },
-  "home-mobile": {
+  "p-mobile": {
    "scores": {
-    "performance": 97,
+    "performance": 99,
     "accessibility": 100,
     "best-practices": 100,
     "seo": 100
    },
    "FCP": "0.9\u00a0s",
-   "LCP": "2.4\u00a0s",
+   "LCP": "2.1\u00a0s",
    "CLS": "0",
-   "TBT": "80\u00a0ms",
-   "bytes": "Total size was 397\u00a0KiB"
+   "TBT": "40\u00a0ms",
+   "bytes": "Total size was 582\u00a0KiB"
   },
-  "homeprojects-bdrs--desktop": {
+  "pprojects-labstock--desktop": {
    "scores": {
     "performance": 100,
     "accessibility": 100,
@@ -40,22 +41,22 @@
    "LCP": "0.5\u00a0s",
    "CLS": "0",
    "TBT": "0\u00a0ms",
-   "bytes": "Total size was 339\u00a0KiB"
+   "bytes": "Total size was 355\u00a0KiB"
   },
-  "homeprojects-bdrs--mobile": {
+  "pprojects-labstock--mobile": {
    "scores": {
-    "performance": 99,
+    "performance": 98,
     "accessibility": 100,
     "best-practices": 100,
     "seo": 100
    },
    "FCP": "0.9\u00a0s",
-   "LCP": "2.0\u00a0s",
+   "LCP": "2.3\u00a0s",
    "CLS": "0",
-   "TBT": "60\u00a0ms",
-   "bytes": "Total size was 339\u00a0KiB"
+   "TBT": "70\u00a0ms",
+   "bytes": "Total size was 291\u00a0KiB"
   },
-  "homeprojects-labstock--desktop": {
+  "pprojects-tomato-ripeness--desktop": {
    "scores": {
     "performance": 100,
     "accessibility": 100,
@@ -63,75 +64,23 @@
     "seo": 100
    },
    "FCP": "0.3\u00a0s",
-   "LCP": "0.7\u00a0s",
+   "LCP": "0.4\u00a0s",
    "CLS": "0",
    "TBT": "0\u00a0ms",
-   "bytes": "Total size was 357\u00a0KiB"
+   "bytes": "Total size was 612\u00a0KiB"
   },
-  "homeprojects-labstock--mobile": {
+  "pprojects-tomato-ripeness--mobile": {
    "scores": {
-    "performance": 94,
+    "performance": 95,
     "accessibility": 100,
     "best-practices": 100,
     "seo": 100
    },
-   "FCP": "0.9\u00a0s",
-   "LCP": "3.1\u00a0s",
+   "FCP": "1.0\u00a0s",
+   "LCP": "2.9\u00a0s",
    "CLS": "0",
-   "TBT": "30\u00a0ms",
-   "bytes": "Total size was 357\u00a0KiB"
-  },
-  "homeprojects-tomato-ripeness--desktop": {
-   "scores": {
-    "performance": 100,
-    "accessibility": 100,
-    "best-practices": 100,
-    "seo": 100
-   },
-   "FCP": "0.2\u00a0s",
-   "LCP": "0.6\u00a0s",
-   "CLS": "0",
-   "TBT": "0\u00a0ms",
-   "bytes": "Total size was 677\u00a0KiB"
-  },
-  "homeprojects-tomato-ripeness--mobile": {
-   "scores": {
-    "performance": 96,
-    "accessibility": 100,
-    "best-practices": 100,
-    "seo": 100
-   },
-   "FCP": "0.9\u00a0s",
-   "LCP": "2.8\u00a0s",
-   "CLS": "0",
-   "TBT": "30\u00a0ms",
-   "bytes": "Total size was 677\u00a0KiB"
-  },
-  "homework--desktop": {
-   "scores": {
-    "performance": 96,
-    "accessibility": 100,
-    "best-practices": 100,
-    "seo": 100
-   },
-   "FCP": "0.3\u00a0s",
-   "LCP": "1.4\u00a0s",
-   "CLS": "0",
-   "TBT": "0\u00a0ms",
-   "bytes": "Total size was 1,016\u00a0KiB"
-  },
-  "homework--mobile": {
-   "scores": {
-    "performance": 99,
-    "accessibility": 100,
-    "best-practices": 100,
-    "seo": 100
-   },
-   "FCP": "0.9\u00a0s",
-   "LCP": "2.1\u00a0s",
-   "CLS": "0",
-   "TBT": "80\u00a0ms",
-   "bytes": "Total size was 888\u00a0KiB"
+   "TBT": "40\u00a0ms",
+   "bytes": "Total size was 612\u00a0KiB"
   }
  }
 }

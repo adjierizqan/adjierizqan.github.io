@@ -2,7 +2,7 @@
 
 My portfolio, built with Next.js as a static export.
 
-On this branch (`feat/personal-site-v2`) the home page, work index and six case studies are a new editorial design for `adjie.jagau.id` (Figma: https://www.figma.com/design/oLmqSNPM6wFWy7w70ihGJz). The previous Workspace interface and its optional Ask AI are kept at `/workspace/`. The AI endpoint runs separately on Cloudflare Workers. Review notes: [docs/v2/REVIEW.md](docs/v2/REVIEW.md).
+On this branch (`feat/personal-site-v2`) the home page and six case studies are a new single-column design for `adjie.jagau.id`, with an Ask box on the home page (Figma: https://www.figma.com/design/oLmqSNPM6wFWy7w70ihGJz). The previous Workspace interface and its optional Ask AI are kept at `/workspace/`. The AI endpoint runs separately on Cloudflare Workers. Review notes: [docs/v2/REVIEW.md](docs/v2/REVIEW.md).
 
 [View the site](https://adjierizqan.github.io/)
 
@@ -15,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-The site works without the AI endpoint. To use Ask AI, set `NEXT_PUBLIC_ASK_API_URL` to the Worker URL before building. `NEXT_PUBLIC_SITE_URL` sets canonical URLs and the sitemap (default `https://adjie.jagau.id`). Fonts are self-hosted from `app/fonts`, so the build needs no network access.
+The site works without the AI endpoint. To use Ask AI, set `NEXT_PUBLIC_ASK_API_URL` to the Worker URL before building. `NEXT_PUBLIC_SITE_URL` sets canonical URLs and the sitemap (default `https://adjie.jagau.id`). Fonts (IBM Plex Sans, and Geist for `/workspace/`) are self-hosted from `app/fonts`, so the build needs no network access.
 
 ## Checks
 
@@ -40,8 +40,8 @@ GitHub Actions runs the release checks before deploying `main` to GitHub Pages. 
 ## Where to look
 
 - `data/workspace.ts`: project content and metadata
-- `data/personal-site.ts`: v2 page copy and release states with their sources
-- `components/site/`: v2 layout, styles and case-study template
+- `data/personal-site.ts`: page copy, case-study text and release states with their sources
+- `components/site/`: styles, Ask box and the case-study template
 - `data/profile.ts`: profile and education
 - `data/tomatovision.ts`: research results
 - `components/studies/`: individual project layouts

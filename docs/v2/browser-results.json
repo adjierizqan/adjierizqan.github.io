@@ -1,5 +1,6 @@
 {
  "base": "http://127.0.0.1:4182",
+ "askResult": "How does LabStock keep imports traceable?The assistant couldn’t be reached. You can still email me at adjierizqan@gmail.com.",
  "results": [
   {
    "viewport": "1440",
@@ -10,23 +11,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Adjie Rizqan — Software Engineer",
+   "title": "Adjie Rizqan, software engineer",
    "canonical": "https://adjie.jagau.id/",
-   "height": 5264,
-   "errors": []
-  },
-  {
-   "viewport": "1440",
-   "path": "/work/",
-   "status": 200,
-   "broken": [],
-   "noAlt": [],
-   "overflow": 0,
-   "h1": 1,
-   "small": [],
-   "title": "Work — Adjie Rizqan",
-   "canonical": "https://adjie.jagau.id/work/",
-   "height": 1246,
+   "height": 1987,
    "errors": []
   },
   {
@@ -38,9 +25,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "LabStock — Adjie Rizqan",
+   "title": "LabStock | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/labstock/",
-   "height": 5425,
+   "height": 5468,
    "errors": []
   },
   {
@@ -52,9 +39,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "BDRS — Adjie Rizqan",
+   "title": "BDRS | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/bdrs/",
-   "height": 5416,
+   "height": 5229,
    "errors": []
   },
   {
@@ -66,9 +53,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "SuhuLog — Adjie Rizqan",
+   "title": "SuhuLog | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/suhulog/",
-   "height": 5015,
+   "height": 3785,
    "errors": []
   },
   {
@@ -80,9 +67,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "TomatoVision — Adjie Rizqan",
+   "title": "TomatoVision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/tomato-ripeness/",
-   "height": 3160,
+   "height": 3169,
    "errors": []
   },
   {
@@ -94,9 +81,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Padel Vision — Adjie Rizqan",
+   "title": "Padel Vision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/padel-vision/",
-   "height": 3509,
+   "height": 2777,
    "errors": []
   },
   {
@@ -108,9 +95,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Porsche 3D — Adjie Rizqan",
+   "title": "Porsche 3D | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/porsche-3d/",
-   "height": 3292,
+   "height": 3044,
    "errors": []
   },
   {
@@ -163,23 +150,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Adjie Rizqan — Software Engineer",
+   "title": "Adjie Rizqan, software engineer",
    "canonical": "https://adjie.jagau.id/",
-   "height": 5075,
-   "errors": []
-  },
-  {
-   "viewport": "1280",
-   "path": "/work/",
-   "status": 200,
-   "broken": [],
-   "noAlt": [],
-   "overflow": 0,
-   "h1": 1,
-   "small": [],
-   "title": "Work — Adjie Rizqan",
-   "canonical": "https://adjie.jagau.id/work/",
-   "height": 1265,
+   "height": 1987,
    "errors": []
   },
   {
@@ -191,9 +164,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "LabStock — Adjie Rizqan",
+   "title": "LabStock | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/labstock/",
-   "height": 5214,
+   "height": 5468,
    "errors": []
   },
   {
@@ -205,9 +178,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "BDRS — Adjie Rizqan",
+   "title": "BDRS | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/bdrs/",
-   "height": 5184,
+   "height": 5229,
    "errors": []
   },
   {
@@ -219,9 +192,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "SuhuLog — Adjie Rizqan",
+   "title": "SuhuLog | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/suhulog/",
-   "height": 4770,
+   "height": 3785,
    "errors": []
   },
   {
@@ -233,9 +206,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "TomatoVision — Adjie Rizqan",
+   "title": "TomatoVision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/tomato-ripeness/",
-   "height": 3100,
+   "height": 3169,
    "errors": []
   },
   {
@@ -247,9 +220,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Padel Vision — Adjie Rizqan",
+   "title": "Padel Vision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/padel-vision/",
-   "height": 3261,
+   "height": 2777,
    "errors": []
   },
   {
@@ -261,9 +234,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Porsche 3D — Adjie Rizqan",
+   "title": "Porsche 3D | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/porsche-3d/",
-   "height": 3079,
+   "height": 3044,
    "errors": []
   },
   {
@@ -316,23 +289,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Adjie Rizqan — Software Engineer",
+   "title": "Adjie Rizqan, software engineer",
    "canonical": "https://adjie.jagau.id/",
-   "height": 6381,
-   "errors": []
-  },
-  {
-   "viewport": "768",
-   "path": "/work/",
-   "status": 200,
-   "broken": [],
-   "noAlt": [],
-   "overflow": 0,
-   "h1": 1,
-   "small": [],
-   "title": "Work — Adjie Rizqan",
-   "canonical": "https://adjie.jagau.id/work/",
-   "height": 1267,
+   "height": 1987,
    "errors": []
   },
   {
@@ -344,9 +303,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "LabStock — Adjie Rizqan",
+   "title": "LabStock | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/labstock/",
-   "height": 7619,
+   "height": 4993,
    "errors": []
   },
   {
@@ -358,9 +317,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "BDRS — Adjie Rizqan",
+   "title": "BDRS | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/bdrs/",
-   "height": 7853,
+   "height": 4720,
    "errors": []
   },
   {
@@ -372,9 +331,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "SuhuLog — Adjie Rizqan",
+   "title": "SuhuLog | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/suhulog/",
-   "height": 6645,
+   "height": 3495,
    "errors": []
   },
   {
@@ -386,9 +345,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "TomatoVision — Adjie Rizqan",
+   "title": "TomatoVision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/tomato-ripeness/",
-   "height": 4376,
+   "height": 3169,
    "errors": []
   },
   {
@@ -400,9 +359,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Padel Vision — Adjie Rizqan",
+   "title": "Padel Vision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/padel-vision/",
-   "height": 3386,
+   "height": 2434,
    "errors": []
   },
   {
@@ -414,9 +373,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Porsche 3D — Adjie Rizqan",
+   "title": "Porsche 3D | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/porsche-3d/",
-   "height": 4430,
+   "height": 2684,
    "errors": []
   },
   {
@@ -470,23 +429,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Adjie Rizqan — Software Engineer",
+   "title": "Adjie Rizqan, software engineer",
    "canonical": "https://adjie.jagau.id/",
-   "height": 6528,
-   "errors": []
-  },
-  {
-   "viewport": "390",
-   "path": "/work/",
-   "status": 200,
-   "broken": [],
-   "noAlt": [],
-   "overflow": 0,
-   "h1": 1,
-   "small": [],
-   "title": "Work — Adjie Rizqan",
-   "canonical": "https://adjie.jagau.id/work/",
-   "height": 1398,
+   "height": 2263,
    "errors": []
   },
   {
@@ -498,9 +443,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "LabStock — Adjie Rizqan",
+   "title": "LabStock | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/labstock/",
-   "height": 6831,
+   "height": 4892,
    "errors": []
   },
   {
@@ -512,9 +457,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "BDRS — Adjie Rizqan",
+   "title": "BDRS | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/bdrs/",
-   "height": 6956,
+   "height": 4690,
    "errors": []
   },
   {
@@ -526,9 +471,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "SuhuLog — Adjie Rizqan",
+   "title": "SuhuLog | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/suhulog/",
-   "height": 6046,
+   "height": 3512,
    "errors": []
   },
   {
@@ -540,9 +485,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "TomatoVision — Adjie Rizqan",
+   "title": "TomatoVision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/tomato-ripeness/",
-   "height": 4017,
+   "height": 3376,
    "errors": []
   },
   {
@@ -554,9 +499,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Padel Vision — Adjie Rizqan",
+   "title": "Padel Vision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/padel-vision/",
-   "height": 2731,
+   "height": 2106,
    "errors": []
   },
   {
@@ -568,9 +513,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Porsche 3D — Adjie Rizqan",
+   "title": "Porsche 3D | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/porsche-3d/",
-   "height": 3397,
+   "height": 2312,
    "errors": []
   },
   {
@@ -617,23 +562,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Adjie Rizqan — Software Engineer",
+   "title": "Adjie Rizqan, software engineer",
    "canonical": "https://adjie.jagau.id/",
-   "height": 6847,
-   "errors": []
-  },
-  {
-   "viewport": "360",
-   "path": "/work/",
-   "status": 200,
-   "broken": [],
-   "noAlt": [],
-   "overflow": 0,
-   "h1": 1,
-   "small": [],
-   "title": "Work — Adjie Rizqan",
-   "canonical": "https://adjie.jagau.id/work/",
-   "height": 1509,
+   "height": 2399,
    "errors": []
   },
   {
@@ -645,9 +576,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "LabStock — Adjie Rizqan",
+   "title": "LabStock | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/labstock/",
-   "height": 6816,
+   "height": 4905,
    "errors": []
   },
   {
@@ -659,9 +590,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "BDRS — Adjie Rizqan",
+   "title": "BDRS | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/bdrs/",
-   "height": 7100,
+   "height": 4766,
    "errors": []
   },
   {
@@ -673,9 +604,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "SuhuLog — Adjie Rizqan",
+   "title": "SuhuLog | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/suhulog/",
-   "height": 6144,
+   "height": 3577,
    "errors": []
   },
   {
@@ -687,9 +618,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "TomatoVision — Adjie Rizqan",
+   "title": "TomatoVision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/tomato-ripeness/",
-   "height": 4133,
+   "height": 3483,
    "errors": []
   },
   {
@@ -701,9 +632,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Padel Vision — Adjie Rizqan",
+   "title": "Padel Vision | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/padel-vision/",
-   "height": 2793,
+   "height": 2116,
    "errors": []
   },
   {
@@ -715,9 +646,9 @@
    "overflow": 0,
    "h1": 1,
    "small": [],
-   "title": "Porsche 3D — Adjie Rizqan",
+   "title": "Porsche 3D | Adjie Rizqan",
    "canonical": "https://adjie.jagau.id/projects/porsche-3d/",
-   "height": 3384,
+   "height": 2293,
    "errors": []
   },
   {
